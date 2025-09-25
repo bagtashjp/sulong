@@ -1,6 +1,6 @@
 async function init() {
   page = {
-    home: document.getElementById("home").innerHTML,
+    home: document.getElementById("home").outerHTML,
     about: await loadTemplate("./pages/about.html")
   };
   card = {
@@ -14,9 +14,7 @@ async function init() {
 // Adjusts the content of <page> based on the URL hash
 function showPage() {
   const hash = location.hash || "#home";
-  if (hash != "#home") {
     document.getElementsByTagName("page")[0].outerHTML = page[hash.replace("#", "")] || "<h1>404 Not Found</h1>";
-  }
   initCards();
 }
 
