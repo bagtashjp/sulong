@@ -13,6 +13,8 @@ body {
     width: 100%;
 }
 
+
+
 .header {
     display: flex;
     align-items: flex-end;
@@ -22,14 +24,18 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
 }
-
-nav {
+.logo {
+    flex: 0 0 auto;
+}
+.nav-center {
+    flex: 1 1 auto;
     display: flex;
     gap: 20px;
     padding: 10px;
+    justify-content: flex-end;
 }
 
-nav a {
+nav a, #signin {
     color: black;
     font-size: 18px;
     text-decoration: none;
@@ -38,14 +44,134 @@ nav a {
     padding: 5px 10px;
 }
 
+#home .nav-center {
+    justify-content: center;
+}
+
 nav a:hover {
     background-color: #FFE041
 }
-nav a:last-child {
-    background-color: #FFE041
+
+#signin {
+    flex: 0 0 auto;
+    background-color: #FFE041;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    margin-bottom: 10px;
 }
-nav a:last-child:hover {
+
+#signin:hover {
     border: 2px solid black;
     background-color: #FFE041
 }
 
+#home {
+    background-image: url('assets/tmp_bg.jpg');
+    background-size: cover;
+    height: 100vh;
+}
+
+#home > .header {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* START START START START [Hero Section] START START START START */
+
+.hero{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hero-text {
+    color: black;
+    max-width: 40vw;
+}
+.hero-text h1 {
+    font-size: 3vw;
+    margin: 0;
+}
+.hero-text p {
+    font-size: 1.2vw;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+.hero-text .started {
+    background-color: #FFE041;
+    text-decoration: none;
+    color: black;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+.hero-image {
+    width: 30vw;
+    max-width: 500px;
+}
+.hero-image img {
+    width: 100%;
+    height: auto;
+}
+
+
+
+@media (max-width: 768px) {
+    .hero {    
+        flex-direction: column-reverse;
+        align-items: center;   
+        justify-content: center;
+    }
+    .hero-text {
+        text-align: center; 
+        max-width: 90%; 
+    }
+    .hero-text h1 {
+        font-size: 5vw;
+    }
+    .hero-text p {
+        font-size: 2vw;
+        text-align: justify;
+        text-align-last: center;
+    }
+    .hero-image {
+        width: 50vw;
+        margin-bottom: 20px; 
+    }
+
+}
+/* END END END END [HERO SECTION] END END END END */
+
+
+#size-error {
+    display: none;
+    position: fixed;
+    bottom:0;
+    left: 0;
+    width: 100%;
+    height: 3vw;
+    color: black;
+    font-size: 2vw;
+    animation: marquee 10s linear infinite;
+    z-index: 9999;
+    text-shadow: 2px 2px 4px white;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+  
+
+@media (max-width: 500px), (max-height: 500px) {
+    #size-error {
+        display: block;
+    }
+}
