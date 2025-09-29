@@ -3,7 +3,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndP
 
 let isUISignin = true;
 function switchAuthUI() {
-    const switcherBtn = document.querySelector("#ui-switch");
+      const switcherBtn = document.querySelector("#ui-switch");
     const bigButton = document.querySelector("#auth-button");
     const bigHeading = document.querySelector("#auth-big-heading");
     const passwordForgot = document.querySelector("#forgot-password");
