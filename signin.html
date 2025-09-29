@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/signin.css">
+    <script type="module" src="scripts/card-reader.js"></script>
+    <title>Sulong</title>
+</head>
+<body id="signin">
+    <card id="header"></card>
+    <div class="signin-form">
+        <h2 id="auth-big-heading">Sign-In</h2>
+        <img class="mini-logo" src="assets/transparent-title-image.png">
+        <div class="input-group">
+            <input type="email" placeholder="" id="email" required>
+            <label for="email">Email</label>
+        </div>
+        <div class="input-group">
+            <input type="password" placeholder="" id="password" required>
+            <label for="password">Password</label>
+        </div>
+        <a id="forgot-password" href="forgot-password" class="auth-switch">Forgot Password?</a>
+        <button id="auth-button" class="sign-button" onclick="signinUI()">Sign In</button>
+        <button id="ui-switch" class="auth-switch" onclick="switchAuthUI()">Don't have an Account? Register.</button>
+        
+    </div>
+    <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a larger screen. ⚠️</div>
+    <script type="module" src="scripts/init-firebase.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
