@@ -53,6 +53,7 @@ function registerUI() {
             const errorCode = error.code;
             const errorMessage = error.message;
             alert("Error: " + errorMessage);
+            bigButton.disabled = false;
         });
     }
 }
@@ -81,6 +82,7 @@ async function signinUI() {
             const errorCode = error.code;
             const errorMessage = error.message;
             alert("Error: " + errorMessage);
+            bigButton.disabled = false;
         });
     }
 
