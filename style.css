@@ -2,10 +2,12 @@
     box-sizing: border-box;
 }
 
-body {
-    margin:0;
+html, body {
     display: block;
+    margin:0;
+    height: 100%;
     font-family: 'Montserrat', 'Roboto', Arial, Helvetica, sans-serif;
+    background-repeat: no-repeat;
 }
 
 .header {
@@ -112,7 +114,6 @@ nav a:hover {
     background-image: url('assets/tmp_bg.jpg');
     background-size: cover;
     background-position: center center;
-    height: 100vh;
 }
 
 #home > .header {
@@ -236,15 +237,15 @@ nav a:hover {
         max-width: 95%; 
     }
     .hero-text h1 {
-        font-size: 6vw;
+        font-size: 3vh;
     }
     .hero-text p {
-        font-size: 3vw;
+        font-size: 2vh;
         text-align: justify;
         text-align-last: center;
     }
     .hero-image {
-        width: 50vw;
+        width: 30vh;
         margin-bottom: 20px; 
     }
 
