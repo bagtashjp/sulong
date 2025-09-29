@@ -5,7 +5,7 @@ const cards = ["header"];
 const card = {};
 async function init() {
     for (const c of cards) {
-        card[c] = await loadTemplate(`./cards/${c}.html`);
+        card[c] = await loadTemplate(`cards/${c}.html`);
     }
     for (const element of document.getElementsByTagName("card")) {
         element.outerHTML = card[element.id];
