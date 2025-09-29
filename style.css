@@ -187,13 +187,13 @@ nav a:hover {
     }
     
     .navfeed {
-        background-image: url("/assets/feed.png");
+        background-image: url("assets/feed.png");
     }
     .navdash {
-        background-image: url("/assets/dashboard.png");
+        background-image: url("assets/dashboard.png");
     }
     .navabout {
-        background-image: url("/assets/about.png");
+        background-image: url("assets/about.png");
     }
     
     .nav-center a {
@@ -207,7 +207,7 @@ nav a:hover {
         }
     }
     .signin a {
-        background-image: url("/assets/signin.png");
+        background-image: url("assets/signin.png");
         background-size: 30px;
         background-repeat: no-repeat;
         background-position: center center;
