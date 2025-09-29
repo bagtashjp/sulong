@@ -107,3 +107,6 @@ h2 {
 #confirm-pass-group {
     display: none;
 }
+#signin .signin {
+    display: none;
+}

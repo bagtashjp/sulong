@@ -5,18 +5,21 @@
 body {
     margin:0;
     display: block;
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', 'Roboto', Arial, Helvetica, sans-serif;
 }
 
-
 .header {
+    letter-spacing: 2px;
+    font-size: 14px;
+    font-weight: bold;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: flex-start; 
     background-color: #FFFFFF;
-    padding: 10px 2vw;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /*box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);*/
+    border-bottom: 2px solid #c4c4c4;
     width: 100%;
+    padding: 0px 10px;
 }
 .logo {
     flex: 1 0 0;
@@ -32,28 +35,67 @@ body {
     flex: 1 0 0;
     display: flex;
     gap: 20px;
-    padding: 10px;
+    padding: 0px 10px;
     justify-content: flex-end;
 }
 
-nav a, .signin a {
+
+nav a {
+    display: flex;
+    align-items: center;
     color: black;
-    font-size: 18px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-decoration: none;
+    border: 2px solid transparent;
+    border-bottom: none;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    height: 100%;
+}
+.signin a {
+    display: flex;
+    align-items: center;
+    color: black;
+    padding-left: 10px;
+    padding-right: 10px;
     text-decoration: none;
     border: 2px solid transparent;
     border-radius: 10px;
-    padding: 5px 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+ }
+
+.nav-center > span {
+    display: none;
+    align-items: center;
+}
+
+
+
+#about .navabout,
+#feed .navfeed,
+#dashboard .navdash {
+    height: calc(100% - 18px);
+    margin-top: 20px;
+    background-color: white;
+    border: 2px solid #c4c4c4;
+    border-bottom: 0px solid transparent;
+    /*box-shadow: inset 0px 2px 1px rgba(0, 0, 0, 0.2);*/
+    &:hover {
+        text-decoration: none;
+        cursor:default;
+    }
 }
 
 nav a:hover {
-    background-color: #FFE041
+    text-decoration: underline;
 }
 
 .signin {
     flex: 0 0 auto;
     display: flex;
     justify-content: flex-start;
-    min-width: 90px;
 }
 
 .signin a {
@@ -63,7 +105,8 @@ nav a:hover {
     }
 }
 
-#home, #signin, #signup {
+
+#home, #signin {
     background-image: url('assets/tmp_bg.jpg');
     background-size: cover;
     background-position: center center;
@@ -73,6 +116,8 @@ nav a:hover {
 #home > .header {
     background-color: transparent;
     box-shadow: none;
+    
+    border-bottom: none;
 }
 
 #home .nav-center {
@@ -80,6 +125,9 @@ nav a:hover {
     margin: 0 auto;
 }
 
+#home .nav-center > span {
+    display: flex;
+}
 #home .signin {
     flex: 1 0 0;
     justify-content: flex-end;
@@ -131,11 +179,41 @@ nav a:hover {
 
 
 @media (orientation: portrait) {
-    .logo img {
-        width: 150px;
-    }
     .nav-center {
+        gap: 2vw;
+    }
+    .nav-center > a span, .signin > a span {
         display: none;
+    }
+    
+    .navfeed {
+        background-image: url("/assets/feed.png");
+    }
+    .navdash {
+        background-image: url("/assets/dashboard.png");
+    }
+    .navabout {
+        background-image: url("/assets/about.png");
+    }
+    
+    .nav-center a {
+        background-size: 30px;
+        background-repeat: no-repeat;
+        background-position: center center;
+        width: 50px;
+        height: 100%;
+        &:hover {
+            transform: translateY(-2px);
+        }
+    }
+    .signin a {
+        background-image: url("/assets/signin.png");
+        background-size: 30px;
+        background-repeat: no-repeat;
+        background-position: center center;
+        width: 50px;
+        height: 34px;
+        
     }
     .hero {    
         flex-direction: column-reverse;
@@ -166,12 +244,12 @@ nav a:hover {
 #size-error {
     display: none;
     position: fixed;
-    bottom:0;
+    bottom: 0;
     left: 0;
     width: 100%;
-    height: 3vw;
+    height: 20px;
     color: black;
-    font-size: 2vw;
+    font-size: 10px;
     animation: marquee 10s linear infinite;
     z-index: 9999;
     text-shadow: 2px 2px 4px white;
