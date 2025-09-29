@@ -1,4 +1,4 @@
-import { auth } from "/scripts/init-firebase.js";
+import { auth } from "./scripts/init-firebase.js";
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 let isUISignin = true;
