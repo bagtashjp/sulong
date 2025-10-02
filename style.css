@@ -18,6 +18,7 @@ html, body {
 
 /* #region Header */
 .header {
+    position: fixed;
     letter-spacing: 2px;
     font-size: 14px;
     font-weight: bold;
@@ -270,8 +271,10 @@ html, body {
     flex: 1 1 auto;
     display: flex;
     justify-content: center;
+    padding: 60px;    
     width: 100%;
     height: 100%;
+
 }
 
 .core_feed {
@@ -453,6 +456,20 @@ html, body {
 /* #endregion */
 
 /* #region Size-error */
+#loading_page {
+    position: fixed;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    text-align: center;
+    background-color: #2876CD;
+    color: white;
+    z-index: 999;
+    justify-content: center;
+    font-size: large;
+}
+
 #size-error {
     display: none;
     position: fixed;
@@ -463,7 +480,7 @@ html, body {
     color: black;
     font-size: 10px;
     animation: marquee 10s linear infinite;
-    z-index: 9999;
+    z-index: 998;
     text-shadow: 2px 2px 4px white;
 }
 

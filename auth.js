@@ -98,7 +98,7 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         let isConfirm = confirm("User is already signed in. You'll be redirected to home page.\nIf you wanna test again. Pressing cancel will sign out the user.");
         if (isConfirm) {
-            window.location.href="index";
+            window.location.href="feed";
         } else {
             auth.signOut();
         }
