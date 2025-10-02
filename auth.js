@@ -91,7 +91,12 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    document.querySelector("#auth-button").click();
+    // Do something here
+  }
+});
 onAuthStateChanged(auth, (user) => {
     if (justOnce) return;
     if (user) {

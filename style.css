@@ -36,8 +36,7 @@ html, body {
     justify-content: flex-start; 
     background-color: var(--color-base-background);
     color: var(--color-base-font);
-    /*box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);*/
-    border-bottom: 2px solid #969696;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
     width: 100%;
     min-height: 61px;
     max-height: 61px;
@@ -61,36 +60,40 @@ html, body {
     gap: 20px;
     padding: 0px 10px;
     justify-content: flex-end;
+    align-items: center;
 }
 
 
 .nav-center a {
     display: flex;
+    padding: 0 10px;
     align-items: center;
     color: var(--color-base-font);
-    padding-left: 10px;
-    padding-right: 10px;
     text-decoration: none;
-    border: 2px solid transparent;
     border-bottom: none;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    height: 100%;
+    border-radius: 10px;
+    height: 75%;
+    
     &:hover {
-        text-decoration: underline;
+        background-color: #969696;
     }
+}
+
+.signin {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 .signin a {
     display: flex;
     align-items: center;
     color: black;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 10px;
     text-decoration: none;
     border: 2px solid transparent;
     border-radius: 10px;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    height: 75%;
  }
 
 .nav-center > span {
@@ -101,22 +104,16 @@ html, body {
 #about .navabout,
 #feed .navfeed,
 #dashboard .navdash {
-    height: calc(100% - 18px);
-    margin-top: 20px;
-    border-bottom: 0px solid transparent;
-    background-color: #9c9c9c;
-    /*box-shadow: inset 0px 2px 1px rgba(0, 0, 0, 0.2);*/
+    background-color: var(--color-secondary);
+    color: white;
+    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.4);
     &:hover {
         text-decoration: none;
-        cursor:default;
+        cursor: default;
+        background-color: var(--color-secondary);
     }
 }
 
-.signin {
-    flex: 0 0 auto;
-    display: flex;
-    justify-content: flex-start;
-}
 
 .signin a {
     background-color: var(--color-primary);
@@ -173,13 +170,12 @@ html, body {
     }
     
     .nav-center a {
-        background-size: min(8vw, 30px);
+        background-size: 50%;
         background-repeat: no-repeat;
         filter: invert(var(--filter-dark-mode));
         background-position: center center;
-        width:11vw;
+        width: 11vw;
         max-width: 50px;
-        height: 100%;
         &:hover {
             transform: translateY(-2px);
         }
@@ -188,21 +184,17 @@ html, body {
     #feed .navfeed,
     #dashboard .navdash {
         filter: none;
-    }
-    #about .navabout:hover,
-    #feed .navfeed:hover,
-    #dashboard .navdash:hover {
-        transform: none;
+        &:hover {
+            transform: none;
+        }
     }
     .signin a {
         background-image: url("assets/signin.png");
-        background-size: min(8vw, 30px);
+        background-size: 50%;
         background-repeat: no-repeat;
         background-position: center center;
         width: 11vw;
         max-width: 50px;
-        height: 9vw;
-        max-height: 40px;
         
     }
 }
@@ -275,7 +267,7 @@ html, body {
     }
 
 }
-/* #endregion Header styles */
+/* #endregion */
 
 /* #region Feed */
 .feed_layer {
@@ -453,11 +445,11 @@ html, body {
 }
 .left_nav hr {
     display: none;
-  width: 80%;                
-  margin: 0 0;             
-  border: none;              
-  height: 1px;
-  background: linear-gradient(to right,white, var(--color-secondary)); 
+    width: 80%;                
+    margin: 0 0;             
+    border: none;              
+    height: 1px;
+    background: linear-gradient(to right,white, var(--color-secondary)); 
 }
 .lnhome::before {   
     background-image: url("assets/about.svg");

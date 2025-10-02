@@ -1,5 +1,4 @@
 // Config
-//const cards = ["header", "left_nav"];
 
 // Initialization
 let card = {};
