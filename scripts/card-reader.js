@@ -1,15 +1,15 @@
 // Config
-const cards = ["header", "left_nav"];
+//const cards = ["header", "left_nav"];
 
 // Initialization
-const card = {};
+let card = {};
 async function init() {
-    for (const c of cards) {
-        card[c] = await loadTemplate(`cards/${c}.html`);
-        console.log(card[c]);
-    }
-    for (const element of Array.from(document.querySelectorAll("card"))) {
-        element.outerHTML = card[element.id];
+    for (const e of Array.from(document.querySelectorAll("card"))) {
+        if (!card[e.id]) {
+            card[e.id] = await loadTemplate(`cards/${e.id}.html`);
+        }
+        if (!card[e.id]) continue;
+        e.outerHTML = card[e.id];
     }
 }
 

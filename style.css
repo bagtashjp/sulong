@@ -1,3 +1,4 @@
+/* #region Init */
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -8,11 +9,12 @@ html, body {
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    margin:0;
     height: 100%;
+    margin: 0;
     font-family: 'Montserrat', 'Roboto', Arial, Helvetica, sans-serif;
     background-repeat: no-repeat;
 }
+/* #endregion */
 
 /* #region Header */
 .header {
@@ -85,8 +87,6 @@ html, body {
     align-items: center;
 }
 
-
-
 #about .navabout,
 #feed .navfeed,
 #dashboard .navdash {
@@ -101,6 +101,8 @@ html, body {
         cursor:default;
     }
 }
+
+
 
 .signin {
     flex: 0 0 auto;
@@ -140,50 +142,6 @@ html, body {
     flex: 1 0 0;
     justify-content: flex-end;
 }
-/* #endregion */
-/* #region Hero */
-.hero{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.hero-text {
-    color: black;
-    max-width: 40vw;
-}
-.hero-text h1 {
-    font-size: 3vw;
-    margin: 0;
-}
-.hero-text p {
-    font-size: 1.2vw;
-    margin-top: 10px;
-    margin-bottom: 30px;
-}
-.hero-text .started {
-    background-color: #FFE041;
-    text-decoration: none;
-    color: black;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-weight: bold;
-}
-
-.hero-image {
-    width: 30vw;
-    max-width: 500px;
-}
-.hero-image img {
-    width: 100%;
-    height: auto;
-}
-
 
 @media (max-width: 700px) {
     .logo img {
@@ -235,6 +193,53 @@ html, body {
         max-height: 40px;
         
     }
+}
+/* #endregion */
+
+/* #region Hero */
+.hero{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hero-text {
+    color: black;
+    max-width: 40vw;
+}
+.hero-text h1 {
+    font-size: 3vw;
+    margin: 0;
+}
+.hero-text p {
+    font-size: 1.2vw;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+.hero-text .started {
+    background-color: #FFE041;
+    text-decoration: none;
+    color: black;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+.hero-image {
+    width: 30vw;
+    max-width: 500px;
+}
+.hero-image img {
+    width: 100%;
+    height: auto;
+}
+
+@media (max-width: 700px) {
     .hero {    
         flex-direction: column-reverse;
         align-items: center;   
@@ -260,20 +265,130 @@ html, body {
 }
 /* #endregion Header styles */
 
+/* #region Feed */
 .feed_layer {
+    flex: 1 1 auto;
     display: flex;
     justify-content: center;
-    flex: 1 1 auto;
     width: 100%;
     height: 100%;
 }
+
 .core_feed {
     display: flex;
+    gap: 10px;
     min-width: 300px;
-    max-width: 600px;
+    max-width: 50vw;
+    width: 50vw;
     align-items: center;
     flex-direction: column;
 }
+
+#create_post {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 15px 20px;
+    text-align: left;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgb(170, 170, 170);
+    width: 80%;
+    font-size: 14px;
+    cursor: pointer;
+    &:hover {
+        box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4);
+      
+    }
+    &::before {
+        content: "";
+        display: inline-block;
+        width: calc(1em + 5px) ;
+        height: calc(1em + 5px); 
+        background-size: cover;  
+        background-image: url("assets/write_post.png");
+        margin-right: 5px;
+        vertical-align: middle;
+    }
+}
+
+.feed_post {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    width: 100%;
+    padding: 15px;
+    gap: 10px;
+}
+
+.feed_post .user_container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: #2876CD;
+    border-radius: 20px;
+    padding: 5px 5px;
+    color:white;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.feed_post .user_icon {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    margin-right: 10px;
+    background-image: url("assets/default_icon.png");
+    background-size: cover;
+    border-radius: 50%;
+}
+.feed_post .tile_map {
+    aspect-ratio: 4 / 1;
+    width: 100%;
+    border-radius: 10px;
+    height: auto;
+    background-image: url("assets/default_map.png");
+    background-position: center center;
+    background-size: cover;
+
+}
+
+.feed_post .post_tags {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    justify-content: flex-start;
+    font-size: min(10px,1.6vw);
+    font-weight: bold;
+    font-family: 'Roboto';
+}
+
+.feed_post .post_tags span {
+    padding: 5px 5px;
+    border: 2px solid white;
+    border-radius: 12px;
+}
+
+.feed_post .post_desc {
+    font-size: min(1.5vw, 16px);
+    font-family: 'Roboto', sans-serif;
+}
+@media (max-width: 680px) {
+    .core_feed {
+        max-width: 90vw;
+        width: 90vw;
+    }
+    
+    .feed_post .post_desc {
+        font-size: 15px;
+    }
+}
+
+
+/* #endregion */
 
 /* #region Left Nav */
 .left_nav {
@@ -282,8 +397,8 @@ html, body {
     position: fixed;
     left: 0px;
     top: 61px;
-    width: 30vw;
-    max-width: 300px;
+    width: 20vw;
+    max-width: 20vw;
     background-color: #2876CD;
     height: 100vh;
     box-shadow: 1px 0px 4px rgba(0, 0, 0, 0.3);
@@ -293,7 +408,7 @@ html, body {
 .lnav {
     text-decoration: none;
     color: white;
-    font-size: min(3vw, 25px);
+    font-size: max(2vw, 20px);
     padding: 10px 5px;
     display: flex;
     align-items: center;
