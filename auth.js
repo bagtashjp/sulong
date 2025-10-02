@@ -46,8 +46,7 @@ function registerUI() {
         createUserWithEmailAndPassword(auth, email, pass)
         .then((user) => {
             alert("Registered successfully!Please don't spam! This is just a test");
-            bigButton.enabled = false;
-            switchAuthUI();
+            window.location.href = "feed";
         })
         .catch((error) => {
             const errorCode = error.code;
