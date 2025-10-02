@@ -28,12 +28,14 @@ function darkmode(evt) {
          els.setProperty("--filter-dark-mode", 1);
          evt.currentTarget.innerText = "Light Mode"
          localStorage.setItem("color-scheme", "dark");
+         isDark = true;
     } else {
          els.setProperty("--color-base-background", "white")
          els.setProperty("--color-base-font", "black")
          els.setProperty("--filter-dark-mode", 0);
          evt.currentTarget.innerText = "Dark Mode"
          localStorage.setItem("color-scheme", "light");
+         isDark = false;
     }
 }
 
