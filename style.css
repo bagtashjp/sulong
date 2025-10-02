@@ -1,4 +1,12 @@
 /* #region Init */
+:root {
+    --color-primary: #FFE041;
+    --color-secondary: #2876CD;
+    --color-base-background: white;
+    --color-base-font: black;
+    --filter-dark-mode: 0; /* your primary blue */
+}
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -13,6 +21,7 @@ html, body {
     margin: 0;
     font-family: 'Montserrat', 'Roboto', Arial, Helvetica, sans-serif;
     background-repeat: no-repeat;
+    background-color: var(--color-base-background);
 }
 /* #endregion */
 
@@ -25,7 +34,8 @@ html, body {
     display: flex;
     align-items: stretch;
     justify-content: flex-start; 
-    background-color: #FFFFFF;
+    background-color: var(--color-base-background);
+    color: var(--color-base-font);
     /*box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);*/
     border-bottom: 2px solid #c4c4c4;
     width: 100%;
@@ -57,7 +67,7 @@ html, body {
 .nav-center a {
     display: flex;
     align-items: center;
-    color: black;
+    color: var(--color-base-font);
     padding-left: 10px;
     padding-right: 10px;
     text-decoration: none;
@@ -93,17 +103,14 @@ html, body {
 #dashboard .navdash {
     height: calc(100% - 18px);
     margin-top: 20px;
-    background-color: white;
-    border: 2px solid #c4c4c4;
     border-bottom: 0px solid transparent;
+    background-color: #c4c4c4;
     /*box-shadow: inset 0px 2px 1px rgba(0, 0, 0, 0.2);*/
     &:hover {
         text-decoration: none;
         cursor:default;
     }
 }
-
-
 
 .signin {
     flex: 0 0 auto;
@@ -112,9 +119,9 @@ html, body {
 }
 
 .signin a {
-    background-color: #FFE041;
+    background-color: var(--color-primary);
     &:hover {
-        border: 2px solid black;
+        border: 2px solid var(--color-base-font);
     }
 }
 
@@ -128,7 +135,6 @@ html, body {
 #home > .header {
     background-color: transparent;
     box-shadow: none;
-    
     border-bottom: none;
 }
 
@@ -169,6 +175,7 @@ html, body {
     .nav-center a {
         background-size: min(8vw, 30px);
         background-repeat: no-repeat;
+        filter: invert(var(--filter-dark-mode));
         background-position: center center;
         width:11vw;
         max-width: 50px;
@@ -177,10 +184,15 @@ html, body {
             transform: translateY(-2px);
         }
     }
+    #about .navabout,
+    #feed .navfeed,
+    #dashboard .navdash {
+        filter: none;
+    }
     #about .navabout:hover,
     #feed .navfeed:hover,
     #dashboard .navdash:hover {
-        transform:none;
+        transform: none;
     }
     .signin a {
         background-image: url("assets/signin.png");
@@ -190,7 +202,6 @@ html, body {
         width: 11vw;
         max-width: 50px;
         height: 9vw;
-        
         max-height: 40px;
         
     }
@@ -223,7 +234,7 @@ html, body {
     margin-bottom: 30px;
 }
 .hero-text .started {
-    background-color: #FFE041;
+    background-color: var(--color-primary);
     text-decoration: none;
     color: black;
     border-radius: 5px;
@@ -274,6 +285,7 @@ html, body {
     padding: 60px;    
     width: 100%;
     height: 100%;
+    background-color: var(--color-base-background);
 
 }
 
@@ -293,7 +305,8 @@ html, body {
     padding: 15px 20px;
     text-align: left;
     border-radius: 12px;
-    background-color: white;
+    background-color: var(--color-base-background);
+    color: var(--color-base-font);
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
     border: 1px solid rgb(170, 170, 170);
     width: 80%;
@@ -310,11 +323,11 @@ html, body {
         height: calc(1em + 5px); 
         background-size: cover;  
         background-image: url("assets/write_post.png");
+        filter: invert(var(--filter-dark-mode));
         margin-right: 5px;
         vertical-align: middle;
     }
 }
-
 .feed_post {
     display: flex;
     justify-content: center;
@@ -323,6 +336,8 @@ html, body {
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
     border-radius: 12px;
     width: 100%;
+    background-color: var(--color-base-background);
+    color: var(--color-base-font);
     padding: 15px;
     gap: 10px;
 }
@@ -331,12 +346,12 @@ html, body {
     display: flex;
     align-items: center;
     width: 100%;
-    background-color: #2876CD;
     border-radius: 20px;
     padding: 5px 5px;
     color:white;
     font-size: 15px;
     font-weight: bold;
+    background-color: var(--color-secondary);
 }
 
 .feed_post .user_icon {
@@ -402,25 +417,24 @@ html, body {
     top: 61px;
     width: 20vw;
     max-width: 20vw;
-    background-color: #2876CD;
     height: calc(100% - 61px);
-    box-shadow: 1px 0px 4px rgba(0, 0, 0, 0.3);
     justify-content: space-between;
 }
 
 
 .lnav {
-
     text-decoration: none;
-    color: white;
-    font-size: max(2vw, 20px);
-    padding: 10px 5px;
+    color: rgb(0, 0, 0);
+    font-size: max(1.2vw, 16px);
+    padding: 10px 15px;
     display: flex;
     width: 100%;
     align-items: center;
-    background-color: transparent;
     border: none;
     cursor: pointer;
+    border-radius: 999px;
+    margin: 5px;
+    background-color: #e0e0e0;
     &:hover { 
         font-weight: bold;
         transform: translateX(5px);
@@ -430,23 +444,23 @@ html, body {
     content: "";
     width: 100%;
     display: inline-block; 
-    width: 1em;
-    height: 1em;           
+    width: 1.5em;
+    height: 1.5em;           
     background-size: cover; 
-    filter: invert(1);
     margin-right: 5px;
     image-rendering: crisp-edges;
     
 }
 .left_nav hr {
+    display: none;
   width: 80%;                
   margin: 0 0;             
   border: none;              
   height: 1px;
-  background: linear-gradient(to right,white, #2876CD); 
+  background: linear-gradient(to right,white, var(--color-secondary)); 
 }
 .lnhome::before {   
-    background-image: url("assets/about.png");
+    background-image: url("assets/about.svg");
 }
 .lnfeed::before {   
     background-image: url("assets/feed.png");
@@ -455,7 +469,7 @@ html, body {
     background-image: url("assets/dashboard.png");
 }
 .lnout::before {
-    background-image: url("assets/logout.png");
+    background-image: url("assets/logout.svg");
 }
 
 @media (max-width: 680px) {
@@ -473,7 +487,7 @@ html, body {
     height: 100%;
     align-items: center;
     text-align: center;
-    background-color: #2876CD;
+    background-color: var(--color-secondary);
     color: white;
     z-index: 999;
     justify-content: center;
