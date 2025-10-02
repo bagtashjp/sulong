@@ -1,6 +1,7 @@
 import { auth } from "./scripts/init-firebase.js";
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-
+import { ignite } from "./script.js";
+import "../script.js";
 let isUISignin = true;
 function switchAuthUI() {
       const switcherBtn = document.querySelector("#ui-switch");
@@ -108,6 +109,7 @@ onAuthStateChanged(auth, (user) => {
         }
     } else {
         console.log("No user is signed in.");
+        ignite();
     }
 });
 

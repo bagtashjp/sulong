@@ -2,9 +2,10 @@
 :root {
     --color-primary: #FFE041;
     --color-secondary: #2876CD;
-    --color-base-background: white;
-    --color-base-font: black;
-    --filter-dark-mode: 0; /* your primary blue */
+    --color-base-background: 255, 255, 255;
+    --color-base-font: 0, 0, 0;
+    --filter-dark-mode: 0;
+    --scheme-background: url("assets/tmp_bg.jpg");
 }
 
 *, *::before, *::after {
@@ -21,7 +22,7 @@ html, body {
     margin: 0;
     font-family: 'Montserrat', 'Roboto', Arial, Helvetica, sans-serif;
     background-repeat: no-repeat;
-    background-color: var(--color-base-background);
+    background-color: rgb(var(--color-base-background));
 }
 /* #endregion */
 
@@ -34,9 +35,9 @@ html, body {
     display: flex;
     align-items: stretch;
     justify-content: flex-start; 
-    background-color: var(--color-base-background);
-    color: var(--color-base-font);
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+    background-color: rgb(var(--color-base-background));
+    color: rgb(var(--color-base-font));
+    box-shadow: 0 2px 3px rgba(var(--color-base-font), 0.3);
     width: 100%;
     min-height: 61px;
     max-height: 61px;
@@ -68,7 +69,7 @@ html, body {
     display: flex;
     padding: 0 10px;
     align-items: center;
-    color: var(--color-base-font);
+    color: rgb(var(--color-base-font));
     text-decoration: none;
     border-bottom: none;
     border-radius: 10px;
@@ -118,13 +119,13 @@ html, body {
 .signin a {
     background-color: var(--color-primary);
     &:hover {
-        border: 2px solid var(--color-base-font);
+        border: 2px solid rgb(var(--color-base-font));
     }
 }
 
 
 #home, #signin {
-    background-image: url('assets/tmp_bg.jpg');
+    background-image: var(--scheme-background);
     background-size: cover;
     background-position: center center;
 }
@@ -213,7 +214,7 @@ html, body {
 }
 
 .hero-text {
-    color: black;
+    color: rgb(var(--color-base-font));
     max-width: 40vw;
 }
 .hero-text h1 {
@@ -274,11 +275,8 @@ html, body {
     flex: 1 1 auto;
     display: flex;
     justify-content: center;
-    padding: 60px;    
-    width: 100%;
-    height: 100%;
-    background-color: var(--color-base-background);
-
+    padding-top: 60px;    
+    background-color: rgb(var(--color-base-background));
 }
 
 .core_feed {
@@ -297,8 +295,8 @@ html, body {
     padding: 15px 20px;
     text-align: left;
     border-radius: 12px;
-    background-color: var(--color-base-background);
-    color: var(--color-base-font);
+    background-color: rgb(var(--color-base-background));
+    color: rgb(var(--color-base-font));
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
     border: 1px solid rgb(170, 170, 170);
     width: 80%;
@@ -328,8 +326,8 @@ html, body {
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
     border-radius: 12px;
     width: 100%;
-    background-color: var(--color-base-background);
-    color: var(--color-base-font);
+    background-color: rgb(var(--color-base-background));
+    color: rgb(var(--color-base-font));
     padding: 15px;
     gap: 10px;
 }
@@ -472,6 +470,24 @@ html, body {
 /* #endregion */
 
 /* #region Utilities */
+#darkmodie {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    right: 10px;
+    bottom: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    box-shadow: 1px 1px 1px rgba(var(--color-base-font), 0.5);
+    background-color: rgb(var(--color-base-background));
+    &:hover {
+        transform: rotateZ(25deg);
+    }
+}
+
+
+
 #loading_page {
     position: fixed;
     display: flex;
@@ -485,6 +501,7 @@ html, body {
     justify-content: center;
     font-size: large;
 }
+
 
 #size-error {
     display: none;
