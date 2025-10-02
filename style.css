@@ -37,7 +37,7 @@ html, body {
     background-color: var(--color-base-background);
     color: var(--color-base-font);
     /*box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);*/
-    border-bottom: 2px solid #c4c4c4;
+    border-bottom: 2px solid #969696;
     width: 100%;
     min-height: 61px;
     max-height: 61px;
@@ -104,7 +104,7 @@ html, body {
     height: calc(100% - 18px);
     margin-top: 20px;
     border-bottom: 0px solid transparent;
-    background-color: #c4c4c4;
+    background-color: #9c9c9c;
     /*box-shadow: inset 0px 2px 1px rgba(0, 0, 0, 0.2);*/
     &:hover {
         text-decoration: none;
