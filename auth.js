@@ -76,7 +76,7 @@ async function signinUI() {
         await signInWithEmailAndPassword(auth, email, pass)
         .then((user) => {
             alert("Signed in successfully!\nPlease don't spam! This is just a test");
-            window.location.href = "index";
+            window.location.href = "feed";
         })
         .catch((error) => {
             const errorCode = error.code;
@@ -98,7 +98,7 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         let isConfirm = confirm("User is already signed in. You'll be redirected to home page.\nIf you wanna test again. Pressing cancel will sign out the user.");
         if (isConfirm) {
-            window.location.href="feed";
+            window.location.href="index";
         } else {
             auth.signOut();
         }
