@@ -403,18 +403,24 @@ html, body {
     width: 20vw;
     max-width: 20vw;
     background-color: #2876CD;
-    height: 100vh;
+    height: calc(100% - 61px);
     box-shadow: 1px 0px 4px rgba(0, 0, 0, 0.3);
+    justify-content: space-between;
 }
 
 
 .lnav {
+
     text-decoration: none;
     color: white;
     font-size: max(2vw, 20px);
     padding: 10px 5px;
     display: flex;
+    width: 100%;
     align-items: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
     &:hover { 
         font-weight: bold;
         transform: translateX(5px);
@@ -423,20 +429,21 @@ html, body {
 .lnav::before {
     content: "";
     width: 100%;
-    display: inline-block;   /* or block depending on layout */
+    display: inline-block; 
     width: 1em;
-    height: 1em;            /* don’t forget height */
-    background-size: cover;  /* optional: make it fit */
+    height: 1em;           
+    background-size: cover; 
     filter: invert(1);
     margin-right: 5px;
+    image-rendering: crisp-edges;
     
 }
 .left_nav hr {
-  width: 80%;                 /* make it shorter */
-  margin: 0 0;             /* center it */
-  border: none;               /* remove default styles */
+  width: 80%;                
+  margin: 0 0;             
+  border: none;              
   height: 1px;
-  background: linear-gradient(to right,white, #2876CD); /* custom line */
+  background: linear-gradient(to right,white, #2876CD); 
 }
 .lnhome::before {   
     background-image: url("assets/about.png");
@@ -447,6 +454,9 @@ html, body {
 .lndash::before {   
     background-image: url("assets/dashboard.png");
 }
+.lnout::before {
+    background-image: url("assets/logout.png");
+}
 
 @media (max-width: 680px) {
     .left_nav {
@@ -455,7 +465,7 @@ html, body {
 }
 /* #endregion */
 
-/* #region Size-error */
+/* #region Utilities */
 #loading_page {
     position: fixed;
     display: flex;
