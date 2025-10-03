@@ -1,0 +1,5 @@
+.dev.vars
+firestore-rules.js
+.wrangler/
+node_modules/
+functions/node_modules/

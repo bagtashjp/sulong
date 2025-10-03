@@ -8,33 +8,33 @@
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styles/signin.css">
-    <script type="module" src="scripts/card-reader.js"></script>
     <title>Sulong</title>
 </head>
 <body id="signin">
+    <div id="loading_page">Loading...</div>
     <card id="header"></card>
     <div class="signin-form">
         <h2 id="auth-big-heading">Sign-In</h2>
         <img class="mini-logo" src="assets/transparent-title-image.png">
         <div class="input-group">
             <input type="email" placeholder="" id="auth-email" required>
-            <label for="email">Email</label>
+            <label for="auth-email">Email</label>
         </div>
         <div class="input-group">
             <input type="password" placeholder="" id="auth-password" required>
-            <label for="password">Password</label>
+            <label for="auth-password">Password</label>
         </div>
         <div class="input-group" id="confirm-pass-group">
             <input type="password" placeholder="" id="auth-confirmpass" required>
-            <label for="confirmpass">Confirm Password</label>
+            <label for="auth-confirmpass">Confirm Password</label>
         </div>
         
         <a id="forgot-password" href="forgot-password" class="auth-switch">Forgot Password?</a>
-        <button id="auth-button" class="sign-button" onclick="signinUI()">Sign In</button>
-        <button id="ui-switch" class="auth-switch" onclick="switchAuthUI()">Don't have an Account? Register.</button>
+        <button id="auth-button" class="sign-button">Sign In</button>
+        <button id="ui-switch" class="auth-switch">Don't have an Account? Register.</button>
         
     </div>
     <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a larger screen. ⚠️</div>
-    <script type="module" src="auth.js?v=2"></script>
+    <script type="module" src="scripts/pages/sign-in.js"></script>
 </body>
 </html>

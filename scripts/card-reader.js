@@ -1,23 +1,47 @@
-// Config
+const cardCache = {};
 
-// Initialization
-let card = {};
-async function init() {
-    for (const e of Array.from(document.querySelectorAll("card"))) {
-        if (!card[e.id]) {
-            card[e.id] = await loadTemplate(`cards/${e.id}.html`);
-        }
-        if (!card[e.id]) continue;
-        e.outerHTML = card[e.id];
+export async function renderCards() {
+    const cardElements = Array.from(document.querySelectorAll("card"));
+    for (const el of cardElements) {
+        await renderCard(el.id, el, el.dataset);
     }
+}
+
+export async function renderCard(templateId, targetEl = null, data = {}) {
+
+    if (!cardCache[templateId]) {
+        cardCache[templateId] = await loadTemplate(`cards/${templateId}.html`);
+    }
+
+    let templateHTML = cardCache[templateId];
+    if (!templateHTML) return null;
+
+    templateHTML = replacePlaceholders(templateHTML, data);
+
+    if (targetEl) {
+        targetEl.outerHTML = templateHTML;
+    } else {
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = templateHTML;
+        document.body.appendChild(wrapper.firstElementChild);
+    }
+
+    return templateHTML;
+}
+
+function replacePlaceholders(template, data) {
+    return template.replace(/{{\s*(\w+)\s*}}/g, (_, key) => {
+        return key in data ? data[key] : "";
+    });
 }
 
 async function loadTemplate(path) {
-    const res = await fetch(path + "?v=" + Date.now(), { cache: "no-store" });
-    if (!res.ok) {
+    try {
+        const res = await fetch(path + "?v=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) return null;
+        return await res.text();
+    } catch (err) {
+        console.error("Error loading template:", path, err);
         return null;
     }
-    return await res.text();
 }
-
-init();
