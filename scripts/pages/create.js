@@ -74,7 +74,11 @@ async function initMapLibre() {
     map.setPitch(60);
     map.addControl(new maplibregl.NavigationControl());
     map.addControl(new maplibregl.AttributionControl(), 'top-left')
-    const marker = new maplibregl.Marker({ draggable: true })
+    const marker = new maplibregl.Marker({
+        draggable: true,
+        color: "#FF0000",
+        scale: 1.5
+    })
         .setLngLat([120.540962, 14.678921])
         .setPopup(new maplibregl.Popup().setText('Drag me to change location!'))
         .addTo(map);
