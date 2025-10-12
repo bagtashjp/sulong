@@ -45,67 +45,77 @@ function initLeafletMap() {
         const { lat, lng } = marker.getLatLng();
         evt.target.disabled = true;
         evt.target.textContent = "Fetching Location..."
-        alert(JSON.stringify(await geocode(lat, lng)))
+        console.log(JSON.stringify(await geocode(lat, lng)))
 
         evt.target.textContent = "Wait a second."
         await waitASecond(1.2);
         evt.target.disabled = false;
         evt.target.textContent = "Fetch Location"
+
+
     })
+
+
+
+
 }
 
 // JS
 async function initMapLibre() {
-    // Initialize the map
     const map = new maplibregl.Map({
         container: 'create_map',
-        style: 'https://tiles.openfreemap.org/styles/bright', // default style
-        center: [120.540962, 14.678921], 
-        zoom: 10,
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+        center: [120.540962, 14.678921],
+        zoom: 16,
         minZoom: 10,
-        maxZoom: 19
+        maxZoom: 19,
+        attributionControl: false
     });
-
-    // Add zoom & rotation controls
+    map.setPitch(60);
     map.addControl(new maplibregl.NavigationControl());
-
-    // Add a draggable marker
+    map.addControl(new maplibregl.AttributionControl(), 'top-left')
     const marker = new maplibregl.Marker({ draggable: true })
         .setLngLat([120.540962, 14.678921])
         .setPopup(new maplibregl.Popup().setText('Drag me to change location!'))
         .addTo(map);
-
-    marker.togglePopup(); // open popup on load
-
-    // Log coordinates when dragging ends
+    marker.togglePopup();
     marker.on('dragend', () => {
         const { lng, lat } = marker.getLngLat();
         console.log(`Latitude: ${lat}\nLongitude: ${lng}\nZoom: ${map.getZoom()}`);
     });
-
-    // Fetch address when button is clicked
     document.querySelector("#map_pinner").addEventListener("click", async (evt) => {
         const { lat, lng } = marker.getLngLat();
         evt.target.disabled = true;
         evt.target.textContent = "Fetching Location...";
 
-        const address = await geocode(lat, lng); // your geocode function
+        const address = await geocode(lat, lng);
         alert(JSON.stringify(address));
 
         evt.target.textContent = "Wait a second.";
         await waitASecond(1.2);
         evt.target.disabled = false;
         evt.target.textContent = "Fetch Location";
+    /*
+        const canvas = map.getCanvas();
+
+        const imgData = canvas.toDataURL("image/png");
+        const newTab = window.open();
+
+        newTab.document.body.innerHTML = `<img src="${imgData}" alt="Map Image" />`;
+        
+        // Option 2: download automatically
+        const link = document.createElement("a");
+        link.download = "map.png";
+        link.href = imgData;
+        link.click();
+    */
     });
 
-    // Optional: switch map style (simulates layer control)
     const styles = {
-        
+        "3D": 'https://tiles.openfreemap.org/styles/liberty',
         "Bright": 'https://tiles.openfreemap.org/styles/bright',
         "CartoDB": 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-        "3D": 'https://tiles.openfreemap.org/styles/liberty',
         "Dark Mode": "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-        
     };
 
     const styleSelector = document.createElement('select');
@@ -117,12 +127,10 @@ async function initMapLibre() {
         styleSelector.appendChild(option);
     }
     document.querySelector("#create_map").appendChild(styleSelector);
-
     styleSelector.addEventListener('change', (e) => {
         map.setStyle(e.target.value);
     });
 }
-
 
 export function logout() {
     auth.signOut();

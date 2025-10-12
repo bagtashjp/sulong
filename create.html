@@ -1,6 +1,7 @@
-    <!--#region templates up-->
+<!--#region templates up-->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,34 +10,51 @@
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin=""
-    />
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""></script>
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
 
     <title>Create Post - Sulong</title>
 </head>
+
 <body id="create">
     <div id="loading_page">Loading...</div>
     <card id="header"></card>
     <card id="left_nav"></card>
     <!--#endregion-->
-        
+
     <div class="mid_layer">
         <div id="create_map">
             <button id="map_pinner">Fetch Location</button>
         </div>
         
+        <div class="create_map-tags-wrapper"><div>
+            <select id="create_map_tags_list" >
+                <option value="" disabled selected>Add Tag</option>
+                <option value="tags_flood">Flooded Area</option>
+                <option value="tags_clog">Clogged Drainage</option>
+                <option value="tags_waterway">Clogged Natural Waterways</option>
+                <option value="tags_overflow">Sewer Overflows</option>
+                <option value="tags_soil">Soil Erosion Risk Area</option>
+                <option value="tags_other">Other</option>
+                
+                
+            </select></div>
+            
+        <textarea id="create_map-description" name="message" rows="6" placeholder="This is where you write your report description..."></textarea>
+        </div>
+
+        <button id="create_map-submit_button" onclick="submitCreatePost()">Submit</button>
     </div>
 
     <!--#region templates down-->
-    <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a larger screen. ⚠️</div>
-    <script type="module" src="scripts/pages/create.js"></script>
-    
+    <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a
+        larger screen. ⚠️</div>
+    <script type="module" src="scripts/pages/create.js?v=5"></script>
+
 </body>
+
 </html>
 <!--#endregion-->
