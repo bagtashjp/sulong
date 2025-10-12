@@ -10,6 +10,7 @@
 
 *, *::before, *::after {
     box-sizing: border-box;
+    transition: background-color 0.2s ease, background-image 0.2s ease, color 0.2s ease;
 }
 
 html, body {
@@ -276,7 +277,7 @@ html, body {
     display: flex;
     justify-content: center;
     padding-top: 60px;    
-    background-color: rgb(var(--color-base-background));
+    /*background-color: rgb(var(--color-base-background));*/
 }
 
 .core_feed {
@@ -293,6 +294,7 @@ html, body {
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 15px 20px;
+    text-decoration: none;
     text-align: left;
     border-radius: 12px;
     background-color: rgb(var(--color-base-background));
@@ -487,10 +489,10 @@ html, body {
 }
 
 
-
 #loading_page {
     position: fixed;
     display: flex;
+    top: 0;
     width: 100%;
     height: 100%;
     align-items: center;
@@ -500,8 +502,19 @@ html, body {
     z-index: 999;
     justify-content: center;
     font-size: large;
+    transition: top 0.5s ease-in
 }
 
+.loading_ender {
+    top: 100%;
+}
+
+
+@keyframes animOut {
+    to {
+        top: 100%;
+    }
+}
 
 #size-error {
     display: none;

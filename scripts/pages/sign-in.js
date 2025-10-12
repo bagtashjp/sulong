@@ -6,15 +6,12 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { endLoading, startLoading, delayHrefs } from "../utils.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
     initDarkmode();
     const user = auth.currentUser;
-
-   
-    
-    
 
     const authButton = document.getElementById("auth-button");
     const uiSwitchBtn = document.getElementById("ui-switch");
@@ -26,9 +23,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (e.key === "Enter") authButton.click();
     });
     initAuthState(() => {
-        window.location.href = "feed";
+        startLoading();
+        setTimeout(() => {
+            window.location.href = "feed"
+        }, 500);
     }, () => {
-        document.querySelector("#loading_page").style.display = "none";
+        endLoading();
+        setTimeout(() => delayHrefs(), 500);
     });
 });
 
