@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
     initDarkmode();
     initAuthState(() => { }, () => {
-        window.location.href = "index";
+        window.location.href = "signin";
     })
     initNavBars();
     endLoading();
