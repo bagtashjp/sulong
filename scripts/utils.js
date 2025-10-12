@@ -26,13 +26,34 @@ export function startLoading() {
 
 export function delayHrefs() {
     Array.from(document.getElementsByTagName("a")).forEach(a => {
+        const href = a.getAttribute("href");
+        if (href.startsWith("#")) return;
         a.addEventListener("click", (evt)=>{
             evt.preventDefault();
             startLoading();
             setTimeout(() => {
-                window.location.href = a.href
+                window.location.href = href
             },800)
         })
     })
 }
 
+export async function geocode(lat, lon) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+
+  const res = await fetch(url, {
+    headers: {
+      'User-Agent': 'MyLeafletApp/1.0 (myemail@example.com)'
+    }
+  });
+  const data = await res.json();
+  
+  // The display_name contains the readable address
+  console.log(data);
+  return data.display_name || "Unknown location";
+}
+
+
+export async function waitASecond(sec) {
+    setTimeout(() => {return}, (sec/1000));
+}
