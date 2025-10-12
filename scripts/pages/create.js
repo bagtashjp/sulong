@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
     initNavBars();
     endLoading();
-    setTimeout(() => delayHrefs(), 500);
+    setTimeout(() => delayHrefs(), 100);
 })
 
 export function logout() {

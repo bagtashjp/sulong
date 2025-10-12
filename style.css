@@ -494,7 +494,7 @@ html, body {
     display: flex;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: 110%;
     align-items: center;
     text-align: center;
     background-color: var(--color-secondary);
@@ -502,19 +502,48 @@ html, body {
     z-index: 999;
     justify-content: center;
     font-size: large;
-    transition: top 0.5s ease-in
+    transform-origin: top left;
+    transition: top 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
-
+.loading_control {
+    overflow: hidden;
+}
+/*
 .loading_ender {
+    animation: dropSwing 1.4s linear forwards;
+}
+.loading_starter {
+    animation: heroRising 0.5s linear forwards;
+}
+@keyframes dropSwing {
+  0% {
+    top: 0;
+    transform: rotate(0deg);
+  }
+  60% {
+    top: 0;
+    transform: rotate(70deg); 
+  }
+  70% {
+    top: 0;
+    transform: rotate(80deg); 
+  }
+  100% {
     top: 100%;
+    transform: rotate(80deg);
+  }
 }
-
-
-@keyframes animOut {
-    to {
+@keyframes heroRising {
+    0%{
         top: 100%;
+        transform: rotate(0);
     }
+    to {
+        top:0;
+        transform: rotate(0);
+    } 
 }
+*/
 
 #size-error {
     display: none;

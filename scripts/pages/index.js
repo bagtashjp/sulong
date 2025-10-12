@@ -6,4 +6,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     initDarkmode();
     endLoading();
     setTimeout(() => delayHrefs(), 500);
+
 })

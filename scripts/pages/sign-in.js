@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (e.key === "Enter") authButton.click();
     });
     initAuthState(() => {
-        startLoading();
+        //startLoading();
         setTimeout(() => {
             window.location.href = "feed"
         }, 500);
@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         endLoading();
         setTimeout(() => delayHrefs(), 500);
     });
+ 
 });
 
 

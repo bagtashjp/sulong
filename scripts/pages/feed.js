@@ -5,7 +5,7 @@ import { initAuthState } from "../auth-firebase.js";
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
     initDarkmode();
-    initAuthState(()=>{}, () => {
+    initAuthState(() => { }, () => {
         window.location.href = "index";
     })
     initNavBars();
