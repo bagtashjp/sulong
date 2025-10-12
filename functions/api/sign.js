@@ -1,5 +1,11 @@
-import crypto from "node:crypto";
-export async function onRequest(context) {
-    
-    return new Response("Hello from create-post!");
+import { jwtVerify } from 'jose';
+
+export async function onRequest() {
+  if (typeof jwtVerify === 'function') {
+    console.log("It's working maybe");
+    return new Response("jose module is working!");
+  } else {
+    console.log("OHH MY GOD");
+    return new Response("IT'S NOT WORKING!!!");
+  }
 }

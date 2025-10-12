@@ -402,7 +402,6 @@ html, body {
     }
 }
 
-
 /* #endregion */
 
 /* #region Create Post */
@@ -410,7 +409,7 @@ html, body {
     flex-direction: row;
     padding-top: 70px;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 }
 .mid_layer {
     display: flex;
@@ -435,7 +434,7 @@ html, body {
     cursor: pointer;
     border-radius: 999px;
     padding: 10px;
-    min-width: 400px;
+    width: 80%;
     border: none;
     position: absolute;
     bottom: 15px;
@@ -453,7 +452,6 @@ html, body {
         cursor:default;
     }
 }
-
 
 .create_map-tags-wrapper {
     display: flex;
@@ -677,7 +675,8 @@ html, body {
 }
 /* #endregion */
 
-/* For leaflet
+/* #region MAP APIs */
+
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
     background-color: rgb(var(--color-base-background)) !important;
     color: rgb(var(--color-base-font)) !important;
@@ -701,12 +700,11 @@ html, body {
     padding: 5px 15px !important;
 }
 
-
 .leaflet-control-attribution {
     border-top-left-radius: 999px !important;
     padding-left: 20px !important;
 }
-    */
+    
 .maplibregl-popup-content {
     background-color: rgb(var(--color-base-background)) !important;
     color: rgb(var(--color-base-font)) !important;
@@ -741,3 +739,4 @@ html, body {
     border: none;
     cursor: pointer;
 }
+/* #endregion */

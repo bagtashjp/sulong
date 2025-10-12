@@ -17,48 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 })
 
-function initLeafletMap() {
-    var map = L.map("create_map").setView([14.678921, 120.540962], 13);
-    var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 19,
-        minZoom: 10
-    }).addTo(map);
 
-    var carto = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://carto.com/attributions">CartoDB</a>',
-        maxZoom: 19,
-        minZoom: 10
-    });
-    L.control.layers({
-        "OpenStreetMap": osm,
-        "CartoDB": carto
-    }).addTo(map);
-
-    const marker = L.marker([14.678921, 120.540962], { draggable: true }).addTo(map)
-    marker.bindPopup('Drag me to change location!').openPopup();
-    marker.on("dragend", () => {
-        const { lat, lng } = marker.getLatLng();
-        console.log(`Latitude: ${lat}\nLongitude: ${lng}\nZoom: ${map.getZoom()}`)
-    })
-    document.querySelector("#map_pinner").addEventListener("click", async (evt) => {
-        const { lat, lng } = marker.getLatLng();
-        evt.target.disabled = true;
-        evt.target.textContent = "Fetching Location..."
-        console.log(JSON.stringify(await geocode(lat, lng)))
-
-        evt.target.textContent = "Wait a second."
-        await waitASecond(1.2);
-        evt.target.disabled = false;
-        evt.target.textContent = "Fetch Location"
-
-
-    })
-
-
-
-
-}
 
 // JS
 async function initMapLibre() {
@@ -99,20 +58,8 @@ async function initMapLibre() {
         await waitASecond(1.2);
         evt.target.disabled = false;
         evt.target.textContent = "Fetch Location";
-    /*
-        const canvas = map.getCanvas();
-
-        const imgData = canvas.toDataURL("image/png");
-        const newTab = window.open();
-
-        newTab.document.body.innerHTML = `<img src="${imgData}" alt="Map Image" />`;
-        
-        // Option 2: download automatically
-        const link = document.createElement("a");
-        link.download = "map.png";
-        link.href = imgData;
-        link.click();
-    */
+        const res = await fetch("/api/sign");
+        console.log(res.body);
     });
 
     const styles = {
@@ -138,4 +85,46 @@ async function initMapLibre() {
 
 export function logout() {
     auth.signOut();
+}
+
+
+function initLeafletMap() {
+    var map = L.map("create_map").setView([14.678921, 120.540962], 13);
+    var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+        minZoom: 10
+    }).addTo(map);
+
+    var carto = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://carto.com/attributions">CartoDB</a>',
+        maxZoom: 19,
+        minZoom: 10
+    });
+    L.control.layers({
+        "OpenStreetMap": osm,
+        "CartoDB": carto
+    }).addTo(map);
+
+    const marker = L.marker([14.678921, 120.540962], { draggable: true }).addTo(map)
+    marker.bindPopup('Drag me to change location!').openPopup();
+    marker.on("dragend", () => {
+        const { lat, lng } = marker.getLatLng();
+        console.log(`Latitude: ${lat}\nLongitude: ${lng}\nZoom: ${map.getZoom()}`)
+    })
+    document.querySelector("#map_pinner").addEventListener("click", async (evt) => {
+        const { lat, lng } = marker.getLatLng();
+        evt.target.disabled = true;
+        evt.target.textContent = "Fetching Location..."
+        console.log(JSON.stringify(await geocode(lat, lng)))
+
+        evt.target.textContent = "Wait a second."
+        await waitASecond(1.2);
+        evt.target.disabled = false;
+        evt.target.textContent = "Fetch Location"
+
+
+    })
+
+
 }
