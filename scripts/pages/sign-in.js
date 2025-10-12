@@ -10,10 +10,11 @@ import {
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
     initDarkmode();
+    const user = auth.currentUser;
 
-    initAuthState(() => {
-        window.location.href = "feed";
-    });
+   
+    
+    
 
     const authButton = document.getElementById("auth-button");
     const uiSwitchBtn = document.getElementById("ui-switch");
@@ -24,7 +25,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.addEventListener("keydown", (e) => {
         if (e.key === "Enter") authButton.click();
     });
-    document.querySelector("#loading_page").style.display = "none";
+    initAuthState(() => {
+        window.location.href = "feed";
+    }, () => {
+        document.querySelector("#loading_page").style.display = "none";
+    });
 });
 
 

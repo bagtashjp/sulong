@@ -19,3 +19,6 @@ export function initAuthState(userLoggedIn, userLoggedOut) {
     });
 }
 
+export function isUserSignedIn() {
+    
+}
