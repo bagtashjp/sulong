@@ -450,10 +450,14 @@ html, body {
 }
 
  .es-button:disabled{
-        background-color: gray;
-        color: rgb(173, 173, 173);
-        cursor:default;
-    }
+    background-color: rgb(99, 99, 99) !important;
+    color: rgb(173, 173, 173) !important;
+    cursor: default !important;
+}
+.es-button:disabled:hover {
+    background-color: rgb(var(--color-base-background))  !important;
+    color: rgb(var(--color-base-font)) !important;
+}
 
 .create_map-tags-wrapper {
     display: flex;

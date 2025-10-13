@@ -3,7 +3,7 @@ import { initDarkmode } from "../theme.js";
 import { initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, db } from "../init-firebase.js";
-import { collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { collection, getDocs, addDoc, GeoPoint} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
@@ -50,8 +50,7 @@ async function submitCreatePost() {
         media: null,
         tracker_id: null,
         created_at: new Date(),
-        lat: +mapLocation.lat,
-        lon: +mapLocation.lon
+        location: new GeoPoint(mapLocation.lat, mapLocation.lon)
     };
     const theBtn = document.querySelector("#create_map-submit_button");
     theBtn.disabled = true;
@@ -97,7 +96,7 @@ async function initMapLibre() {
     const map = new maplibregl.Map({
         container: 'create_map',
         style: 'https://tiles.openfreemap.org/styles/liberty',
-        center: [120.540962, 14.678921],
+        center: [120.5394262, 14.6779294],
         zoom: 16,
         minZoom: 10,
         maxZoom: 19,
@@ -111,7 +110,7 @@ async function initMapLibre() {
         color: "#FF0000",
         scale: 1.5
     })
-        .setLngLat([120.540962, 14.678921])
+        .setLngLat([120.5394262, 14.6779294])
         .setPopup(new maplibregl.Popup().setText('Drag me to change location!'))
         .addTo(map);
     marker.togglePopup();
