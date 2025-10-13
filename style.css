@@ -446,12 +446,14 @@ html, body {
         background-color: var(--color-primary);
         color: black;
     }
-    &:disabled{
+   
+}
+
+ .es-button:disabled{
         background-color: gray;
         color: rgb(173, 173, 173);
         cursor:default;
     }
-}
 
 .create_map-tags-wrapper {
     display: flex;
@@ -502,6 +504,16 @@ html, body {
    color: rgba(var(--color-base-font), 0.3) 
 }
 
+.create_location-bar {
+    color: var(--color-primary);
+    align-self: flex-start;
+    font-size: 16px;
+    padding: 0 10px;
+}
+.create_location-bar span {
+    color: rgb(var(--color-base-font));
+    font-size: 14px;
+}
 /* #endregion */
 
 /* #region Left Nav */
@@ -711,18 +723,18 @@ html, body {
 }
 
 .maplibregl-popup-anchor-bottom > .maplibregl-popup-tip {
-    border-bottom-color:  rgb(var(--color-base-background)) !important;
+    border-top-color:  rgb(var(--color-base-background)) !important;
 }
-.maplibregl-popup-anchor-bottom > .maplibregl-popup-tip {
-    border-top-color: rgb(var(--color-base-background)) !important;
+.maplibregl-popup-anchor-top > .maplibregl-popup-tip {
+    border-bottom-color: rgb(var(--color-base-background)) !important;
 }
 
 .maplibregl-popup-anchor-right > .maplibregl-popup-tip {
-    border-right-color:  rgb(var(--color-base-background)) !important;
+    border-left-color:  rgb(var(--color-base-background)) !important;
 }
 
 .maplibregl-popup-anchor-left > .maplibregl-popup-tip {
-    border-left-color:  rgb(var(--color-base-background)) !important;
+    border-right-color:  rgb(var(--color-base-background)) !important;
 }
 
 .maplibregl-popup-close-button {

@@ -1,7 +1,9 @@
 import { renderCards } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, geocode, waitASecond } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
+import { auth, db } from "../init-firebase.js";
+import { collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
@@ -15,8 +17,79 @@ document.addEventListener("DOMContentLoaded", async () => {
     setTimeout(() => {
         delayHrefs(), 100
     });
-})
+});
 
+let mapLocation;
+async function submitCreatePost() {
+    const user = auth.currentUser;
+    if (!user) {
+        startLoading()
+        setTimeout(() => {
+            window.location.href = "signin"
+        }, 800)
+        return;
+    }
+    if (!mapLocation) {
+        alert("You didn't specify a location. Please click [Fetch Location] first.");
+        return;
+    }
+    const theDescription = document.querySelector("#create_map-description").value;
+    const theCategory = document.querySelector("#create_map_tags_list").value;
+    if (theCategory == "tags_null") {
+        alert("Please add a Tag.");
+        return;
+    }
+    if (theDescription.length == 0) {
+        alert("Please add a description.");
+        return;
+    }
+    const postData = {
+        user_id: user.uid,
+        description: theDescription,
+        category: theCategory,
+        media: null,
+        tracker_id: null,
+        created_at: new Date(),
+        lat: +mapLocation.lat,
+        lon: +mapLocation.lon
+    };
+    const theBtn = document.querySelector("#create_map-submit_button");
+    theBtn.disabled = true;
+    theBtn.textContent = "Please wait";
+    try {
+        const docRef = await addDoc(collection(db, "posts"), postData);
+        console.log("Post created with ID:", docRef.id);
+        alert("Post successfully created.");
+        startLoading();
+        setTimeout(() => {
+            window.location.href = "feed"
+        }, 800)
+    } catch (err) {
+        console.error("Error creating post:", err);
+        alert("Error creating post:" + err.message);
+         const theBtn = document.querySelector("#create_map-submit_button");
+        theBtn.disabled = false;
+        theBtn.textContent = "Submit";
+    }
+    /*
+    const token = await user.getIdToken();
+    if (!token) {
+        alert("Failed to get token. Please report this as a bug.");
+    }
+    const response = await fetch("/api/create-post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+      },
+      body: JSON.stringify({ data: "hello" }),
+    });
+
+    const result = await response.json();
+    console.log(result);
+  */
+
+}
 
 
 // JS
@@ -50,10 +123,12 @@ async function initMapLibre() {
         const { lat, lng } = marker.getLngLat();
         evt.target.disabled = true;
         evt.target.textContent = "Fetching Location...";
-
         const address = await geocode(lat, lng);
-        alert(JSON.stringify(address));
-
+        document.querySelector("#create_location_field").textContent = address.display_name
+        mapLocation = address;
+        console.log(mapLocation.lat);
+        console.log(mapLocation.lon);
+        
         evt.target.textContent = "Wait a second.";
         await waitASecond(1.2);
         evt.target.disabled = false;
@@ -128,3 +203,6 @@ function initLeafletMap() {
 
 
 }
+
+
+window.submitCreatePost = submitCreatePost;

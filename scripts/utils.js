@@ -47,10 +47,8 @@ export async function geocode(lat, lon) {
     }
   });
   const data = await res.json();
-  
-  // The display_name contains the readable address
   console.log(data);
-  return data.display_name || "Unknown location";
+  return data || "Unknown location";
 }
 
 
