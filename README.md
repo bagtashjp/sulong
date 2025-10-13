@@ -1,5 +1,7 @@
 ## Libraries & Services Used
 
+This project uses a **serverless approach** with cloud-based tools and APIs to handle backend logic, authentication, database, maps, and media management.
+
 - **Cloudflare Functions** – Serverless backend functions.  
   [https://developers.cloudflare.com/workers/](https://developers.cloudflare.com/workers/)
 
