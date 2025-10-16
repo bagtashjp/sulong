@@ -1,22 +1,76 @@
 import { renderCards } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading, generatePublicId } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, db } from "../init-firebase.js";
-import { collection, getDocs, addDoc, GeoPoint} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { collection, addDoc, GeoPoint } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
+
+let selectedFiles = [];
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
     initDarkmode();
-    initAuthState(() => { }, () => {
-        window.location.href = "signin";
-    })
+    initAuthState(() => { }, () => window.location.href = "signin");
     initNavBars();
     endLoading();
     initMapLibre();
-    setTimeout(() => {
-        delayHrefs(), 100
+    setTimeout(() => delayHrefs(), 100);
+    document.querySelector("#create_image_upload").addEventListener("change", async (evt) => {
+        const file = evt.target.files[0];
+        if (!file) return;
+        const container = document.querySelector("#create_image_container");
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const maxSize = 500;
+                let scaleWidth, scaleHeight;
+                if (img.width > img.height) {
+                    scaleWidth = maxSize;
+                    scaleHeight = Math.round((img.height / img.width) * maxSize);
+                } else {
+                    scaleHeight = maxSize;
+                    scaleWidth = Math.round((img.width / img.height) * maxSize);
+                }
+                const canvas = document.createElement("canvas");
+                canvas.width = scaleWidth;
+                canvas.height = scaleHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, scaleWidth, scaleHeight);
+                const diver = document.createElement("div");
+                const dataUrl = canvas.toDataURL("image/png");
+                diver.classList.add("create_image-preview");
+                diver.style.backgroundImage = `url(${dataUrl})`;
+                container.appendChild(diver);
+                diver.addEventListener("click", () => {
+                    const newTab = window.open();
+                    if (newTab) {
+                        newTab.document.write(`<img src="${dataUrl}"/>`);
+                        newTab.document.title = "Preview Image";
+                    } else {
+                        alert("Pop-up blocked! Allow pop-ups to view the image.");
+                    }
+                });
+
+                const removeBtn = document.createElement("button");
+                removeBtn.textContent = "×";
+                removeBtn.classList.add("create_image-remove_button");
+                diver.appendChild(removeBtn);
+                canvas.toBlob((blob) => {
+                    selectedFiles.push(blob);
+                    removeBtn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        container.removeChild(diver);
+                        selectedFiles = selectedFiles.filter(f => f !== blob);
+                        console.log(selectedFiles.length);
+                    });
+                }, 'image/png')
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
     });
+
 });
 
 let mapLocation;
@@ -43,11 +97,13 @@ async function submitCreatePost() {
         alert("Please add a description.");
         return;
     }
+
+    const imgURLS = await getUploadUrls();
     const postData = {
         user_id: user.uid,
         description: theDescription,
         category: theCategory,
-        media: null,
+        media: imgURLS,
         tracker_id: null,
         created_at: new Date(),
         location: new GeoPoint(mapLocation.lat, mapLocation.lon)
@@ -55,6 +111,7 @@ async function submitCreatePost() {
     const theBtn = document.querySelector("#create_map-submit_button");
     theBtn.disabled = true;
     theBtn.textContent = "Please wait";
+
     try {
         const docRef = await addDoc(collection(db, "posts"), postData);
         console.log("Post created with ID:", docRef.id);
@@ -66,10 +123,13 @@ async function submitCreatePost() {
     } catch (err) {
         console.error("Error creating post:", err);
         alert("Error creating post:" + err.message);
-         const theBtn = document.querySelector("#create_map-submit_button");
+        const theBtn = document.querySelector("#create_map-submit_button");
         theBtn.disabled = false;
         theBtn.textContent = "Submit";
     }
+
+
+
     /*
     const token = await user.getIdToken();
     if (!token) {
@@ -90,8 +150,6 @@ async function submitCreatePost() {
 
 }
 
-
-// JS
 async function initMapLibre() {
     const map = new maplibregl.Map({
         container: 'create_map',
@@ -127,7 +185,7 @@ async function initMapLibre() {
         mapLocation = address;
         console.log(mapLocation.lat);
         console.log(mapLocation.lon);
-        
+
         evt.target.textContent = "Wait a second.";
         await waitASecond(1.2);
         evt.target.disabled = false;
@@ -156,52 +214,62 @@ async function initMapLibre() {
         map.setStyle(e.target.value);
     });
 }
-
 export function logout() {
     auth.signOut();
 }
 
-
-function initLeafletMap() {
-    var map = L.map("create_map").setView([14.678921, 120.540962], 13);
-    var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 19,
-        minZoom: 10
-    }).addTo(map);
-
-    var carto = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://carto.com/attributions">CartoDB</a>',
-        maxZoom: 19,
-        minZoom: 10
-    });
-    L.control.layers({
-        "OpenStreetMap": osm,
-        "CartoDB": carto
-    }).addTo(map);
-
-    const marker = L.marker([14.678921, 120.540962], { draggable: true }).addTo(map)
-    marker.bindPopup('Drag me to change location!').openPopup();
-    marker.on("dragend", () => {
-        const { lat, lng } = marker.getLatLng();
-        console.log(`Latitude: ${lat}\nLongitude: ${lng}\nZoom: ${map.getZoom()}`)
-    })
-    document.querySelector("#map_pinner").addEventListener("click", async (evt) => {
-        const { lat, lng } = marker.getLatLng();
-        evt.target.disabled = true;
-        evt.target.textContent = "Fetching Location..."
-        console.log(JSON.stringify(await geocode(lat, lng)))
-
-        evt.target.textContent = "Wait a second."
-        await waitASecond(1.2);
-        evt.target.disabled = false;
-        evt.target.textContent = "Fetch Location"
-
-
-    })
-
-
+async function getUploadUrls() {
+    if (selectedFiles.length == 0) return [];
+    const uploads = [];
+    for (let file of selectedFiles) {
+        const url = await uploadToCloudinary(file);
+        uploads.push(url);
+        await waitASecond(1);
+    }
+    return uploads;
 }
 
+async function getSignature(public_id) {
+    const response = await fetch("/api/upload_sign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ public_id })
+    });
+
+    const data = await response.json();
+    return data;
+}
+async function uploadToCloudinary(file) {
+    const public_id = generatePublicId();
+    const { signature, timestamp } = await getSignature(public_id);
+    const formData = new FormData();
+    console.log(timestamp);
+    formData.append("file", file);
+    formData.append("api_key", "456145141394984");
+    formData.append("public_id", public_id); 
+    formData.append("timestamp", timestamp);
+    formData.append("signature", signature);
+    console.log(signature);
+    const res = await fetch("https://api.cloudinary.com/v1_1/dxdmjp5zr/image/upload", {
+        method: "POST",
+        body: formData
+    });
+    if (!res.ok) {
+        console.error("Upload failed, aborting app", res.status, res.statusText);
+        return;
+    }
+
+    const result = await res.json();
+    console.log("Upload result:", result);
+
+    if (!result.secure_url) {
+        console.error("Upload returned no URL, aborting app");
+
+        return;
+    }
+
+    return result.secure_url;
+
+}
 
 window.submitCreatePost = submitCreatePost;

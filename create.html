@@ -43,7 +43,9 @@
             </select></div>
         <textarea id="create_map-description" name="message" rows="6" placeholder="This is where you write your report description..."></textarea>
         </div>
-
+        <input type="file" id="create_image_upload" accept="image/*" style="display: none;">
+        <button id="create_image_upload_button" class="es-button" onclick="document.querySelector('#create_image_upload').click()"></button>
+        <div id="create_image_container"></div>
         <button id="create_map-submit_button" class="es-button" onclick="submitCreatePost()">Submit</button>
     </div>
 

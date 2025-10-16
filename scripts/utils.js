@@ -28,30 +28,53 @@ export function delayHrefs() {
     Array.from(document.getElementsByTagName("a")).forEach(a => {
         const href = a.getAttribute("href");
         if (href.startsWith("#")) return;
-        a.addEventListener("click", (evt)=>{
+        a.addEventListener("click", (evt) => {
             evt.preventDefault();
             startLoading();
             setTimeout(() => {
                 window.location.href = href
-            },800)
+            }, 800)
         })
     })
 }
 
 export async function geocode(lat, lon) {
-  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
 
-  const res = await fetch(url, {
-    headers: {
-      'User-Agent': 'MyLeafletApp/1.0 (myemail@example.com)'
-    }
-  });
-  const data = await res.json();
-  console.log(data);
-  return data || "Unknown location";
+    const res = await fetch(url, {
+        headers: {
+            'User-Agent': 'MyLeafletApp/1.0 (myemail@example.com)'
+        }
+    });
+    const data = await res.json();
+    console.log(data);
+    return data || "Unknown location";
 }
 
 
 export async function waitASecond(sec) {
-    setTimeout(() => {return}, (sec/1000));
+    setTimeout(() => { return }, (sec / 1000));
+}
+
+export async function searchGeo({ city, barangay, street }) {
+    const url = new URL('https://nominatim.openstreetmap.org/search');
+    url.searchParams.set('format', 'json');
+    url.searchParams.set('country', 'Philippines');
+    url.searchParams.set('state', 'Bataan');
+    url.searchParams.set('city', city);
+    url.searchParams.set('suburb', barangay)
+    url.searchParams.set('street', street);
+    url.searchParams.set('addressdetails', '1');
+    const res = await fetch(url, {
+        headers: {
+            "User-Agent": "SulongApp/1.0 (hjpbagtas@bpsu.edu.ph)"
+        }
+    })
+    const data = await res.json();
+    console.log(data);
+
+}
+
+export function generatePublicId() {
+  return crypto.randomUUID(); 
 }

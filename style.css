@@ -518,6 +518,54 @@ html, body {
     color: rgb(var(--color-base-font));
     font-size: 14px;
 }
+#create_image_container {
+    display: flex;
+    gap: 10px;
+    align-self: flex-start;
+    width: 100%;
+    overflow-x: auto;
+}
+.create_image-preview {
+    width: 100px;
+    min-width: 100px;
+    height: 100px;
+    min-height: 100px;
+    background-size: cover;     
+    background-position: center;
+    display: inline-block;
+    border-radius: 10px;
+}
+#create_image_upload_button {
+    align-self: flex-start;
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
+    aspect-ratio: 1/1;
+    width: 20px;
+    height: auto;
+    background-image: url(assets/upload_image_button.svg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    &:hover{
+        box-shadow: inset 1px 1px 3px black;
+    }
+}
+.create_image-remove_button {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 /* #endregion */
 
 /* #region Left Nav */
