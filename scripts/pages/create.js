@@ -109,7 +109,8 @@ async function submitCreatePost() {
         media: imgURLS,
         tracker_id: null,
         created_at: new Date(),
-        location: new GeoPoint(mapLocation.lat, mapLocation.lon)
+        location: new GeoPoint(mapLocation.lat, mapLocation.lon),
+        status: "PENDING"
     };
 
     try {
@@ -127,27 +128,6 @@ async function submitCreatePost() {
         theBtn.disabled = false;
         theBtn.textContent = "Submit";
     }
-
-
-
-    /*
-    const token = await user.getIdToken();
-    if (!token) {
-        alert("Failed to get token. Please report this as a bug.");
-    }
-    const response = await fetch("/api/create-post", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token,
-      },
-      body: JSON.stringify({ data: "hello" }),
-    });
-
-    const result = await response.json();
-    console.log(result);
-  */
-
 }
 
 async function initMapLibre() {
@@ -187,8 +167,9 @@ async function initMapLibre() {
         await waitASecond(1.2);
         evt.target.disabled = false;
         evt.target.textContent = "Fetch Location";
-    });
 
+
+    });
     const styles = {
         "3D": 'https://tiles.openfreemap.org/styles/liberty',
         "Bright": 'https://tiles.openfreemap.org/styles/bright',
@@ -234,6 +215,7 @@ async function getSignature(public_id) {
     const data = await response.json();
     return data;
 }
+
 async function uploadToCloudinary(file) {
     const public_id = generatePublicId();
     const { signature, timestamp } = await getSignature(public_id);
@@ -241,7 +223,7 @@ async function uploadToCloudinary(file) {
     console.log(timestamp);
     formData.append("file", file);
     formData.append("api_key", "456145141394984");
-    formData.append("public_id", public_id); 
+    formData.append("public_id", public_id);
     formData.append("timestamp", timestamp);
     formData.append("signature", signature);
     console.log(signature);
@@ -259,7 +241,6 @@ async function uploadToCloudinary(file) {
 
     if (!result.secure_url) {
         console.error("Upload returned no URL, aborting app");
-
         return;
     }
 

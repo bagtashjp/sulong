@@ -11,6 +11,7 @@ export function initAuthState(userLoggedIn, userLoggedOut) {
                 "If you want to test again, [Cancel] will sign out the user."
             );
             */
+           
             userLoggedIn?.();
         } else {
             console.log("No user is signed in.");
