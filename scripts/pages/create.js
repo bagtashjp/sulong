@@ -98,6 +98,9 @@ async function submitCreatePost() {
         return;
     }
 
+    const theBtn = document.querySelector("#create_map-submit_button");
+    theBtn.disabled = true;
+    theBtn.textContent = "Please wait";
     const imgURLS = await getUploadUrls();
     const postData = {
         user_id: user.uid,
@@ -108,9 +111,6 @@ async function submitCreatePost() {
         created_at: new Date(),
         location: new GeoPoint(mapLocation.lat, mapLocation.lon)
     };
-    const theBtn = document.querySelector("#create_map-submit_button");
-    theBtn.disabled = true;
-    theBtn.textContent = "Please wait";
 
     try {
         const docRef = await addDoc(collection(db, "posts"), postData);
@@ -183,15 +183,10 @@ async function initMapLibre() {
         const address = await geocode(lat, lng);
         document.querySelector("#create_location_field").textContent = address.display_name
         mapLocation = address;
-        console.log(mapLocation.lat);
-        console.log(mapLocation.lon);
-
         evt.target.textContent = "Wait a second.";
         await waitASecond(1.2);
         evt.target.disabled = false;
         evt.target.textContent = "Fetch Location";
-        const res = await fetch("/api/sign");
-        console.log(res.body);
     });
 
     const styles = {

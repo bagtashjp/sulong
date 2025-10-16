@@ -47,7 +47,7 @@ export async function geocode(lat, lon) {
         }
     });
     const data = await res.json();
-    console.log(data);
+    console.log("Location Data:", data);
     return data || "Unknown location";
 }
 

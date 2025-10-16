@@ -544,6 +544,7 @@ html, body {
     width: 20px;
     height: auto;
     background-image: url(assets/upload_image_button.svg);
+    filter: invert(var(--filter-dark-mode));
     background-position: center center;
     background-repeat: no-repeat;
     border: none;
