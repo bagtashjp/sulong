@@ -68,16 +68,18 @@ export async function getApprovedPosts(limitCount = 10) {
             querySnapshot.docs.map(async (postDoc) => {
                 const postData = postDoc.data();
                 let userName = "Unknown";
-
+                let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
                 const userRef = doc(db, "users", postData.user_id);
                 const userSnap = await getDoc(userRef);
                 if (userSnap.exists()) {
                     userName = userSnap.data().first_name + " " + userSnap.data().last_name;
+                    userAvatar = userSnap.data().avatar || userAvatar;
                 }
                 return {
                     id: postDoc.id,
                     ...postData,
-                    display_name: userName
+                    display_name: userName,
+                    user_avatar: userAvatar
                 };
             })
         );

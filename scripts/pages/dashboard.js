@@ -61,7 +61,8 @@ async function loadPostCards() {
             ".post_tag": { text: POST_TAG_NAME[post.category] },
             ".image_container": { append: imgs },
             ".location_text": { text: address.display_name || "Unknown" },
-            ".user_container": { append: [rejectBtn, approveBtn] }
+            ".user_container": { append: [rejectBtn, approveBtn] },
+            ".user_icon": {bg: post.user_avatar}
         });
 
         approveBtn.addEventListener("click", async () => {

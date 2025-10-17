@@ -41,7 +41,6 @@ async function loadPostCards() {
         const address = await geocode(post.location.latitude, post.location.longitude);
 
       
-
         const postCards = summonTemplate("feed_post", {
             ".feed_post": { id: post.id },
             ".post_display_name": { text: post.display_name },
@@ -57,7 +56,8 @@ async function loadPostCards() {
             },
             ".post_tag": { text: POST_TAG_NAME[post.category] },
             ".image_container": { append: imgs },
-            ".location_text": { text: address.display_name || "Unknown" }
+            ".location_text": { text: address.display_name || "Unknown" },
+            ".user_icon": {bg: post.user_avatar}
         });
 
     
