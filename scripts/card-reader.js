@@ -56,8 +56,19 @@ export function summonTemplate(node_name, data) {
         if (!!value.style) Object.assign(child.style, value.style);
         if (!!value.onclick) child.onclick = value.onclick;
         if (!!value.id) child.id = value.id;
+        if (!!value.bg) setBackgroundPreload(child, value.bg);
     }
     return node;
+}
+
+export function setBackgroundPreload(el, imageUrl) {
+    const img = new Image();
+    img.onload = () => {
+        el.style.backgroundImage = `url(${imageUrl})`;
+        el.style.backgroundColor = "transparent";
+        el.classList.add("bg-loaded");
+    };
+    img.src = imageUrl;
 }
 async function loadTemplate(path) {
     try {

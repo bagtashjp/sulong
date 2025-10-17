@@ -1,8 +1,8 @@
-import { renderCards, renderCardsAsync, summonTemplate} from "../card-reader.js";
+import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, generatePublicId, geocode } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, generatePublicId, geocode, buildStaticMapUrl, waitASecond } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { getApprovedPosts, updatePostStatus } from "../init-firebase.js";
+import { auth, getApprovedPosts, doesUserExist } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
 
@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     await renderCardsAsync(["feed_post"]);
     initDarkmode();
     initAuthState(async () => {
+        if (!(await doesUserExist(auth.currentUser.uid))) {
+            window.location.href = "signin";
+            return;
+        }
         await loadPostCards();
         endLoading();
     }, () => {
@@ -23,9 +27,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadPostCards() {
     const postsContainer = document.querySelector(".core_feed");
     const posts = await getApprovedPosts();
-    console.log(posts);
+
     for (const post of posts) {
-        const mapid = generatePublicId()
+
         const imgs = [];
         for (const imgUrl of post.media || []) {
             const img = document.createElement("span");
@@ -33,46 +37,36 @@ async function loadPostCards() {
             img.style.backgroundImage = `url(${imgUrl})`;
             imgs.push(img);
         }
+
         const address = await geocode(post.location.latitude, post.location.longitude);
-        const approveBtn = document.createElement("button");
-        approveBtn.textContent = "Approve";
-        approveBtn.classList.add("admin_approve_button");
-        approveBtn.addEventListener("click", async () => {
-            approveBtn.disabled = true;
-            await updatePostStatus(post.id, "APPROVED");
-            alert("Approved!");
-        });
-        const rejectBtn = document.createElement("button");
-        rejectBtn.textContent = "Reject";
-        rejectBtn.classList.add("admin_reject_button");
-        rejectBtn.addEventListener("click", async () => {
-            rejectBtn.disabled = true;
-            await updatePostStatus(post.id, "REJECTED");
-            alert("Rejected!");
-        });
+
+      
+
         const postCards = summonTemplate("feed_post", {
+            ".feed_post": { id: post.id },
             ".post_display_name": { text: post.display_name },
             ".post_desc": { text: post.description },
-            ".tile_map": { id: mapid },
+            ".tile_map": {
+                style: {
+                    backgroundImage: `url(${buildStaticMapUrl({
+                        centerLon: post.location.longitude,
+                        centerLat: post.location.latitude,
+                        markers: [{}]
+                    })})`
+                }
+            },
             ".post_tag": { text: POST_TAG_NAME[post.category] },
             ".image_container": { append: imgs },
             ".location_text": { text: address.display_name || "Unknown" }
         });
+
+    
+
         for (const postCard of postCards.children) {
             postsContainer.appendChild(postCard);
         }
-        const map = new maplibregl.Map({
-            container: mapid,
-            style: 'https://tiles.openfreemap.org/styles/liberty',
-            center: [post.location.longitude, post.location.latitude],
-            zoom: 10,
-            interactive: false,
-            attributionControl: false
-        });
-        new maplibregl.Marker({ draggable: false })
-            .setLngLat([post.location.longitude, post.location.latitude])
-            .addTo(map);
 
+        await waitASecond(250);
     }
 }
 

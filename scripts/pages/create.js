@@ -205,7 +205,7 @@ async function getUploadUrls() {
     return uploads;
 }
 
-async function getSignature(public_id) {
+export async function getSignature(public_id) {
     const response = await fetch("/api/upload_sign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -216,7 +216,7 @@ async function getSignature(public_id) {
     return data;
 }
 
-async function uploadToCloudinary(file) {
+export async function uploadToCloudinary(file) {
     const public_id = generatePublicId();
     const { signature, timestamp } = await getSignature(public_id);
     const formData = new FormData();

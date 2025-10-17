@@ -1,17 +1,16 @@
 import { renderCards } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth } from "../init-firebase.js";
+import { auth, doesUserExist, saveUserData } from "../init-firebase.js";
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { endLoading, startLoading, delayHrefs } from "../utils.js";
-
+import { endLoading, delayHrefs, uploadToCloudinary, getSignature } from "../utils.js";
+let isButtonDisabled = false;
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
     initDarkmode();
-    const user = auth.currentUser;
 
     const authButton = document.getElementById("auth-button");
     const uiSwitchBtn = document.getElementById("ui-switch");
@@ -20,20 +19,80 @@ document.addEventListener("DOMContentLoaded", async () => {
     uiSwitchBtn.onclick = switchAuthUI;
 
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") authButton.click();
+        if (e.key === "Enter" && !isButtonDisabled) authButton.click();
     });
     initAuthState(() => {
-        //startLoading();
-        setTimeout(() => {
-            window.location.href = "feed"
+        setTimeout(async () => {
+            const eee = await doesUserExist(auth.currentUser.uid);
+            console.log(eee);
+            if (!eee) {
+                console.log("this should work");
+                document.querySelector("#signin-form-main").style.display = "none";
+                document.querySelector("#signup-extra").style.display = "flex";
+                document.querySelector("#auth-button").disabled = true;
+                isButtonDisabled = true;
+                document.querySelector("#get-button").addEventListener("click", submitProfile);
+                document.querySelector("#attach-photo").addEventListener("click", ()=>document.querySelector("#profile-upload").click());
+                document.querySelector("#profile-upload").addEventListener("change", (evt) => {
+                    const file = evt.target.files[0];
+                    if (!file) return;
+                    if (!file.type.startsWith("image/")) {
+                        alert("Please select a valid image file!");
+                        evt.target.value = "";
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        profilePic = e.target.result;
+                        document.querySelector("#signup-profile-preview").src = profilePic;
+                        console.log("Image loaded:", profilePic);
+                    };
+                    reader.readAsDataURL(file);
+                });
+                endLoading();
+            } else {
+                //window.location.href = "feed"
+            }
         }, 500);
     }, () => {
         endLoading();
         setTimeout(() => delayHrefs(), 500);
     });
- 
+
 });
 
+let profilePic = null;
+async function submitProfile() {
+
+    const thbtn = document.querySelector("#get-button");
+    thbtn.disabled = true;
+    thbtn.textContent = "Submitting...";
+    try {
+        const firstName = document.querySelector("#auth-firstname").value;
+        const lastName = document.querySelector("#auth-lastname").value;
+        let img;
+        if (!profilePic) {
+            img = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
+        } else {
+            const signature = await getSignature(crypto.randomUUID());
+            img = await uploadToCloudinary(profilePic, signature);
+        }
+        if (!firstName || !lastName) {
+            return alert("Please fill out all required fields.");
+        }
+        saveUserData({
+            first_name: firstName,
+            last_name: lastName,
+            avatar: img
+        });
+        alert("Profile completed successfully!");
+        window.location.href = "feed";
+    } catch (e) {
+        alert("Error submitting profile: " + e.message);
+        thbtn.disabled = false;
+        thbtn.textContent = "Submit Profile";
+    }
+}
 
 let isSignIn = true;
 
@@ -108,6 +167,9 @@ async function signinUI() {
     }
 }
 
+async function submitPosts() {
+
+}
 function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }

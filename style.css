@@ -31,7 +31,6 @@ body {
 
 
 /* #endregion */
-
 /* #region Header */
 .header {
     position: fixed;
@@ -229,7 +228,6 @@ body {
 }
 
 /* #endregion */
-
 /* #region Hero */
 .hero {
     position: absolute;
@@ -307,7 +305,6 @@ body {
 }
 
 /* #endregion */
-
 /* #region Feed */
 .feed_layer {
     flex: 1 1 auto;
@@ -418,9 +415,9 @@ body {
     border-radius: 10px;
     height: auto;
     background-image: url("assets/default_map.png");
+    position: relative;
     background-position: center center;
     background-size: cover;
-
 }
 
 .image_container {
@@ -441,6 +438,7 @@ body {
     color: black;
     text-align: right;
 }
+
 #dash_inner_header {
     font-size: 50px;
     font-weight: bolder;
@@ -451,6 +449,7 @@ body {
     width: 100%;
 
 }
+
 .admin_approve_button,
 .admin_reject_button {
     border-radius: 999px;
@@ -515,7 +514,6 @@ body {
 }
 
 /* #endregion */
-
 /* #region Create Post */
 #create {
     flex-direction: row;
@@ -695,7 +693,6 @@ body {
 }
 
 /* #endregion */
-
 /* #region Left Nav */
 .left_nav {
     display: flex;
@@ -781,7 +778,6 @@ body {
 }
 
 /* #endregion */
-
 /* #region Utilities */
 #darkmodie {
     position: fixed;
@@ -891,7 +887,6 @@ body {
 }
 
 /* #endregion */
-
 /* #region MAP APIs */
 
 .leaflet-popup-content-wrapper,

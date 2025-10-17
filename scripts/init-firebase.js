@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
-import { getFirestore, collection, getDocs,updateDoc, query, limit, getDoc, doc, where } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -115,4 +115,28 @@ export async function getCurrentUserData() {
     } else {
         return null;
     }
+}
+
+export async function doesUserExist(userId) {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+    console.log("User exists:", userSnap.exists());
+    return userSnap.exists();
+}
+
+export async function saveUserData(userData) {
+    const user = auth.currentUser;
+
+    if (!user) {
+        console.error("No authenticated user!");
+        return;
+    }
+
+    const userRef = doc(db, "users", user.uid);
+
+    await setDoc(userRef, {
+        ...userData,
+        email: user.email,
+        createdAt: new Date(),
+    }, { merge: true }); 
 }

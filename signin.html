@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +11,11 @@
     <link rel="stylesheet" href="styles/signin.css">
     <title>Sulong</title>
 </head>
+
 <body id="signin">
     <div id="loading_page">Loading...</div>
     <card id="header"></card>
-    <div class="signin-form">
+    <div id="signin-form-main" class="signin-form">
         <h2 id="auth-big-heading">Sign-In</h2>
         <img class="mini-logo" src="assets/transparent-title-image.png">
         <div class="input-group">
@@ -28,13 +30,34 @@
             <input type="password" placeholder="" id="auth-confirmpass" required>
             <label for="auth-confirmpass">Confirm Password</label>
         </div>
-        
+
         <a id="forgot-password" href="forgot-password" class="auth-switch">Forgot Password?</a>
         <button id="auth-button" class="sign-button">Sign In</button>
         <button id="ui-switch" class="auth-switch">Don't have an Account? Register.</button>
-        
+
     </div>
-    <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a larger screen. ⚠️</div>
-    <script type="module" src="scripts/pages/sign-in.js?v=2"></script>
+    <div id="signup-extra" class="signin-form">
+        <div class="profile-pic-box">
+            <img id="signup-profile-preview" src="assets/default_icon.png" alt="Profile Picture">
+            <input type="file" id="profile-upload" accept="image/*" hidden>
+            <button id="attach-photo">Add Profile Picture</button>
+        </div>
+
+        <div class="extra-fields">
+            <div class="input-group">
+                <input type="text" id="auth-firstname" placeholder="" required>
+                <label for="auth-firstname">First Name</label>
+            </div>
+            <div class="input-group">
+                <input type="text" id="auth-lastname" placeholder="" required>
+                <label for="auth-lastname">Last Name</label>
+            </div>
+        </div>
+        <button id="get-button" class="sign-button">Submit</button>
+    </div>
+    <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a
+        larger screen. ⚠️</div>
+    <script type="module" src="scripts/pages/sign-in.js?v=3"></script>
 </body>
+
 </html>
