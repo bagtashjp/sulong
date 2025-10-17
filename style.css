@@ -67,6 +67,16 @@ body {
     height: auto;
 }
 
+.nav_profile_pic {
+    aspect-ratio: 1 / 1 !important;
+    border: none !important;
+    width: auto !important;
+    height: 75% !important;
+    border-radius: 50% !important;
+    background-size: cover;
+    background-position: center;
+}
+
 .nav-center {
     flex: 1 0 0;
     display: flex;
@@ -97,6 +107,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    padding-right: 17px;
 }
 
 .signin a {

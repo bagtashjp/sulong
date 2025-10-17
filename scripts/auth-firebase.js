@@ -1,18 +1,20 @@
-import { auth } from "./init-firebase.js";
+import { auth, doesUserExist, getCurrentUserData } from "./init-firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 export function initAuthState(userLoggedIn, userLoggedOut) {
-    onAuthStateChanged(auth, (user) => {
+
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
-            /*
-            Omitting this since log out button is already created, instead user will just redirect to feed.
-            const confirmRedirect = confirm (
-                "User is already signed in. You'll be redirected to home page.\n" +
-                "If you want to test again, [Cancel] will sign out the user."
-            );
-            */
-           
-            userLoggedIn?.();
+            await userLoggedIn?.();
+            if (window.location.pathname.endsWith("signin")) return;
+            const container = document.querySelector("#switch-to-pic");
+            container.replaceChildren();
+            const image = document.createElement("a");
+            const udd = await getCurrentUserData();
+            console.log(udd);
+            image.style.backgroundImage = `url(${udd.avatar})`;
+            image.classList.add("nav_profile_pic");
+            container.appendChild(image);
         } else {
             console.log("No user is signed in.");
             userLoggedOut?.();
@@ -21,5 +23,5 @@ export function initAuthState(userLoggedIn, userLoggedOut) {
 }
 
 export function isUserSignedIn() {
-    
+
 }

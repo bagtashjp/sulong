@@ -27,10 +27,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log(eee);
             if (!eee) {
                 authExtra();
-
                 endLoading();
             } else {
-                //window.location.href = "feed"
+                window.location.href = "feed"
             }
         }, 500);
     }, () => {
@@ -59,7 +58,7 @@ async function submitProfile() {
         if (!firstName || !lastName) {
             return alert("Please fill out all required fields.");
         }
-        saveUserData({
+        await saveUserData({
             first_name: firstName,
             last_name: lastName,
             avatar: img
