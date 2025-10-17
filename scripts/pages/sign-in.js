@@ -26,29 +26,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             const eee = await doesUserExist(auth.currentUser.uid);
             console.log(eee);
             if (!eee) {
-                console.log("this should work");
-                document.querySelector("#signin-form-main").style.display = "none";
-                document.querySelector("#signup-extra").style.display = "flex";
-                document.querySelector("#auth-button").disabled = true;
-                isButtonDisabled = true;
-                document.querySelector("#get-button").addEventListener("click", submitProfile);
-                document.querySelector("#attach-photo").addEventListener("click", ()=>document.querySelector("#profile-upload").click());
-                document.querySelector("#profile-upload").addEventListener("change", (evt) => {
-                    const file = evt.target.files[0];
-                    if (!file) return;
-                    if (!file.type.startsWith("image/")) {
-                        alert("Please select a valid image file!");
-                        evt.target.value = "";
-                        return;
-                    }
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        profilePic = e.target.result;
-                        document.querySelector("#signup-profile-preview").src = profilePic;
-                        console.log("Image loaded:", profilePic);
-                    };
-                    reader.readAsDataURL(file);
-                });
+                authExtra();
+
                 endLoading();
             } else {
                 //window.location.href = "feed"
@@ -95,6 +74,31 @@ async function submitProfile() {
 }
 
 let isSignIn = true;
+function authExtra() {
+    document.querySelector("#signin-form-main").style.display = "none";
+    document.querySelector("#signup-extra").style.display = "flex";
+    document.querySelector("#auth-button").disabled = true;
+    isButtonDisabled = true;
+    document.querySelector("#get-button").addEventListener("click", submitProfile);
+    document.querySelector("#attach-photo").addEventListener("click", () => document.querySelector("#profile-upload").click());
+    document.querySelector("#profile-upload").addEventListener("change", (evt) => {
+        const file = evt.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+            alert("Please select a valid image file!");
+            evt.target.value = "";
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            profilePic = e.target.result;
+            document.querySelector("#signup-profile-preview").src = profilePic;
+            console.log("Image loaded:", profilePic);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
 
 function switchAuthUI() {
     const switcherBtn = document.querySelector("#ui-switch");
@@ -137,8 +141,9 @@ async function registerUI() {
     bigButton.disabled = true;
 
     try {
-        const user = await createUserWithEmailAndPassword(auth, email, pass);
-        alert("Registered successfully! Please don't spam!");
+        await createUserWithEmailAndPassword(auth, email, pass);
+        authExtra();
+
 
     } catch (err) {
         alert("Error: " + err.message);
