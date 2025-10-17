@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
         await loadPostCards();
-        endLoading();
     }, () => {
         window.location.href = "signin";
     })
@@ -27,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadPostCards() {
     const postsContainer = document.querySelector(".core_feed");
     const posts = await getApprovedPosts();
-
+    endLoading();
     for (const post of posts) {
 
         const imgs = [];
