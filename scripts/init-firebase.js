@@ -49,10 +49,10 @@ export async function getPendingPosts(limitCount = 10) {
                 };
             })
         );
-
         return posts;
     } catch (error) {
-        console.error("Error getting posts with user:", error);
+        console.error("Error getting posts with user: ", error);
+        alert("Error getting pending posts. " + error);
         return [];
     }
 }
@@ -90,6 +90,7 @@ export async function getApprovedPosts(limitCount = 10) {
         return posts;
     } catch (error) {
         console.error("Error getting approved posts:", error);
+        alert("Error getting pending posts. " + error);
         return [];
     }
 }

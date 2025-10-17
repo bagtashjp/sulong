@@ -116,7 +116,7 @@ async function submitCreatePost() {
     try {
         const docRef = await addDoc(collection(db, "posts"), postData);
         console.log("Post created with ID:", docRef.id);
-        alert("Post successfully created.");
+        alert("Post successfully created.\nPlease wait for the admin review to approve your post.");
         startLoading();
         setTimeout(() => {
             window.location.href = "feed"

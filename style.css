@@ -775,6 +775,7 @@ body {
 }
 
 .lndash {
+    display: none;
     background-image: url("assets/dashboard.png");
 }
 

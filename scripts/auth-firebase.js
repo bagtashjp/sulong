@@ -7,6 +7,14 @@ export function initAuthState(userLoggedIn, userLoggedOut) {
         if (user) {
             await userLoggedIn?.();
             if (window.location.pathname.endsWith("signin")) return;
+            auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
+                const role = idTokenResult.claims.role;
+                if (role === "admin") {
+                    document.querySelector(".lndash").style.display = "flex";
+                } else {
+                    document.querySelector(".lndash").style.display = "none";
+                }
+            });
             const container = document.querySelector("#switch-to-pic");
             container.replaceChildren();
             const image = document.createElement("a");
