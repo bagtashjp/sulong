@@ -10,6 +10,7 @@ export function initAuthState(userLoggedIn, userLoggedOut) {
             const container = document.querySelector("#switch-to-pic");
             container.replaceChildren();
             const image = document.createElement("a");
+            image.href = "";
             const udd = await getCurrentUserData();
             console.log(udd);
             image.style.backgroundImage = `url(${udd.avatar})`;

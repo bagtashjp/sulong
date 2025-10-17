@@ -46,7 +46,7 @@ async function loadPostCards() {
         const rejectBtn = document.createElement("button");
         rejectBtn.textContent = "Reject";
         rejectBtn.classList.add("admin_reject_button");
-
+        console.log(post);
         const postCards = summonTemplate("feed_post", {
             ".feed_post": { id: post.id },
             ".post_display_name": { text: post.display_name },
@@ -62,7 +62,7 @@ async function loadPostCards() {
             ".image_container": { append: imgs },
             ".location_text": { text: address.display_name || "Unknown" },
             ".user_container": { append: [rejectBtn, approveBtn] },
-            ".user_icon": {bg: post.user_avatar}
+            ".user_icon": {style: {"backgroundImage": `url(${post.user_avatar})`}}
         });
 
         approveBtn.addEventListener("click", async () => {

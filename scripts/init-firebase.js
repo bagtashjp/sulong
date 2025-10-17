@@ -35,14 +35,17 @@ export async function getPendingPosts(limitCount = 10) {
                 let userName = "Unknown";
 
                 const userRef = doc(db, "users", postData.user_id);
+                let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
                 const userSnap = await getDoc(userRef);
                 if (userSnap.exists()) {
                     userName = userSnap.data().first_name + " " + userSnap.data().last_name;
+                    userAvatar = userSnap.data().avatar || userAvatar;
                 }
                 return {
                     id: postDoc.id,
                     ...postData,
-                    display_name: userName
+                    display_name: userName,
+                    user_avatar: userAvatar
                 };
             })
         );
