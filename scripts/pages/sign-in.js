@@ -71,7 +71,6 @@ async function submitProfile() {
         thbtn.textContent = "Submit Profile";
     }
 }
-
 let isSignIn = true;
 function authExtra() {
     document.querySelector("#signin-form-main").style.display = "none";
@@ -81,7 +80,7 @@ function authExtra() {
     document.querySelector("#get-button").addEventListener("click", submitProfile);
     document.querySelector("#attach-photo").addEventListener("click", () => document.querySelector("#profile-upload").click());
     document.querySelector("#profile-upload").addEventListener("change", (evt) => {
-        const file = evt.target.files[0];
+        const file = document.querySelector("#profile-upload").files[0];
         if (!file) return;
         if (!file.type.startsWith("image/")) {
             alert("Please select a valid image file!");
