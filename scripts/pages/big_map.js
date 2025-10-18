@@ -62,7 +62,7 @@ async function loadPostCards() {
             const selectedCategory = e.target.value;    
             posts.forEach(post => {
                 if (post.marker) {
-                    post.marker.getElement().style.display = post.category === selectedCategory || selectedCategory === "all" ? "block" : "none";
+                    post.marker.getElement().style.display = post.category === selectedCategory || selectedCategory === "tags_null" ? "block" : "none";
                 }
             });
         });
