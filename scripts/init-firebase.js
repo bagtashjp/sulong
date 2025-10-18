@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
-import { getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc, getCountFromServer} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc, getCountFromServer, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -95,6 +95,42 @@ export async function getApprovedPosts(limitCount = 10) {
     }
 }
 
+export async function getPost(postId) {
+    try {
+        const postRef = doc(db, "posts", postId);
+        const postSnap = await getDoc(postRef);
+
+        if (!postSnap.exists()) {
+            console.warn("Post not found:", postId);
+            return null;
+        }
+
+        const postData = postSnap.data();
+
+        let userName = "Unknown";
+        let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
+        const userRef = doc(db, "users", postData.user_id);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            const user = userSnap.data();
+            userName = user.first_name + " " + user.last_name;
+            userAvatar = user.avatar || userAvatar;
+        }
+
+        return {
+            id: postSnap.id,
+            ...postData,
+            display_name: userName,
+            user_avatar: userAvatar
+        };
+    } catch (error) {
+        console.error("Error getting post:", error);
+        alert("Error fetching post. " + error);
+        return null;
+    }
+}
+
 export async function updatePostStatus(docId, newStatus) {
     try {
         const postRef = doc(db, "posts", docId);
@@ -160,6 +196,60 @@ export async function getReactionCount(postId, reactionType = "UPVOTE") {
     const count = countSnap.data().count;
     return count;
 }
+export async function getUserPostReaction(postId) {
+    try {
+        const userId = auth.currentUser.uid;
+        const reactionRef = doc(db, "posts", postId, "reactions", userId);
+        const reactionSnap = await getDoc(reactionRef);
+        return reactionSnap.exists() ? reactionSnap.data() : null;
+    } catch (error) {
+        console.error("Error getting user post reaction:", error);
+        return null;
+    }
+}
+export async function getComments(postId, commentLimit = 100) {
+    try {
+        const commentsCol = collection(db, "posts", postId, "comments");
+        const commentsQuery = query(
+            commentsCol,
+            limit(commentLimit)
+        );
+
+        const commentsSnap = await getDocs(commentsQuery);
+
+        const comments = await Promise.all(
+            commentsSnap.docs.map(async (commentDoc) => {
+                const commentData = commentDoc.data();
+
+                let userName = "Unknown";
+                let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
+
+                if (commentData.user_id) {
+                    const userRef = doc(db, "users", commentData.user_id);
+                    const userSnap = await getDoc(userRef);
+
+                    if (userSnap.exists()) {
+                        const user = userSnap.data();
+                        userName = `${user.first_name} ${user.last_name}`;
+                        userAvatar = user.avatar || userAvatar;
+                    }
+                }
+
+                return {
+                    id: commentDoc.id,
+                    ...commentData,
+                    display_name: userName,
+                    user_avatar: userAvatar
+                };
+            })
+        );
+
+        return comments;
+    } catch (error) {
+        console.error("Error fetching comments:", error);
+        return [];
+    }
+}
 
 export async function setReaction(postId, reactionType) {
     try {
@@ -188,5 +278,23 @@ export async function removeReaction(postId) {
         await deleteDoc(reactionRef);
     } catch (error) {
         console.error("Error deleting reaction:", error);
+    }
+}
+
+export async function setComment(postId, body) {
+    try {
+        const userId = auth.currentUser.uid;
+
+        const commentsCol = collection(db, "posts", postId, "comments");
+
+        await addDoc(commentsCol, {
+            body: body,
+            user_id: userId,
+            timestamp: Date.now()
+        });
+
+        console.log("Comment added successfully!");
+    } catch (error) {
+        console.error("Error adding comment:", error);
     }
 }

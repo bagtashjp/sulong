@@ -49,7 +49,6 @@ export function summonTemplate(node_name, data) {
     const node = cardNodes[node_name].cloneNode(true);
     for (const [key, value] of Object.entries(data)) {
         const child = node.querySelector(key);
-        
         if (!!value.append) child.append(...(Array.isArray(value.append) ? value.append : [value.append]));
         if (!!value.html) child.innerHTML = value.html;
         if (!!value.text) child.textContent = value.text;
@@ -58,6 +57,7 @@ export function summonTemplate(node_name, data) {
         if (!!value.onclick) child.onclick = value.onclick;
         if (!!value.id) child.id = value.id;
         if (!!value.bg) setBackgroundPreload(child, value.bg);
+        if (!!value.img) child.src = value.img;
     }
     return node;
 }
