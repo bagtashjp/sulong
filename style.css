@@ -73,7 +73,7 @@ body {
     width: auto !important;
     height: 75% !important;
     border-radius: 50% !important;
-    background-size: cover;
+    background-size: cover !important;
     background-position: center;
 }
 
@@ -556,13 +556,10 @@ body {
 }
 
 
-
-
 .feed_post .tile_map {
-    aspect-ratio: 4 / 1;
     width: 100%;
-    border-radius: 10px;
-    height: auto;
+    border-radius: 15px;
+    height: 200px;
     background-image: url("assets/default_map.png");
     position: relative;
     background-position: center center;
@@ -657,7 +654,9 @@ body {
         max-width: 90vw;
         width: 90vw;
     }
-
+    .location_text {
+        font-size: 12px;
+    }
     .feed_post .post_desc {
         font-size: 15px;
     }
