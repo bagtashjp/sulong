@@ -127,7 +127,8 @@ body {
 
 #about .navabout,
 #feed .navfeed,
-#dashboard .navdash {
+#dashboard .navdash,
+#big_map .navmap {
     background-color: var(--color-secondary);
     color: white;
     box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.4);
@@ -438,10 +439,12 @@ body {
     gap: 10px;
     width: 100%;
 }
+
 .comment {
     position: relative;
     margin-left: 30px;
 }
+
 .comment::before {
     content: "—";
     font-weight: bold;
@@ -459,9 +462,11 @@ body {
     font-weight: bold;
     margin-left: -10px;
 }
+
 .comment_header {
     display: flex;
 }
+
 .comment_user_icon {
     display: inline-block;
     width: 1.5em;
@@ -471,11 +476,12 @@ body {
     background-size: cover;
     border-radius: 50%;
 }
-.comment_display_name{
+
+.comment_display_name {
     font-weight: bold;
 }
 
-.comment_text{
+.comment_text {
     font-size: 14px;
 }
 
@@ -490,15 +496,18 @@ body {
     font-size: 14px;
     font-family: 'Montserrat', 'Roboto', sans-serif;
     cursor: pointer;
+
     &:hover {
         box-shadow: inset 1px 1px 3px rgba(var(--color-base-font), 0.5);
     }
+
     &:disabled {
         background-color: grey;
         cursor: not-allowed;
         box-shadow: none;
     }
 }
+
 .new_comment_input {
     width: 100%;
     padding: 8px;
@@ -509,6 +518,7 @@ body {
     resize: vertical;
     z-index: 300;
 }
+
 .new_comment_wrapper {
     display: flex;
     gap: 10px;
@@ -648,15 +658,25 @@ body {
     align-self: flex-start;
 }
 
+#dashboard .interacts_container {
+    display: none;
+}
+
 @media (max-width: 680px) {
     .core_feed {
         min-width: 360px;
         max-width: 90vw;
         width: 90vw;
     }
+
+    #dash_inner_header {
+        font-size: 8vw;
+    }
+
     .location_text {
         font-size: 12px;
     }
+
     .feed_post .post_desc {
         font-size: 15px;
     }
@@ -852,6 +872,7 @@ body {
     width: 70px;
     height: calc(100% - 65px);
     justify-content: space-between;
+    z-index: 99997;
 }
 
 .top_lnav {
@@ -940,6 +961,7 @@ body {
     transition: transform 0.3s ease;
     box-shadow: 1px 1px 1px rgba(var(--color-base-font), 0.5);
     background-color: rgb(var(--color-base-background));
+    z-index: 99998;
 
     &:hover {
         transform: rotateZ(25deg);
@@ -1039,6 +1061,8 @@ body {
 /* #endregion */
 /* #region MAP APIs */
 
+
+
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
     background-color: rgb(var(--color-base-background)) !important;
@@ -1107,6 +1131,53 @@ body {
     padding: 5px 5px;
     border: none;
     cursor: pointer;
+}
+
+/* #endregion */
+
+
+/* #region BIG MAP */
+.big_map_wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+}
+
+.filter_options_container {
+    padding: 10px 10px;
+    position: absolute;
+    top: 61px;
+    width: 100vw;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    z-index: 99996;
+}
+
+.filter_options_container span {
+    text-shadow: 1px 1px 4px rgb(255, 255, 255, 1);
+}
+
+.filter_bys {
+    padding-top: 5px;
+    align-items: center;
+    background-color: rgb(var(--color-base-background));
+    color: rgb(var(--color-base-font));
+    margin-right: 10px;
+}
+
+#big_map .maplibregl-marker {
+    cursor: pointer;
+
+}
+
+#big_map_wrapper #map_style_selector {
+
+    z-index: 99997;
+    position: absolute;
+    top: 80px;
+    right: 10px;
+    left: auto;
 }
 
 /* #endregion */

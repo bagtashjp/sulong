@@ -28,22 +28,27 @@
         <div id="create_map">
             <button id="map_pinner" class="es-button">Fetch Location</button>
         </div>
-        <div class="create_location-bar">Location: <span id ="create_location_field">Click [Fetch Location] to add Location data here.</span></div>
-            
-        <div class="create_map-tags-wrapper"><div>
-            <select id="create_map_tags_list" >
-                <option value="tags_null" disabled selected>Add Tag</option>
-                <option value="tags_flood">Flooded Area</option>
-                <option value="tags_clog">Clogged Drainage</option>
-                <option value="tags_waterway">Clogged Natural Waterways</option>
-                <option value="tags_overflow">Sewer Overflows</option>
-                <option value="tags_soil">Soil Erosion Risk Area</option>
-                <option value="tags_other">Other</option>
-            </select></div>
-        <textarea id="create_map-description" name="message" rows="6" placeholder="This is where you write your report description..."></textarea>
+        <div class="create_location-bar">Location: <span id="create_location_field">Click [Fetch Location] to add
+                Location data here.</span></div>
+
+        <div class="create_map-tags-wrapper">
+            <div>
+                <select id="create_map_tags_list">
+                    <option value="tags_null" disabled selected>Add Tag</option>
+                    <option value="tags_flood">Flooded Area</option>
+                    <option value="tags_clog">Clogged Drainage</option>
+                    <option value="tags_waterway">Clogged Natural Waterways</option>
+                    <option value="tags_overflow">Sewer Overflows</option>
+                    <option value="tags_soil">Soil Erosion Risk Area</option>
+                    <option value="tags_other">Other</option>
+                </select>
+            </div>
+            <textarea id="create_map-description" name="message" rows="6"
+                placeholder="This is where you write your report description..."></textarea>
         </div>
         <input type="file" id="create_image_upload" accept="image/*" style="display: none;">
-        <button id="create_image_upload_button" class="es-button" onclick="document.querySelector('#create_image_upload').click()"></button>
+        <button id="create_image_upload_button" class="es-button"
+            onclick="document.querySelector('#create_image_upload').click()"></button>
         <div id="create_image_container"></div>
         <button id="create_map-submit_button" class="es-button" onclick="submitCreatePost()">Submit</button>
     </div>

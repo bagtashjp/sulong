@@ -1,0 +1,57 @@
+<!--#region templates up-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+    <title>Map View - Sulong</title>
+</head>
+
+<body id="big_map">
+    <div id="loading_page">Loading...</div>
+    <card id="header"></card>
+    <card id="left_nav"></card>
+    <!--#endregion-->
+
+    <div id="big_map_wrapper" class="big_map_wrapper">
+        <div class="filter_options_container">
+            <span>Category: </span>
+            <select id="filter_by_category" class="filter_bys">
+                <option value="tags_null">All</option>
+                <option value="tags_flood">Flooded Area</option>
+                <option value="tags_clog">Clogged Drainage</option>
+                <option value="tags_waterway">Clogged Natural Waterways</option>
+                <option value="tags_overflow">Sewer Overflows</option>
+                <option value="tags_soil">Soil Erosion Risk Area</option>
+                <option value="tags_other">Other</option>
+            </select>
+            <!--
+            <span>Date: </span>
+            <select id="filter_by_date" class="filter_bys">
+                <option value="filter_date_all">All</option>
+                <option value="filter_date_today">Today</option>
+                <option value="filter_date_last_week">This Week</option>
+                <option value="filter_date_this_month">This Month</option>
+            </select>
+        -->
+        </div>
+
+
+    </div>
+
+    <!--#region templates down-->
+    <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a
+        larger screen. ⚠️</div>
+    <script type="module" src="scripts/pages/big_map.js"></script>
+
+</body>
+
+</html>
+<!--#endregion-->

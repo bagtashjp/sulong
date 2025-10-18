@@ -5,6 +5,42 @@ import { initAuthState } from "../auth-firebase.js";
 import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getUserPostReaction, getReactionCount } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
+/**
+ * Clear all posts from the feed container safely.
+ * - removes common inline event handlers to reduce accidental retention
+ * - removes child nodes
+ *
+ * Use `refreshPosts()` to clear then reload posts (handy for filters).
+ */
+export function clearPostsContainer(container = document.querySelector(".core_feed")) {
+    if (!container) return;
+    // Remove common inline handlers to avoid accidental references
+    container.querySelectorAll("*").forEach(el => {
+        try {
+            el.onclick = null;
+            el.onchange = null;
+            el.onmouseover = null;
+            el.onmouseout = null;
+            el.onkeyup = null;
+            el.onkeydown = null;
+        } catch (e) {
+            // ignore
+        }
+    });
+    // Remove child nodes
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+}
+
+/**
+ * Convenience: clear the feed then reload posts.
+ */
+export async function refreshPosts() {
+    const postsContainer = document.querySelector(".core_feed");
+    clearPostsContainer(postsContainer);
+    await loadPostCards();
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
