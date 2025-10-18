@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
-import { getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc, getCountFromServer} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -144,5 +144,49 @@ export async function saveUserData(userData) {
         ...userData,
         email: user.email,
         createdAt: new Date(),
-    }, { merge: true }); 
+    }, { merge: true });
+}
+
+export async function getReactionCount(postId, reactionType = "UPVOTE") {
+    const reactionsCol = collection(db, "posts", postId, "reactions");
+
+    const reactionQuery = query(
+        reactionsCol,
+        where("type", "==", reactionType),
+        limit(100)
+    );
+
+    const countSnap = await getCountFromServer(reactionQuery);
+    const count = countSnap.data().count;
+    return count;
+}
+
+export async function setReaction(postId, reactionType) {
+    try {
+        const userId = auth.currentUser.uid;
+        const reactionRef = doc(db, "posts", postId, "reactions", userId);
+        await setDoc(reactionRef, { type: reactionType, timestamp: Date.now() });
+    } catch (error) {
+        console.error("Error setting reaction:", error);
+    }
+}
+
+export async function updateReaction(postId, newReaction) {
+    try {
+        const userId = auth.currentUser.uid;
+        const reactionRef = doc(db, "posts", postId, "reactions", userId);
+        await updateDoc(reactionRef, { type: newReaction, timestamp: Date.now() });
+    } catch (error) {
+        console.error("Error updating reaction:", error);
+    }
+}
+
+export async function removeReaction(postId) {
+    try {
+        const userId = auth.currentUser.uid;
+        const reactionRef = doc(db, "posts", postId, "reactions", userId);
+        await deleteDoc(reactionRef);
+    } catch (error) {
+        console.error("Error deleting reaction:", error);
+    }
 }

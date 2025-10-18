@@ -1,8 +1,8 @@
 import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, generatePublicId, geocode, buildStaticMapUrl, waitASecond } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, generatePublicId, geocode, buildStaticMapUrl, waitASecond, summonToast } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth, getApprovedPosts, doesUserExist } from "../init-firebase.js";
+import { auth, getApprovedPosts, doesUserExist, getReactionCount } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
 
@@ -38,9 +38,8 @@ async function loadPostCards() {
         }
 
         const address = await geocode(post.location.latitude, post.location.longitude);
-
-      
-        const postCards = summonTemplate("feed_post", {
+        const voteCount = await getReactionCount(post.id, "UPVOTE") - await getReactionCount(post.id, "DOWNVOTE");
+        const postCards = summonTemplate("feed_post",   {
             ".feed_post": { id: post.id },
             ".post_display_name": { text: post.display_name },
             ".post_desc": { text: post.description },
@@ -56,7 +55,8 @@ async function loadPostCards() {
             ".post_tag": { text: POST_TAG_NAME[post.category] },
             ".image_container": { append: imgs },
             ".location_text": { text: address.display_name || "Unknown" },
-            ".user_icon": {bg: post.user_avatar}
+            ".user_icon": {bg: post.user_avatar},
+            ".post-reaction-count": { text: (voteCount > 99 ? `99+` : ""+voteCount) }
         });
 
     
@@ -72,3 +72,5 @@ async function loadPostCards() {
 export function logout() {
     auth.signOut();
 }
+
+window.summonToast = summonToast;

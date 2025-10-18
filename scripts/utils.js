@@ -76,53 +76,53 @@ export async function searchGeo({ city, barangay, street }) {
 }
 
 export function generatePublicId() {
-  return crypto.randomUUID(); 
+    return crypto.randomUUID();
 }
 
 const GEOAPIFY_BASE = "https://maps.geoapify.com/v1/staticmap";
-const API_KEY = "2d543afb501542e2baf2164ff8af23c9"; 
+const API_KEY = "2d543afb501542e2baf2164ff8af23c9";
 
 export function buildStaticMapUrl({
-  centerLon,
-  centerLat,
-  zoom = 16,
-  width = 1200,
-  height = 700,
-  markers = []
+    centerLon,
+    centerLat,
+    zoom = 16,
+    width = 1200,
+    height = 700,
+    markers = []
 }) {
-  // center lonlat part
-  const center = `lonlat:${centerLon},${centerLat}`;
-  
-  // markers part
-  const markerStrings = markers.map(marker => {
-    const {
-      lon = centerLon, lat = centerLat,
-      type = "material",
-      color = "#4c905a",
-      size = "medium",
-      icon = "",
-      icontype = "awesome"
-    } = marker;
-    let str = `lonlat:${lon},${lat};type:${type};color:${encodeURIComponent(color)};size:${size}`;
-    if (icon) {
-      str += `;icon:${icon}`;
-    }
-    if (icontype) {
-      str += `;icontype:${icontype}`;
-    }
-    return str;
-  });
-  
-  const markerParam = markerStrings.length > 0
-    ? `&marker=${markerStrings.join("|")}`
-    : "";
+    // center lonlat part
+    const center = `lonlat:${centerLon},${centerLat}`;
 
-  const url = `${GEOAPIFY_BASE}?style=osm-bright-smooth&width=${width}&height=${height}`
-    + `&center=${center}&zoom=${zoom}`
-    + markerParam
-    + `&apiKey=${API_KEY}`;
-  
-  return url;
+    // markers part
+    const markerStrings = markers.map(marker => {
+        const {
+            lon = centerLon, lat = centerLat,
+            type = "material",
+            color = "#4c905a",
+            size = "medium",
+            icon = "",
+            icontype = "awesome"
+        } = marker;
+        let str = `lonlat:${lon},${lat};type:${type};color:${encodeURIComponent(color)};size:${size}`;
+        if (icon) {
+            str += `;icon:${icon}`;
+        }
+        if (icontype) {
+            str += `;icontype:${icontype}`;
+        }
+        return str;
+    });
+
+    const markerParam = markerStrings.length > 0
+        ? `&marker=${markerStrings.join("|")}`
+        : "";
+
+    const url = `${GEOAPIFY_BASE}?style=osm-bright-smooth&width=${width}&height=${height}`
+        + `&center=${center}&zoom=${zoom}`
+        + markerParam
+        + `&apiKey=${API_KEY}`;
+
+    return url;
 }
 
 
@@ -167,4 +167,39 @@ export async function uploadToCloudinary(file) {
 
     return result.secure_url;
 
+}
+
+export async function summonToast(message, duration = 3000) {
+    const toast = document.createElement("div");
+
+    Object.assign(toast.style, {
+        position: "fixed",
+        bottom: "-20px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        backgroundColor: "rgb(var(--color-base-background))",
+        color: "rgb(var(--color-base-font))",
+        padding: "10px 20px",
+        borderRadius: "8px",
+        fontSize: "14px",
+        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.5)",
+        zIndex: 9999,
+        opacity: 0,
+        transition: "bottom 0.5s ease, opacity 0.5s ease",
+    });
+
+    toast.innerText = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.bottom = "20px";
+        toast.style.opacity = 1;
+    }, 100);
+
+    setTimeout(() => {
+        toast.style.opacity = 0;
+        toast.style.bottom = "-20px";
+        toast.addEventListener("transitionend", () => toast.remove(), { once: true });
+    }, duration);
+    
 }

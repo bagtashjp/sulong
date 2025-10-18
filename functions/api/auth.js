@@ -5,10 +5,10 @@ const firebaseJwks = createRemoteJWKSet(
 );
 
 const FIREBASE_PROJECT_ID = 'sulong-app';
-export async function verifyUser() {
+export async function verifyUser(request) {
     const authHeader = request.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
-        return new Response('Invalid Authorization header', { status: 401 });
+        return 401;
     }
     const token = authHeader.split(' ')[1];
     try {
@@ -16,8 +16,8 @@ export async function verifyUser() {
             issuer: `https://securetoken.google.com/${FIREBASE_PROJECT_ID}`,
             audience: FIREBASE_PROJECT_ID,
         });
-        return new Response(`Hello ${payload.uid}, you are authenticated!`);
+        return 200;
     } catch (err) {
-        return new Response('Invalid token: ' + err.message, { status: 401 });
+        return 500;
     }
 }
