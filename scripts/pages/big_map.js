@@ -56,10 +56,10 @@ async function loadPostCards() {
           `))
 
                 .addTo(map);
-                post.marker = marker;
+            post.marker = marker;
         });
         document.querySelector("#filter_by_category").addEventListener("change", (e) => {
-            const selectedCategory = e.target.value;    
+            const selectedCategory = e.target.value;
             posts.forEach(post => {
                 if (post.marker) {
                     post.marker.getElement().style.display = post.category === selectedCategory || selectedCategory === "tags_null" ? "block" : "none";
@@ -67,7 +67,7 @@ async function loadPostCards() {
             });
         });
     })
-     const styles = {
+    const styles = {
         "3D": 'https://tiles.openfreemap.org/styles/liberty',
         "Bright": 'https://tiles.openfreemap.org/styles/bright',
         "CartoDB": 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',

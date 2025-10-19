@@ -143,6 +143,7 @@ async function initMapLibre() {
     map.setPitch(60);
     map.addControl(new maplibregl.NavigationControl());
     map.addControl(new maplibregl.AttributionControl(), 'top-left')
+    map.getCanvas().style.cursor = 'pointer';
     const marker = new maplibregl.Marker({
         draggable: true,
         color: "#FF0000",
@@ -156,6 +157,10 @@ async function initMapLibre() {
         const { lng, lat } = marker.getLngLat();
         console.log(`Latitude: ${lat}\nLongitude: ${lng}\nZoom: ${map.getZoom()}`);
     });
+    map.on('click', (e) => {
+        marker.setLngLat(e.lngLat);
+    });
+
     document.querySelector("#map_pinner").addEventListener("click", async (evt) => {
         const { lat, lng } = marker.getLngLat();
         evt.target.disabled = true;
