@@ -9,12 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/geofire@6.0.0/dist/geofire/geofire.min.js"></script>
+
     <title>Create Post - Sulong</title>
 </head>
 
@@ -30,8 +28,9 @@
         </div>
         <div class="location-dropdown-wrapper">
             <input type="checkbox" id="location-dropdown-toggle" hidden>
-            <label for="location-dropdown-toggle" class="location-dropdown-label">Location  <span id="create_location_field">Click <b>[Fetch Location]</b> or manually add it.</span></label>
-            
+            <label for="location-dropdown-toggle" class="location-dropdown-label">Location <span
+                    id="create_location_field">Click <b>[Fetch Location]</b> or manually add it.</span></label>
+
             <form class="location-dropdown-content">
                 <div class="input-group">
                     <input type="text" placeholder="" id="create-post-city-input" required>
@@ -42,12 +41,12 @@
                     <label for="create-post-barangay-input">Barangay</label>
                 </div>
                 <div class="input-group" id="confirm-pass-group">
-                    <input type="text" placeholder="" id="create-post-street-input" required>
-                    <label for="create-post-street-input">Street</label>
+                    <input type="text" placeholder="" id="create-post-street-input">
+                    <label for="create-post-street-input">Street/Block/Subdivision</label>
                 </div>
                 <button type="submit" id="fetch-coordinates-button" class="es-button">Fetch Coordinates</button>
             </form>
-        </div>  
+        </div>
         <div class="create_map-tags-wrapper">
             <div>
                 <select id="create_map_tags_list">
