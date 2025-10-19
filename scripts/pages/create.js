@@ -4,7 +4,6 @@ import { initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading
 import { initAuthState } from "../auth-firebase.js";
 import { auth, db } from "../init-firebase.js";
 import { collection, addDoc, GeoPoint } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
 let selectedFiles = [];
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
@@ -137,9 +136,10 @@ async function submitCreatePost() {
         location: new GeoPoint(mapLocation.lat, mapLocation.lon),
         status: "PENDING",
         address_name: fullAddress.display_name,
-        geofire_hash: geofire.geohashForLocation([mapLocation.lat, mapLocation.lon])
+        address_city: fullAddress.city,
+        address_brgy: fullAddress.brgy,
     };
-
+    console.log("Post Data:", postData);
     try {
         const docRef = await addDoc(collection(db, "posts"), postData);
         console.log("Post created with ID:", docRef.id);
@@ -193,9 +193,10 @@ async function initMapLibre() {
         evt.target.disabled = true;
         evt.target.textContent = "Fetching Location...";
         const address = await geocode(lat, lng);
-        const fullAddress = addressify(address.address);
+        fullAddress = addressify(address.address);
         document.querySelector("#create_location_field").textContent = fullAddress.display_name;
         mapLocation = address;
+
         evt.target.textContent = "Wait a second.";
         await waitASecond(1.2);
         evt.target.disabled = false;
@@ -305,7 +306,7 @@ function addressify(addr) {
     parts.push("Bataan"); // always add province/state at the end
 
     let displayName = parts.join(", ");
-
+    console.log("Addressify:", displayName);
     return {
         display_name: displayName.trim(),
         street: street.trim(),

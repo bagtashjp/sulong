@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "geofire-common": "^6.0.0",
     "jose": "^6.1.0"
   }
 }
