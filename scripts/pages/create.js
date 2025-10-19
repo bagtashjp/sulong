@@ -140,7 +140,6 @@ async function initMapLibre() {
         maxZoom: 19,
         attributionControl: false
     });
-    map.setPitch(60);
     map.addControl(new maplibregl.NavigationControl());
     map.addControl(new maplibregl.AttributionControl(), 'top-left')
     map.getCanvas().style.cursor = 'pointer';
