@@ -135,9 +135,9 @@ async function submitCreatePost() {
         created_at: new Date(),
         location: new GeoPoint(mapLocation.lat, mapLocation.lon),
         status: "PENDING",
-        address_name: fullAddress.display_name,
-        address_city: fullAddress.city,
-        address_brgy: fullAddress.brgy,
+        address_name: fullAddress.display_name || "Unknown Address",
+        address_city: fullAddress.city || "Unknown City",
+        address_brgy: fullAddress.brgy || "Unknown Barangay",
     };
     console.log("Post Data:", postData);
     try {
