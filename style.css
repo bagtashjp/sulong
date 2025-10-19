@@ -808,18 +808,61 @@ body {
     color: rgba(var(--color-base-font), 0.3)
 }
 
-.create_location-bar {
+
+.location-dropdown-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+.location-dropdown-label {
     color: var(--color-secondary);
     align-self: flex-start;
     font-size: 16px;
     padding: 0 10px;
+    cursor: pointer;
 }
-
-.create_location-bar span {
+.location-dropdown-label span {
     color: rgb(var(--color-base-font));
     font-size: 14px;
 }
 
+.location-dropdown-label::before {
+    content: "▼";
+     display: inline-block;
+    transition: transform 0.5s ease-out;
+}
+#location-dropdown-toggle:checked+.location-dropdown-label::before {
+    transform: rotate(-180deg);
+}
+
+.location-dropdown-content {
+    max-height: 0px;
+    overflow-y: hidden;
+    transition: max-height 0.5s ease-out;
+
+}
+
+#location-dropdown-toggle:checked ~ .location-dropdown-content {
+    max-height: 213px;
+}
+
+#fetch-coordinates-button {
+    width: 100%;
+    padding: 10px 0;
+    background-color: var(--color-secondary);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 9999px;
+    &:hover {
+        box-shadow: inset 1px 1px 3px black;
+    }
+}
 #create_image_container {
     display: flex;
     gap: 10px;
@@ -859,6 +902,8 @@ body {
         box-shadow: inset 1px 1px 3px black;
     }
 }
+
+
 
 .create_image-remove_button {
     background-color: rgba(255, 0, 0, 0.8);
@@ -1250,3 +1295,40 @@ body:has(#menu-toggle:checked) .left_nav {
     }
 }
 /* #endregion */
+
+
+
+.input-group {
+    position: relative;
+    margin: 10px 0;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: rgb(var(--color-base-background));
+    color: rgb(var(--color-base-font))
+}
+
+.input-group label {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    color: #888;
+    font-size: 16px;
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: -8px;
+    left: 8px;
+    font-size: 12px;
+    background-color:rgb(var(--color-base-background));
+    padding: 0 4px;
+    color: rgb(var(--color-base-font));
+}

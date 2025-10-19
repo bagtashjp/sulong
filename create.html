@@ -28,9 +28,26 @@
         <div id="create_map">
             <button id="map_pinner" class="es-button">Fetch Location</button>
         </div>
-        <div class="create_location-bar">Location: <span id="create_location_field">Click [Fetch Location] to add
-                Location data here.</span></div>
-
+        <div class="location-dropdown-wrapper">
+            <input type="checkbox" id="location-dropdown-toggle" hidden>
+            <label for="location-dropdown-toggle" class="location-dropdown-label">Location  <span id="create_location_field">Click <b>[Fetch Location]</b> or manually add it.</span></label>
+            
+            <form class="location-dropdown-content">
+                <div class="input-group">
+                    <input type="text" placeholder="" id="create-post-city-input" required>
+                    <label for="create-post-city-input">City/Municipality</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" placeholder="" id="create-post-barangay-input" required>
+                    <label for="create-post-barangay-input">Barangay</label>
+                </div>
+                <div class="input-group" id="confirm-pass-group">
+                    <input type="text" placeholder="" id="create-post-street-input" required>
+                    <label for="create-post-street-input">Street</label>
+                </div>
+                <button type="submit" id="fetch-coordinates-button" class="es-button">Fetch Coordinates</button>
+            </form>
+        </div>  
         <div class="create_map-tags-wrapper">
             <div>
                 <select id="create_map_tags_list">

@@ -43,40 +43,6 @@
     background-color: #FFE041;
     color: black;
 }
-.input-group {
-    position: relative;
-    margin: 10px 0;
-}
-
-.input-group input {
-    width: 100%;
-    padding: 12px 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
-    background-color: rgb(var(--color-base-background));
-    color: rgb(var(--color-base-font))
-}
-
-.input-group label {
-    position: absolute;
-    left: 12px;
-    top: 12px;
-    color: #888;
-    font-size: 16px;
-    pointer-events: none;
-    transition: all 0.2s ease;
-}
-
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label {
-    top: -8px;
-    left: 8px;
-    font-size: 12px;
-    background-color:rgb(var(--color-base-background));
-    padding: 0 4px;
-    color: rgb(var(--color-base-font));
-}
 
 h2 {
     text-align: center;

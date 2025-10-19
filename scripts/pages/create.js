@@ -1,10 +1,9 @@
 import { renderCards } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading, generatePublicId } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading, generatePublicId, searchGeo } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, db } from "../init-firebase.js";
 import { collection, addDoc, GeoPoint } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
 
 let selectedFiles = [];
 document.addEventListener("DOMContentLoaded", async () => {
@@ -70,7 +69,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
         reader.readAsDataURL(file);
     });
+    document.querySelector(".location-dropdown-content").addEventListener("submit", async (evt) => {
 
+        evt.preventDefault();
+
+        document.querySelector("#fetch-coordinates-button").disabled = true;
+        document.querySelector("#fetch-coordinates-button").textContent = "Fetching...";
+        const city = document.querySelector("#create-post-city-input").value;
+        const barangay = document.querySelector("#create-post-barangay-input").value;
+        const street = document.querySelector("#create-post-street-input").value;
+        const query = [street, barangay, city, "Bataan"].filter(Boolean).join(", ").trim()
+        const data = await fetch(`/functions/geocode?q=${encodeURIComponent(query)}`)
+        const locations = await data.json();
+        if (locations.error || locations.length == 0) {
+            alert("Location not found. Please refine your search.");
+        } else {
+            const location = locations[0];
+            marker.setLngLat([location.lon, location.lat]);
+            map.flyTo({ center: [location.lon, location.lat], zoom: 16, pitch: 0 });
+            document.querySelector(".location-dropdown-label").textContent = [street, barangay, city, "Bataan"].filter(Boolean).join(", ") || "Select Location";
+        }
+        document.querySelector("#fetch-coordinates-button").disabled = false;
+        document.querySelector("#fetch-coordinates-button").textContent = "Fetch Location";
+        console.log(location);
+    });
 });
 
 let mapLocation;
@@ -129,9 +151,10 @@ async function submitCreatePost() {
         theBtn.textContent = "Submit";
     }
 }
-
+let map;
+let marker;
 async function initMapLibre() {
-    const map = new maplibregl.Map({
+    map = new maplibregl.Map({
         container: 'create_map',
         style: 'https://tiles.openfreemap.org/styles/liberty',
         center: [120.5394262, 14.6779294],
@@ -143,7 +166,7 @@ async function initMapLibre() {
     map.addControl(new maplibregl.NavigationControl());
     map.addControl(new maplibregl.AttributionControl(), 'top-left')
     map.getCanvas().style.cursor = 'pointer';
-    const marker = new maplibregl.Marker({
+    marker = new maplibregl.Marker({
         draggable: true,
         color: "#FF0000",
         scale: 1.5
@@ -251,5 +274,47 @@ export async function uploadToCloudinary(file) {
     return result.secure_url;
 
 }
+
+let fullAddress;
+
+function addressify(addr) {
+    let city = addr.city || addr.town || addr.municipality || addr.county || "";
+    let brgy = addr.suburb || addr.village || addr.neighbourhood || "";
+
+    let street = addr.street || "";
+
+    // append neighbourhood if it's not the barangay
+    if (addr.neighbourhood && addr.neighbourhood !== brgy) {
+        street += street ? ", " + addr.neighbourhood : addr.neighbourhood;
+    }
+
+    // append village if it's not the barangay or neighbourhood
+    if (addr.village && addr.village !== brgy && addr.village !== addr.neighbourhood) {
+        street += street ? ", " + addr.village : addr.village;
+    }
+
+    // append any other subdivision/block if needed
+    if (addr.block && addr.block !== brgy) {
+        street += street ? ", " + addr.block : addr.block;
+    }
+
+    // build display name
+    // only include parts that are not empty
+    let parts = [];
+    if (street) parts.push(street);
+    if (brgy) parts.push(brgy);
+    if (city) parts.push(city);
+    parts.push("Bataan"); // always add state at the end
+
+    let displayName = parts.join(", ");
+
+    return {
+        display_name: displayName.trim(),
+        street: street.trim(),
+        brgy: brgy.trim(),
+        city: city.trim()
+    };
+}
+
 
 window.submitCreatePost = submitCreatePost;

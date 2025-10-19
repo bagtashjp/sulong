@@ -57,23 +57,23 @@ export async function waitASecond(sec) {
 }
 
 export async function searchGeo({ city, barangay, street }) {
+    const parts = [street, barangay, city, "Bataan", "Philippines"].filter(Boolean);
+    const query = encodeURIComponent(parts.join(", "));
+
     const url = new URL('https://nominatim.openstreetmap.org/search');
-    url.searchParams.set('format', 'json');
-    url.searchParams.set('country', 'Philippines');
-    url.searchParams.set('state', 'Bataan');
-    url.searchParams.set('city', city);
-    url.searchParams.set('suburb', barangay)
-    url.searchParams.set('street', street);
-    url.searchParams.set('addressdetails', '1');
+    url.searchParams.set('q', query);
+
     const res = await fetch(url, {
         headers: {
             "User-Agent": "SulongApp/1.0 (hjpbagtas@bpsu.edu.ph)"
         }
-    })
+    });
     const data = await res.json();
     console.log(data);
 
+    return data;
 }
+
 
 export function generatePublicId() {
     return crypto.randomUUID();
