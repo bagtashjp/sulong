@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
-import { getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc, getCountFromServer, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc, getCountFromServer, addDoc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -27,6 +27,7 @@ export async function getPendingPosts(limitCount = 10) {
     try {
         const q = query(collection(db, "posts"),
             where("status", "==", "PENDING"),
+            orderBy("created_at", "desc"),
             limit(limitCount));
         const querySnapshot = await getDocs(q);
         const posts = await Promise.all(
@@ -62,6 +63,7 @@ export async function getApprovedPosts(limitCount = 10) {
         const q = query(
             collection(db, "posts"),
             where("status", "==", "APPROVED"),
+            orderBy("created_at", "desc"),
             limit(limitCount)
         );
 
