@@ -11,7 +11,7 @@
     justify-content: flex-start;
     background-color: rgb(var(--color-base-background));
     color: rgb(var(--color-base-font));
-    box-shadow: 0 2px 3px rgba(var(--color-base-font), 0.3);
+    box-shadow: 0 2px 3px rgba(0,0,0, 0.5);
     width: 100%;
     min-height: 61px;
     max-height: 61px;
@@ -121,9 +121,9 @@
 
 #home,
 #signin {
-    background-image: var(--scheme-background);
-    background-size: cover;
-    background-position: center center;
+    background-image: var(--scheme-background) !important;
+    background-size: cover !important;
+    background-position: center center !important;
 }
 
 #home>.header {

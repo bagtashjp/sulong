@@ -1,0 +1,32 @@
+.dash-layer {
+    display: flex;
+    justify-content: flex-start;
+    position: absolute;
+    top: 61px;
+    width: 100vw;
+}
+.dash-mock-layer {
+    width: 300px;
+    max-width: 300px;
+    
+}
+.dash-layer .core_feed .feed_post {
+    min-width: 380px;
+    max-width: 600px;
+}
+.dash-layer .core_feed  {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 380px;
+    max-width: none;
+}
+@media (max-width: 680px) {
+    .dash-mock-layer {
+        width: 0;
+        max-width: 0;
+    }
+}
+
+#dashboard #dash_inner_header {
+    text-align: center;
+}

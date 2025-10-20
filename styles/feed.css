@@ -56,7 +56,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    box-shadow: 1px 1px 5px rgba(var(--color-base-font), 0.4);
+    box-shadow: 1px 1px 5px rgba(0,0,0, 0.5);
     border-radius: 12px;
     width: 100%;
     background-color: rgb(var(--color-base-background));

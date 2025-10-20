@@ -1,0 +1,110 @@
+.admin_page .left_nav {
+    display: none !important;
+}
+.admin_nav {
+    position: fixed;
+    top: 61px;
+    left: 0;
+    width: 300px;
+    height: calc(100% - 61px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 20px;
+    background-color: var(--color-secondary);
+    color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 99997;
+}
+
+.anav-title {
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+}
+.admin_page .top_anav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: var(--color-secondary);
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.admin_page .top_anav a {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    width: 100%;
+    height: auto;
+    border: none;
+    cursor: pointer;
+    padding: 15px 5px;
+
+    &:hover {
+        background-color: color-mix(in srgb, var(--color-secondary) 80%, black 20%);
+    }
+}
+
+.top_anav a img,
+.anav-toggle-label img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    filter: invert(1);
+}
+
+.anav-toggle-label {
+    cursor: pointer;
+    padding: 15px 5px;
+    &:hover {
+        transform: translateX(2px);
+    }
+}
+
+.anav-toggle-label::after {
+    display: inline-block;
+    align-self: last baseline;
+    content: '▼';
+    position: absolute;
+    right: 10px;
+    font-size: 12px;
+    transition: transform 0.5s ease;
+
+}
+
+#anav-analytics-toggle:checked+.anav-toggle-label::after {
+    transform: rotate(180deg);
+}
+
+.anav-wrapper {
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+    transition: max-height 0.5s ease;
+}
+
+#anav-analytics-toggle:checked~.anav-wrapper {
+    max-height: 200px;
+}
+
+@media (max-width: 680px) {
+    .admin_nav {
+        left: -300px;
+        transition: left 0.5s ease;
+    }
+
+    body:has(#menu-toggle:checked) .admin_nav {
+        left: 0 !important;
+    }
+
+    .analytics_wrapper {
+        width: calc(100% - 0px) !important;
+    }
+
+}

@@ -1,0 +1,134 @@
+    <!--#region templates up-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <title>Analytics - Sulong</title>
+</head>
+<body id="analytics" class="admin_page">
+    <div id="loading_page">Loading...</div>
+    <card id="header"></card>
+    <card id="admin_nav"></card>
+    <!--#endregion-->
+        
+    <div class="dash-layer">
+        <div class="dash-mock-layer"></div>
+        <div class="analytics_wrapper">
+            <div id="dash_inner_header">Analytics</div>
+            <h2 id="analytics_table">TABLE</h2>
+            <div class="analytics_table_container">
+                <table class="analytics_table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Date/Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="table_index">1</td>
+                            <td class="table_author">Harley Jet Bagtas</td>
+                            <td class="table_category">Road Repair</td>
+                            <td class="table_location">Barangay 123, Makati City</td>
+                            <td class="table_status">Resolved</td>
+                            <td class="table_description">Potholes on the main road have been fixed.</td>
+                            <td class="table_datetime">24/06/15 10:30AM
+                        </tr>
+                        <tr>
+                            <td class="table_index">2</td>
+                            <td class="table_author">Harley Jet Bagtas</td>
+                            <td class="table_category">Road Repair</td>
+                            <td class="table_location">Barangay 123, Makati City</td>
+                            <td class="table_status">Resolved</td>
+                            <td class="table_description">Potholes on the main road have been fixed.</td>
+                            <td class="table_datetime">24/06/15 10:30AM</td>
+                        </tr>
+                        <tr>
+                            <td class="table_index">3</td>
+                            <td class="table_author">Harley Jet Bagtas</td>
+                            <td class="table_category">Road Repair</td>
+                            <td class="table_location">Barangay 123, Makati City</td>
+                            <td class="table_status">Resolved</td>
+                            <td class="table_description">Potholes on the main road have been fixed.</td>
+                            <td class="table_datetime">24/06/15 10:30AM</td>
+                        </tr>
+                        <tr>
+                            <td class="table_index">1</td>
+                            <td class="table_author">Harley Jet Bagtas</td>
+                            <td class="table_category">Road Repair</td>
+                            <td class="table_location">Barangay 123, Makati City</td>
+                            <td class="table_status">Resolved</td>
+                            <td class="table_description">Potholes on the main road have been fixed.</td>
+                            <td class="table_datetime">24/06/15 10:30AM
+                        </tr>
+                        <tr>
+                            <td class="table_index">2</td>
+                            <td class="table_author">Harley Jet Bagtas</td>
+                            <td class="table_category">Road Repair</td>
+                            <td class="table_location">Barangay 123, Makati City</td>
+                            <td class="table_status">Resolved</td>
+                            <td class="table_description">Potholes on the main road have been fixed.</td>
+                            <td class="table_datetime">24/06/15 10:30AM</td>
+                        </tr>
+                        <tr>
+                            <td class="table_index">3</td>
+                            <td class="table_author">Harley Jet Bagtas</td>
+                            <td class="table_category">Road Repair</td>
+                            <td class="table_location">Barangay 123, Makati City</td>
+                            <td class="table_status">Resolved</td>
+                            <td class="table_description">Potholes on the main road have been fixed.</td>
+                            <td class="table_datetime">24/06/15 10:30AM</td>
+                        </tr>
+                        <tr>
+                            <td class="table_index">1</td>
+                            <td class="table_author">Harley Jet Bagtas</td>
+                            <td class="table_category">Road Repair</td>
+                            <td class="table_location">Barangay 123, Makati City</td>
+                            <td class="table_status">Resolved</td>
+                            <td class="table_description">Potholes on the main road have been fixed.</td>
+                            <td class="table_datetime">24/06/15 10:30AM
+                        </tr>
+                        <tr>
+                            <td class="table_index">2</td>
+                            <td class="table_author">Harley Jet Bagtas</td>
+                            <td class="table_category">Road Repair</td>
+                            <td class="table_location">Barangay 123, Makati City</td>
+                            <td class="table_status">Resolved</td>
+                            <td class="table_description">Potholes on the main road have been fixed.</td>
+                            <td class="table_datetime">24/06/15 10:30AM</td>
+                        </tr>
+                        <tr>
+                            <td class="table_index">3</td>
+                            <td class="table_author">Harley Jet Bagtas</td>
+                            <td class="table_category">Road Repair</td>
+                            <td class="table_location">Barangay 123, Makati City</td>
+                            <td class="table_status">Resolved</td>
+                            <td class="table_description">Potholes on the main road have been fixed.</td>
+                            <td class="table_datetime">24/06/15 10:30AM</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <h2 id="analytics_graphs">CHARTS</h2>
+            <div class="analytics_graph_container">
+                <canvas id="posts_chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!--#region templates down-->
+    <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a larger screen. ⚠️</div>
+    <script type="module" src="scripts/pages/analytics.js"></script>
+    
+</body>
+</html>
+<!--#endregion-->

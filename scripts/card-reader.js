@@ -1,7 +1,6 @@
 const cardCache = {};
 export const cardNodes = {};
 
-
 export async function renderCards() {
     const cardElements = Array.from(document.querySelectorAll("card"));
     for (const el of cardElements) {
