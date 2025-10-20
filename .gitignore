@@ -1,4 +1,4 @@
 .dev.vars
-firestore-rules.js
+firestore-rules
 .wrangler/
 node_modules/

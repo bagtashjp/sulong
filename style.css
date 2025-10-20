@@ -31,6 +31,7 @@ body {
 
 
 /* #endregion */
+
 /* #region Header */
 .header {
     position: fixed;
@@ -246,6 +247,7 @@ body {
 }
 
 /* #endregion */
+
 /* #region Hero */
 .hero {
     position: absolute;
@@ -323,6 +325,7 @@ body {
 }
 
 /* #endregion */
+
 /* #region Feed */
 .feed_layer {
     flex: 1 1 auto;
@@ -695,6 +698,7 @@ body {
 }
 
 /* #endregion */
+
 /* #region Create Post */
 #create {
     flex-direction: row;
@@ -903,8 +907,6 @@ body {
     }
 }
 
-
-
 .create_image-remove_button {
     background-color: rgba(255, 0, 0, 0.8);
     color: white;
@@ -919,6 +921,7 @@ body {
 }
 
 /* #endregion */
+
 /* #region Left Nav */
 .left_nav {
     display: flex;
@@ -1011,6 +1014,7 @@ body {
 }
 
 /* #endregion */
+
 /* #region Utilities */
 #darkmodie {
     position: fixed;
@@ -1121,6 +1125,7 @@ body {
 }
 
 /* #endregion */
+
 /* #region MAP APIs */
 
 .leaflet-popup-content-wrapper,
@@ -1194,6 +1199,7 @@ body {
 }
 
 /* #endregion */
+
 /* #region BIG MAP */
 
 
@@ -1241,7 +1247,6 @@ body {
 }
 
 /* #endregion */
-
 
 /* #region Top Menu Button */
 .menu-btn {
@@ -1296,8 +1301,7 @@ body:has(#menu-toggle:checked) .left_nav {
 }
 /* #endregion */
 
-
-
+/* #region General Styles */
 .input-group {
     position: relative;
     margin: 10px 0;
@@ -1332,3 +1336,5 @@ body:has(#menu-toggle:checked) .left_nav {
     padding: 0 4px;
     color: rgb(var(--color-base-font));
 }
+
+/* #endregion */
