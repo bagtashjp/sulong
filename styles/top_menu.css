@@ -1,0 +1,53 @@
+
+/* #region Top Menu Button */
+.menu-btn {
+    align-self: center;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    
+}
+
+.menu-line {
+    height: 4px;
+    background: rgb(var(--color-base-font));
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Animation when checked */
+#menu-toggle:checked+.menu-btn .top {
+    transform: rotate(30deg) translate(5px, 13px);
+    width: 20px;
+}
+
+#menu-toggle:checked+.menu-btn .middle {
+    /*opacity: 0;*/
+    transform: translateX(-2px);
+}
+
+#menu-toggle:checked+.menu-btn .bottom {
+    transform: rotate(-30deg) translate(5px,-13px);
+    width: 20px;
+}
+#menu-toggle:checked+.menu-btn:hover{
+    transform: translateX(-5px);
+}
+body:has(#menu-toggle:checked) .left_nav {
+    left: 0px;
+}
+
+
+@media (max-width: 680px) {
+    #home .menu-btn, #signin .menu-btn {
+        display: none;
+    }
+    .menu-btn {
+        display: flex;
+    }
+}
+/* #endregion */

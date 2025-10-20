@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
 import { getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc, getCountFromServer, addDoc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -20,9 +19,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+const usersCache = {};
 export async function getPendingPosts(limitCount = 10) {
     try {
         const q = query(collection(db, "posts"),
@@ -34,13 +33,20 @@ export async function getPendingPosts(limitCount = 10) {
             querySnapshot.docs.map(async (postDoc) => {
                 const postData = postDoc.data();
                 let userName = "Unknown";
-
-                const userRef = doc(db, "users", postData.user_id);
                 let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists()) {
-                    userName = userSnap.data().first_name + " " + userSnap.data().last_name;
-                    userAvatar = userSnap.data().avatar || userAvatar;
+
+                if (usersCache[postData.user_id]) {
+                    userName = usersCache[postData.user_id].name;
+                    userAvatar = usersCache[postData.user_id].avatar;
+                } else {
+                    const userRef = doc(db, "users", postData.user_id);
+                    const userSnap = await getDoc(userRef);
+                    const userData = userSnap.exists() ? userSnap.data() : null;
+                    if (userData) {
+                        userName = userData.first_name + " " + userData.last_name;
+                        userAvatar = userData.avatar || userAvatar;
+                    }
+                    usersCache[postData.user_id] = { name: userName, avatar: userAvatar };
                 }
                 return {
                     id: postDoc.id,
@@ -74,11 +80,19 @@ export async function getApprovedPosts(limitCount = 10) {
                 const postData = postDoc.data();
                 let userName = "Unknown";
                 let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
-                const userRef = doc(db, "users", postData.user_id);
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists()) {
-                    userName = userSnap.data().first_name + " " + userSnap.data().last_name;
-                    userAvatar = userSnap.data().avatar || userAvatar;
+
+                if (usersCache[postData.user_id]) {
+                    userName = usersCache[postData.user_id].name;
+                    userAvatar = usersCache[postData.user_id].avatar;
+                } else {
+                    const userRef = doc(db, "users", postData.user_id);
+                    const userSnap = await getDoc(userRef);
+                    const userData = userSnap.exists() ? userSnap.data() : null;
+                    if (userData) {
+                        userName = userData.first_name + " " + userData.last_name;
+                        userAvatar = userData.avatar || userAvatar;
+                    }
+                    usersCache[postData.user_id] = { name: userName, avatar: userAvatar };
                 }
                 return {
                     id: postDoc.id,
@@ -92,7 +106,7 @@ export async function getApprovedPosts(limitCount = 10) {
         return posts;
     } catch (error) {
         console.error("Error getting approved posts:", error);
-        alert("Error getting pending posts. " + error);
+        alert("Error getting approved posts. " + error);
         return [];
     }
 }
@@ -100,28 +114,27 @@ export async function getApprovedPosts(limitCount = 10) {
 export async function getPost(postId) {
     try {
         const postRef = doc(db, "posts", postId);
-        const postSnap = await getDoc(postRef);
-
-        if (!postSnap.exists()) {
-            console.warn("Post not found:", postId);
-            return null;
-        }
-
-        const postData = postSnap.data();
-
+        const postDoc = await getDoc(postRef);
+        const postData = postDoc.data();
         let userName = "Unknown";
         let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
-        const userRef = doc(db, "users", postData.user_id);
-        const userSnap = await getDoc(userRef);
 
-        if (userSnap.exists()) {
-            const user = userSnap.data();
-            userName = user.first_name + " " + user.last_name;
-            userAvatar = user.avatar || userAvatar;
+        if (usersCache[postData.user_id]) {
+            userName = usersCache[postData.user_id].name;
+            userAvatar = usersCache[postData.user_id].avatar;
+        } else {
+            const userRef = doc(db, "users", postData.user_id);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.exists() ? userSnap.data() : null;
+            if (userData) {
+                userName = userData.first_name + " " + userData.last_name;
+                userAvatar = userData.avatar || userAvatar;
+            }
+            userAvatar = userSnap.data().avatar || userAvatar;
+            usersCache[postData.user_id] = { name: userName, avatar: userAvatar };
         }
-
         return {
-            id: postSnap.id,
+            id: postDoc.id,
             ...postData,
             display_name: userName,
             user_avatar: userAvatar
@@ -218,7 +231,6 @@ export async function getComments(postId, commentLimit = 100) {
         );
 
         const commentsSnap = await getDocs(commentsQuery);
-
         const comments = await Promise.all(
             commentsSnap.docs.map(async (commentDoc) => {
                 const commentData = commentDoc.data();
@@ -227,13 +239,19 @@ export async function getComments(postId, commentLimit = 100) {
                 let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
 
                 if (commentData.user_id) {
-                    const userRef = doc(db, "users", commentData.user_id);
-                    const userSnap = await getDoc(userRef);
+                    if (usersCache[commentData.user_id]) {
+                        userName = usersCache[commentData.user_id].name;
+                        userAvatar = usersCache[commentData.user_id].avatar;
+                    } else {
+                        const userRef = doc(db, "users", commentData.user_id);
+                        const userSnap = await getDoc(userRef);
 
-                    if (userSnap.exists()) {
-                        const user = userSnap.data();
-                        userName = `${user.first_name} ${user.last_name}`;
-                        userAvatar = user.avatar || userAvatar;
+                        if (userSnap.exists()) {
+                            const user = userSnap.data();
+                            userName = `${user.first_name} ${user.last_name}`;
+                            userAvatar = user.avatar || userAvatar;
+                        }
+                        usersCache[commentData.user_id] = { name: userName, avatar: userAvatar };
                     }
                 }
 

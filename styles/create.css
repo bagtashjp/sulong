@@ -1,0 +1,222 @@
+/* #region Create Post */
+#create {
+    flex-direction: row;
+    padding-top: 70px;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.mid_layer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 1px 1px 4px rgba(var(--color-base-font), 0.5);
+    border-radius: 20px;
+    padding: 10px;
+    gap: 10px;
+}
+
+#create_map {
+    border-radius: 15px;
+    width: 100%;
+    height: 300px;
+}
+
+#map_pinner {
+    background-color: rgb(var(--color-base-background));
+    color: rgb(var(--color-base-font));
+    cursor: pointer;
+    border-radius: 999px;
+    padding: 10px;
+    width: 80%;
+    border: none;
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 402;
+    font-weight: bold;
+
+    &:hover {
+        background-color: var(--color-primary);
+        color: black;
+    }
+
+}
+
+.es-button:disabled {
+    background-color: rgb(99, 99, 99) !important;
+    color: rgb(173, 173, 173) !important;
+    cursor: default !important;
+}
+
+.es-button:disabled:hover {
+    background-color: rgb(var(--color-base-background)) !important;
+    color: rgb(var(--color-base-font)) !important;
+}
+
+.create_map-tags-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    box-shadow: 0px 0px 4px rgba(var(--color-base-font), 0.3);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+#create_map_tags_list {
+    color: rgb(var(--color-base-font));
+    background-color: rgb(var(--color-base-background));
+    padding-left: 10px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+}
+
+#create_map-description {
+    color: rgb(var(--color-base-font));
+    background-color: rgb(var(--color-base-background));
+    width: 100%;
+    border: 2px solid rgba(var(--color-base-font), 0.3);
+    border-radius: 10px;
+    font-family: 'Montseratt', 'Roboto', sans-serif;
+    font-size: 16px;
+    padding: 10px;
+}
+
+#create_map-submit_button {
+    width: 100%;
+    padding: 10px 0;
+    background-color: #FFE041;
+    border: none;
+    border-radius: 9999px;
+    font-size: 16px;
+    box-shadow: 1px 1px 4px rgba(var(--color-base-font), 0.3);
+
+    &:hover {
+        box-shadow: inset 1px 1px 3px black;
+        cursor: pointer;
+    }
+}
+
+#create_map-description::placeholder {
+    color: rgb(var(--color-base-font))
+}
+
+.create_map-tags-wrapper #create_map-description:focus::placeholder {
+    color: rgba(var(--color-base-font), 0.3)
+}
+
+
+.location-dropdown-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+.location-dropdown-label {
+    color: var(--color-secondary);
+    align-self: flex-start;
+    font-size: 16px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+.location-dropdown-label span {
+    color: rgb(var(--color-base-font));
+    font-size: 14px;
+}
+
+.location-dropdown-label::before {
+    content: "▼";
+     display: inline-block;
+    transition: transform 0.5s ease-out;
+}
+#location-dropdown-toggle:checked+.location-dropdown-label::before {
+    transform: rotate(-180deg);
+}
+
+.location-dropdown-content {
+    max-height: 0px;
+    overflow-y: hidden;
+    transition: max-height 0.5s ease-out;
+
+}
+
+#location-dropdown-toggle:checked ~ .location-dropdown-content {
+    max-height: 213px;
+}
+
+#fetch-coordinates-button {
+    width: 100%;
+    padding: 10px 0;
+    background-color: var(--color-secondary);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 9999px;
+    &:hover {
+        box-shadow: inset 1px 1px 3px black;
+    }
+}
+#create_image_container {
+    display: flex;
+    gap: 10px;
+    align-self: flex-start;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.create_image-preview {
+    width: 100px;
+    min-width: 100px;
+    height: 100px;
+    min-height: 100px;
+    background-size: cover;
+    background-position: center;
+    display: inline-block;
+    border-radius: 10px;
+}
+
+#create_image_upload_button {
+    align-self: flex-start;
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
+    aspect-ratio: 1/1;
+    width: 20px;
+    height: auto;
+    background-image: url(../assets/upload_image_button.svg);
+    filter: invert(var(--filter-dark-mode));
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+
+    &:hover {
+        box-shadow: inset 1px 1px 3px black;
+    }
+}
+
+.create_image-remove_button {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* #endregion */

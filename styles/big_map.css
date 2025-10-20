@@ -1,0 +1,47 @@
+
+/* #region BIG MAP */
+
+.big_map_wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+}
+
+.filter_options_container {
+    padding: 10px 10px;
+    position: absolute;
+    top: 61px;
+    width: 100vw;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    z-index: 99996;
+}
+
+.filter_options_container span {
+    text-shadow: 1px 1px 4px rgb(255, 255, 255, 1);
+}
+
+.filter_bys {
+    padding-top: 5px;
+    align-items: center;
+    background-color: rgb(var(--color-base-background));
+    color: rgb(var(--color-base-font));
+    margin-right: 10px;
+}
+
+#big_map .maplibregl-marker {
+    cursor: pointer;
+
+}
+
+#big_map_wrapper #map_style_selector {
+
+    z-index: 99997;
+    position: absolute;
+    top: 92px;
+    right: 10px;
+    left: auto;
+}
+
+/* #endregion */
