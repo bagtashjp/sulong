@@ -71,6 +71,7 @@
 .analytics_graph_container {
     width: 100%;
     display: flex;
+    flex-direction: row;
     gap: 10px;
 }
 .analytics_graph_container div {
@@ -78,4 +79,9 @@
     overflow: hidden;
     background-color: rgb(var(--color-base-font), 0.1);
     border-radius: 10px;
+}
+@media (max-width: 680px) {
+    .analytics_graph_container {
+        flex-direction: column;
+    }
 }
