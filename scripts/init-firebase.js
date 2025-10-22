@@ -1,7 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc, getCountFromServer, addDoc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { Timestamp, getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc, getCountFromServer, addDoc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { POST_TAG_NAME } from "./z_constants.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -26,6 +27,47 @@ export async function getPendingPosts(limitCount = 10) {
     try {
         const q = query(collection(db, "posts"),
             where("status", "==", "PENDING"),
+            orderBy("created_at", "desc"),
+            limit(limitCount));
+        const querySnapshot = await getDocs(q);
+        const posts = await Promise.all(
+            querySnapshot.docs.map(async (postDoc) => {
+                const postData = postDoc.data();
+                let userName = "Unknown";
+                let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
+
+                if (usersCache[postData.user_id]) {
+                    userName = usersCache[postData.user_id].name;
+                    userAvatar = usersCache[postData.user_id].avatar;
+                } else {
+                    const userRef = doc(db, "users", postData.user_id);
+                    const userSnap = await getDoc(userRef);
+                    const userData = userSnap.exists() ? userSnap.data() : null;
+                    if (userData) {
+                        userName = userData.first_name + " " + userData.last_name;
+                        userAvatar = userData.avatar || userAvatar;
+                    }
+                    usersCache[postData.user_id] = { name: userName, avatar: userAvatar };
+                }
+                return {
+                    id: postDoc.id,
+                    ...postData,
+                    display_name: userName,
+                    user_avatar: userAvatar
+                };
+            })
+        );
+        return posts;
+    } catch (error) {
+        console.error("Error getting posts with user: ", error);
+        alert("Error getting pending posts. " + error);
+        return [];
+    }
+}
+
+export async function getPosts(limitCount = 10) {
+    try {
+        const q = query(collection(db, "posts"),
             orderBy("created_at", "desc"),
             limit(limitCount));
         const querySnapshot = await getDocs(q);
@@ -211,6 +253,7 @@ export async function getReactionCount(postId, reactionType = "UPVOTE") {
     const count = countSnap.data().count;
     return count;
 }
+
 export async function getUserPostReaction(postId) {
     try {
         const userId = auth.currentUser.uid;
@@ -222,6 +265,7 @@ export async function getUserPostReaction(postId) {
         return null;
     }
 }
+
 export async function getComments(postId, commentLimit = 100) {
     try {
         const commentsCol = collection(db, "posts", postId, "comments");
@@ -317,4 +361,42 @@ export async function setComment(postId, body) {
     } catch (error) {
         console.error("Error adding comment:", error);
     }
+}
+
+export async function getMonthlyCounts(year = 2025) {
+    const counts = [];
+
+    for (let month = 1; month <= 12; month++) {
+        const q = query(
+            collection(db, "posts"),
+            where("created_at", ">=", startOfMonth(year, month)),
+            where("created_at", "<", startOfNextMonth(year, month))
+        );
+        const snapshot = await getCountFromServer(q);
+        counts.push(snapshot.data().count);
+    }
+
+    return counts;
+}
+
+export async function getCategoryCounts() {
+    const catTags = Object.keys(POST_TAG_NAME);
+    const cats = [];
+     for (const tag of catTags) {
+        const q = query(
+            collection(db, "posts"),
+            where("category", "==", tag)
+        );
+        const snapshot = await getCountFromServer(q);
+        cats.push(snapshot.data().count);
+    }
+    return cats;
+}
+
+
+function startOfMonth(y, m) {
+    return Timestamp.fromDate(new Date(y, m - 1, 1));
+}
+function startOfNextMonth(y, m) {
+    return Timestamp.fromDate(new Date(y, m, 1));
 }

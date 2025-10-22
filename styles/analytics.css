@@ -1,11 +1,10 @@
 .analytics_wrapper {
     color: rgb(var(--color-base-font));
     padding-left: 10px;
-    background-color: rgb(var(--color-base-font), 0.1);
+    background-color: rgb(var(--color-base-font), 0.05);
     width: calc(100% - 300px);
     min-height: calc(100vh - 61px);
-
-
+    
 }
 #dash_inner_header {
     text-transform: uppercase;
@@ -20,6 +19,13 @@
     max-height: 500px;
     overflow-y: auto;
     overflow-x: auto;
+}
+.analytics_wrapper h1 {
+    margin: 0;
+    font-size: 60px;
+    text-align: left;
+    color: var(--color-primary);
+    font-family: 'Arial Black', sans-serif;
 }
 .analytics_wrapper h2 {
     margin: 0;
@@ -53,4 +59,23 @@
     padding: 20px 10px;
     font-size: 16px;
 
+}
+
+.analytics_table tr th {
+    cursor: pointer;
+}
+
+#analytics .dash-layer {
+    width: 100%;
+}
+.analytics_graph_container {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+}
+.analytics_graph_container div {
+    flex: 1;
+    overflow: hidden;
+    background-color: rgb(var(--color-base-font), 0.1);
+    border-radius: 10px;
 }

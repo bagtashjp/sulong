@@ -1,9 +1,9 @@
 import { renderCards } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading, generatePublicId, searchGeo } from "../utils.js";
+import { addressify, initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading, generatePublicId, searchGeo } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, db } from "../init-firebase.js";
-import { collection, addDoc, GeoPoint } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { collection, addDoc, GeoPoint , serverTimestamp} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 let selectedFiles = [];
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
@@ -132,7 +132,7 @@ async function submitCreatePost() {
         category: theCategory,
         media: imgURLS,
         tracker_id: null,
-        created_at: new Date(),
+        created_at: serverTimestamp(),
         location: new GeoPoint(mapLocation.lat, mapLocation.lon),
         status: "PENDING",
         address_name: fullAddress.display_name || "Unknown Address",
@@ -282,38 +282,6 @@ export async function uploadToCloudinary(file) {
 
 let fullAddress;
 
-function addressify(addr) {
-    let city = addr.city || addr.town || addr.municipality || addr.county || "";
-    let brgy = addr.suburb || addr.village || addr.neighbourhood || "";
-
-    let streetParts = [];
-
-    // Order: street > road > block > quarter > neighbourhood > village
-    if (addr.street) streetParts.push(addr.street);
-    if (addr.road && addr.road !== addr.street) streetParts.push(addr.road);
-    if (addr.block && addr.block !== brgy) streetParts.push(addr.block);
-    if (addr.quarter && addr.quarter !== brgy) streetParts.push(addr.quarter);
-    if (addr.neighbourhood && addr.neighbourhood !== brgy) streetParts.push(addr.neighbourhood);
-    if (addr.village && addr.village !== brgy && addr.village !== addr.neighbourhood) streetParts.push(addr.village);
-
-    let street = streetParts.join(", ");
-
-    // build display name
-    let parts = [];
-    if (street) parts.push(street);
-    if (brgy) parts.push(brgy);
-    if (city) parts.push(city);
-    parts.push("Bataan"); // always add province/state at the end
-
-    let displayName = parts.join(", ");
-    console.log("Addressify:", displayName);
-    return {
-        display_name: displayName.trim(),
-        street: street.trim(),
-        brgy: brgy.trim(),
-        city: city.trim()
-    };
-}
 
 
 window.submitCreatePost = submitCreatePost;

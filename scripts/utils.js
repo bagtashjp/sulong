@@ -203,3 +203,37 @@ export async function summonToast(message, duration = 3000) {
     }, duration);
     
 }
+
+
+export function addressify(addr) {
+    let city = addr.city || addr.town || addr.municipality || addr.county || "";
+    let brgy = addr.suburb || addr.village || addr.neighbourhood || "";
+
+    let streetParts = [];
+
+    // Order: street > road > block > quarter > neighbourhood > village
+    if (addr.street) streetParts.push(addr.street);
+    if (addr.road && addr.road !== addr.street) streetParts.push(addr.road);
+    if (addr.block && addr.block !== brgy) streetParts.push(addr.block);
+    if (addr.quarter && addr.quarter !== brgy) streetParts.push(addr.quarter);
+    if (addr.neighbourhood && addr.neighbourhood !== brgy) streetParts.push(addr.neighbourhood);
+    if (addr.village && addr.village !== brgy && addr.village !== addr.neighbourhood) streetParts.push(addr.village);
+
+    let street = streetParts.join(", ");
+
+    // build display name
+    let parts = [];
+    if (street) parts.push(street);
+    if (brgy) parts.push(brgy);
+    if (city) parts.push(city);
+    parts.push("Bataan"); // always add province/state at the end
+
+    let displayName = parts.join(", ");
+    console.log("Addressify:", displayName);
+    return {
+        display_name: displayName.trim(),
+        street: street.trim(),
+        brgy: brgy.trim(),
+        city: city.trim()
+    };
+}
