@@ -164,9 +164,7 @@ export async function uploadToCloudinary(file) {
         console.error("Upload returned no URL, aborting app");
         return;
     }
-
     return result.secure_url;
-
 }
 
 export async function summonToast(message, duration = 3000) {

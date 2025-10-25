@@ -1,9 +1,11 @@
 import { renderCards } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { addressify, initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading, generatePublicId, searchGeo } from "../utils.js";
+import { addressify, initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading, generatePublicId } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, db } from "../init-firebase.js";
 import { collection, addDoc, GeoPoint , serverTimestamp} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+
 let selectedFiles = [];
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
@@ -278,10 +280,8 @@ export async function uploadToCloudinary(file) {
 
     return result.secure_url;
 
-}
+} 
 
 let fullAddress;
-
-
 
 window.submitCreatePost = submitCreatePost;

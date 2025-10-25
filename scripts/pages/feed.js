@@ -12,6 +12,7 @@ import { POST_TAG_NAME } from "../z_constants.js";
  *
  * Use `refreshPosts()` to clear then reload posts (handy for filters).
  */
+
 export function clearPostsContainer(container = document.querySelector(".core_feed")) {
     if (!container) return;
     // Remove common inline handlers to avoid accidental references
@@ -70,6 +71,9 @@ async function loadPostCards() {
             const img = document.createElement("span");
             img.classList.add("feed-image-preview");
             img.style.backgroundImage = `url(${imgUrl})`;
+            img.onclick = () => {
+                window.open(imgUrl, "_blank");
+            }
             imgs.push(img);
         }
 

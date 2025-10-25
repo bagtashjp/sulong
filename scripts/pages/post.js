@@ -41,6 +41,9 @@ async function loadPostCard(postId) {
         const img = document.createElement("span");
         img.classList.add("feed-image-preview");
         img.style.backgroundImage = `url(${imgUrl})`;
+        img.onclick = () => {
+            window.open(imgUrl, "_blank");
+        }
         imgs.push(img);
     }
     const address = await geocode(post.location.latitude, post.location.longitude);
@@ -59,6 +62,7 @@ async function loadPostCard(postId) {
         ".user_icon": { bg: post.user_avatar },
         ".post-reaction-count": { text: (voteCount > 99 ? `99+` : "" + voteCount), id: reactionCountId },
         ".comments_section": { style: { display: "flex" } },
+        ".progress_section": { style: { display: "flex" } },
         ".comment_button": { style: { display: "none" } },
         ".upvote_button": {
             img: userReaction == "UPVOTE" ? "assets/upvote_shaded_icon.svg" : "assets/upvote_icon.svg",

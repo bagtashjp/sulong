@@ -111,22 +111,21 @@
     padding-left: 10px;
     gap: 10px;
     position: relative;
-    margin-top: -10px;
 }
 
-.comments_wrapper {
+.comments_wrapper, .progress_wrapper {
     display: flex;
     flex-direction: column;
     gap: 10px;
     width: 100%;
 }
 
-.comment {
+.comment, .progress {
     position: relative;
     margin-left: 30px;
 }
 
-.comment::before {
+.comment::before, .progress::before {
     content: "—";
     font-weight: bold;
     color: gray;
@@ -138,7 +137,7 @@
     left: -20px;
 }
 
-.comments_header {
+.comments_header, .progress_header {
     font-size: 18px;
     font-weight: bold;
     margin-left: -10px;
@@ -166,20 +165,20 @@
     font-size: 14px;
 }
 
-.new_comment_submit {
+.new_comment_submit, .new_progress_submit {
     width: 100px;
     align-self: flex-end;
     border: none;
     padding: 8px 12px;
     border-radius: 10px;
     background-color: var(--color-secondary);
-    color: rgb(var(--color-base-background));
+    color: white;
     font-size: 14px;
     font-family: 'Montserrat', 'Roboto', sans-serif;
     cursor: pointer;
 
     &:hover {
-        box-shadow: inset 1px 1px 3px rgba(var(--color-base-font), 0.5);
+        box-shadow: inset 1px 1px 3px rgba(0, 0 ,0, 0.5);
     }
 
     &:disabled {
@@ -195,7 +194,7 @@
     }
 }
 
-.new_comment_input {
+.new_comment_input, .new_progress_input {
     width: 100%;
     padding: 8px;
     border: 2px solid gray;
@@ -204,6 +203,8 @@
     font-family: 'Montserrat', 'Roboto', sans-serif;
     resize: vertical;
     z-index: 300;
+    background-color: rgb(var(--color-base-background));
+    color: rgb(var(--color-base-font));
 }
 
 .new_comment_wrapper {
@@ -251,7 +252,6 @@
     background-size: cover;
     border-radius: 50%;
 }
-
 
 .feed_post .tile_map {
     width: 100%;
@@ -324,6 +324,10 @@
     background-color: rgb(236, 59, 46);
 }
 
+.bottom_anav {
+    justify-self: flex-end;
+}
+
 .tile_map .post_tag {
     padding: 5px 10px;
     border-radius: 999px;
@@ -349,6 +353,19 @@
     display: none;
 }
 
+
+.progress_section {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: -10px;
+    border-top: 1px solid rgba(var(--color-base-font), 0.2);
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+}
+
 @media (max-width: 680px) {
     .core_feed {
         min-width: 360px;
@@ -368,5 +385,31 @@
         font-size: 15px;
     }
 }
+.progress_indicator {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+.progress_indicator .progress_timestamp {
+    font-weight: bold;
+    background-color: gray;
+    color: white;
+    border-radius: 9999px;
+    padding: 2px 10px;
+}
+
+.progress_indicator .progress_user {
+    font-weight: bold;
+}
+
+.new_progress_wrapper {
+    display: none;
+    gap: 10px;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+
 
 /* #endregion */
