@@ -2,14 +2,14 @@ import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js
 import { initDarkmode } from "../theme.js";
 import { initNavBars, endLoading, delayHrefs, generatePublicId, geocode, buildStaticMapUrl, waitASecond, summonToast } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth, getPost, doesUserExist, getReactionCount, getComments, setComment, getCurrentUserData, getUserPostReaction, removeReaction, setReaction } from "../init-firebase.js";
+import { auth, getPost, doesUserExist, getReactionCount, getComments, setComment, getCurrentUserData, getReactions, removeReaction, setReaction, setProgress, getProgress } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
 let userData = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
-    await renderCardsAsync(["feed_post", "comment"]);
+    await renderCardsAsync(["feed_post", "comment", "progress"]);
     initDarkmode();
     initAuthState(async () => {
         if (!(await doesUserExist(auth.currentUser.uid))) {
@@ -48,7 +48,7 @@ async function loadPostCard(postId) {
     }
     const address = await geocode(post.location.latitude, post.location.longitude);
     const voteCount = await getReactionCount(post.id, "UPVOTE") - await getReactionCount(post.id, "DOWNVOTE");
-    let userReaction = (await getUserPostReaction(post.id))?.type;
+    let userReaction = (await getReactions(post.id))?.type;
     const downvoteId = "_" + crypto.randomUUID();
     const upvoteId = "_" + crypto.randomUUID();
     const reactionCountId = "_" + crypto.randomUUID();
@@ -93,10 +93,46 @@ async function loadPostCard(postId) {
                         commentsContainer.appendChild(commentCard);
                     }
                     document.querySelector(".new_comment_input").value = "";
-                    setTimeout(() => evt.target.disabled = true, 5000);
                 } catch (error) {
                     console.error("Error adding comment:", error);
                     summonToast("Error adding comment. " + error, 5000);
+                } finally {
+                    setTimeout(() => evt.target.disabled = false, 5000);
+                }
+            }
+        }
+    });
+
+    auth.currentUser.getIdTokenResult(false).then((idTokenResult) => {
+        const role = idTokenResult.claims.role;
+        if (role == "ADMIN" || role == "LGU") {
+            document.querySelector(".new_progress_wrapper").style.display = "flex";
+            document.querySelector(".new_progress_submit").onclick = async (evt) => {
+                const progressInput = document.querySelector(".new_progress_input")?.value.trim();
+                if (progressInput.length == 0) {
+                    alert("Please enter a progress update.");
+                    return;
+                }
+                evt.target.disabled = true;
+                try {
+                    const timestamp = await setProgress(post.id, progressInput);
+                    
+                    summonToast("Progress added!", 3000);
+                    const progressNode = summonTemplate("progress", {
+                        ".progress_user": { text: userData.first_name + " " + userData.last_name },
+                        ".progress_text": { text: progressInput },
+                        ".progress_timestamp": { text: toDateString(timestamp) }
+                    });
+
+                    for (const progressCard of progressNode.children) {
+                        progressContainer.prepend(progressCard);
+                    }
+                    document.querySelector(".new_progress_input").value = "";
+                } catch (error) {
+                    console.error("Error adding progress:", error);
+                    summonToast("Error adding progress. " + error, 5000);
+                } finally {
+                    setTimeout(() => evt.target.disabled = false, 5000);
                 }
             }
         }
@@ -192,7 +228,8 @@ async function loadPostCard(postId) {
     }
     const commentsContainer = document.querySelector(".comments_wrapper");
     const comments = await getComments(post.id, 100);
-
+    const progressContainer = document.querySelector(".progress_wrapper");
+    const progresses = await getProgress(post.id, 100);
     for (const comment of comments) {
         const commentNode = summonTemplate("comment", {
             ".comment_display_name": { text: comment.display_name },
@@ -201,6 +238,17 @@ async function loadPostCard(postId) {
         });
         for (const commentCard of commentNode.children) {
             commentsContainer.appendChild(commentCard);
+        }
+    }
+    console.log(progresses.length)
+    for (const progress of progresses) {
+        const progressNode = summonTemplate("progress", {
+            ".progress_user": { text: progress.display_name },
+            ".progress_text": { text: progress.body },
+            ".progress_timestamp": { text: toDateString(progress.timestamp) }
+        });
+        for (const progressCard of progressNode.children) {
+            progressContainer.appendChild(progressCard);
         }
     }
     const map = new maplibregl.Map({
@@ -222,6 +270,21 @@ async function loadPostCard(postId) {
     })
         .setLngLat([post.location.longitude, post.location.latitude])
         .addTo(map);
+}
+
+function toDateString(timestamp) {
+    const date = timestamp.toDate();
+
+    const hours = date.getHours() % 12 || 12;
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const ampm = date.getHours() >= 12 ? "PM" : "AM";
+
+    const month = date.toLocaleString("en-US", { month: "long" });
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    return `${hours}:${minutes}${ampm} ${month} ${day}, ${year}`;
+
 }
 
 export function logout() {

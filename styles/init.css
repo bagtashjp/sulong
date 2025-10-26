@@ -2,7 +2,7 @@
 :root {
     --color-primary: #FFE041;
     --color-secondary: #2876CD;
-    --color-base-background: 255, 255, 255;
+    --color-base-background: 44, 44, 44;
     --color-base-font: 0, 0, 0;
     --filter-dark-mode: 0;
     --scheme-background: url(../assets/tmp_bg.jpg);

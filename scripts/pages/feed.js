@@ -2,7 +2,7 @@ import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js
 import { initDarkmode } from "../theme.js";
 import { initNavBars, endLoading, delayHrefs, generatePublicId, geocode, buildStaticMapUrl, waitASecond, summonToast, startLoading } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getUserPostReaction, getReactionCount } from "../init-firebase.js";
+import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getReactions, getReactionCount } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
 /**
@@ -79,7 +79,7 @@ async function loadPostCards() {
 
         const address = await geocode(post.location.latitude, post.location.longitude);
         const voteCount = await getReactionCount(post.id, "UPVOTE") - await getReactionCount(post.id, "DOWNVOTE");
-        let userReaction = (await getUserPostReaction(post.id))?.type;
+        let userReaction = (await getReactions(post.id))?.type;
         const downvoteId = "_" + crypto.randomUUID();
         const upvoteId = "_" + crypto.randomUUID();
         const reactionCountId = "_" + crypto.randomUUID();

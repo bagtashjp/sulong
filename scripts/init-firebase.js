@@ -1,7 +1,24 @@
-// Import the functions you need from the SDKs you need
+// #region INIT 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { Timestamp, getFirestore, collection, getDocs, updateDoc, query, limit, getDoc, doc, where, setDoc, getCountFromServer, addDoc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import {
+    Timestamp,
+    getFirestore,
+    collection,
+    getDocs,
+    updateDoc, 
+    query,
+    limit,
+    getDoc,
+    doc,
+    where,
+    setDoc,
+    getCountFromServer,
+    addDoc,
+    deleteDoc,
+    orderBy,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { POST_TAG_NAME } from "./z_constants.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -23,10 +40,12 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 const usersCache = {};
-export async function getPendingPosts(limitCount = 10) {
+// #endregion
+
+// #region POSTS
+export async function getPosts(limitCount = 10) {
     try {
         const q = query(collection(db, "posts"),
-            where("status", "==", "PENDING"),
             orderBy("created_at", "desc"),
             limit(limitCount));
         const querySnapshot = await getDocs(q);
@@ -65,9 +84,10 @@ export async function getPendingPosts(limitCount = 10) {
     }
 }
 
-export async function getPosts(limitCount = 10) {
+export async function getPendingPosts(limitCount = 10) {
     try {
         const q = query(collection(db, "posts"),
+            where("status", "==", "PENDING"),
             orderBy("created_at", "desc"),
             limit(limitCount));
         const querySnapshot = await getDocs(q);
@@ -197,6 +217,16 @@ export async function updatePostStatus(docId, newStatus) {
         console.error("Error updating post status:", error);
     }
 }
+// #endregion
+
+
+// #region USERS
+export async function doesUserExist(userId) {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+    console.log("User exists:", userSnap.exists());
+    return userSnap.exists();
+}
 
 export async function getCurrentUserData() {
     const user = auth.currentUser;
@@ -216,13 +246,6 @@ export async function getCurrentUserData() {
     }
 }
 
-export async function doesUserExist(userId) {
-    const userRef = doc(db, "users", userId);
-    const userSnap = await getDoc(userRef);
-    console.log("User exists:", userSnap.exists());
-    return userSnap.exists();
-}
-
 export async function saveUserData(userData) {
     const user = auth.currentUser;
 
@@ -236,36 +259,12 @@ export async function saveUserData(userData) {
     await setDoc(userRef, {
         ...userData,
         email: user.email,
-        createdAt: new Date(),
+        created_at: serverTimestamp(),
     }, { merge: true });
 }
+// #endregion
 
-export async function getReactionCount(postId, reactionType = "UPVOTE") {
-    const reactionsCol = collection(db, "posts", postId, "reactions");
-
-    const reactionQuery = query(
-        reactionsCol,
-        where("type", "==", reactionType),
-        limit(100)
-    );
-
-    const countSnap = await getCountFromServer(reactionQuery);
-    const count = countSnap.data().count;
-    return count;
-}
-
-export async function getUserPostReaction(postId) {
-    try {
-        const userId = auth.currentUser.uid;
-        const reactionRef = doc(db, "posts", postId, "reactions", userId);
-        const reactionSnap = await getDoc(reactionRef);
-        return reactionSnap.exists() ? reactionSnap.data() : null;
-    } catch (error) {
-        console.error("Error getting user post reaction:", error);
-        return null;
-    }
-}
-
+// #region COMMENTS
 export async function getComments(postId, commentLimit = 100) {
     try {
         const commentsCol = collection(db, "posts", postId, "comments");
@@ -315,6 +314,109 @@ export async function getComments(postId, commentLimit = 100) {
     }
 }
 
+export async function setComment(postId, body) {
+    try {
+        const userId = auth.currentUser.uid;
+        const commentsCol = collection(db, "posts", postId, "comments");
+        await addDoc(commentsCol, {
+            body: body,
+            user_id: userId,
+            timestamp: serverTimestamp()
+        });
+
+        console.log("Comment added successfully!");
+    } catch (error) {
+        console.error("Error adding comment:", error);
+    }
+}
+// #endregion
+
+// #region PROGRESS
+export async function setProgress(postId, body, media = []) {
+    try {
+        const user_id = auth.currentUser.uid;
+        const progress_collection = collection(db, "posts", postId, "progress");
+        const docRef = await addDoc(progress_collection, {
+            body,
+            media,
+            user_id,
+            timestamp: serverTimestamp()
+        }); 
+        // Re-fetch to get the resolved timestamp
+        const snap = await getDoc(docRef);
+        const data = snap.data();
+
+        console.log("Progress added successfully!", data.timestamp.toDate());
+        return data.timestamp;
+    } catch (error) {
+        console.error("Error adding progress:", error);
+    }
+}
+
+export async function getProgress(postId, progressLimit = 100) {
+    try {
+        const progressCol = collection(db, "posts", postId, "progress");
+        const progressQuery = query(
+            progressCol,
+            orderBy("timestamp", "desc"),
+            limit(progressLimit)
+        );
+
+        const progressSnap = await getDocs(progressQuery);
+        const progressItems = await Promise.all(
+            progressSnap.docs.map(async (progressDoc) => {
+                const progressData = progressDoc.data();
+
+                let userName = "Unknown";
+                let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
+
+                if (progressData.user_id) {
+                    if (usersCache[progressData.user_id]) {
+                        userName = usersCache[progressData.user_id].name;
+                        userAvatar = usersCache[progressData.user_id].avatar;
+                    } else {
+                        const userRef = doc(db, "users", progressData.user_id);
+                        const userSnap = await getDoc(userRef);
+
+                        if (userSnap.exists()) {
+                            const user = userSnap.data();
+                            userName = `${user.first_name} ${user.last_name}`;
+                            userAvatar = user.avatar || userAvatar;
+                        }
+                        usersCache[progressData.user_id] = { name: userName, avatar: userAvatar };
+                    }
+                }
+
+                return {
+                    id: progressDoc.id,
+                    ...progressData,
+                    display_name: userName,
+                    user_avatar: userAvatar
+                };
+            })
+        );
+
+        return progressItems;
+    } catch (error) {
+        console.error("Error fetching progress:", error);
+        return [];
+    }
+}
+// #endregion
+
+// #region REACTIONS
+export async function getReactions(postId) {
+    try {
+        const userId = auth.currentUser.uid;
+        const reactionRef = doc(db, "posts", postId, "reactions", userId);
+        const reactionSnap = await getDoc(reactionRef);
+        return reactionSnap.exists() ? reactionSnap.data() : null;
+    } catch (error) {
+        console.error("Error getting user post reaction:", error);
+        return null;
+    }
+}
+
 export async function setReaction(postId, reactionType) {
     try {
         const userId = auth.currentUser.uid;
@@ -329,7 +431,7 @@ export async function updateReaction(postId, newReaction) {
     try {
         const userId = auth.currentUser.uid;
         const reactionRef = doc(db, "posts", postId, "reactions", userId);
-        await updateDoc(reactionRef, { type: newReaction, timestamp: Date.now() });
+        await updateDoc(reactionRef, { type: newReaction, timestamp: serverTimestamp() });
     } catch (error) {
         console.error("Error updating reaction:", error);
     }
@@ -345,24 +447,30 @@ export async function removeReaction(postId) {
     }
 }
 
-export async function setComment(postId, body) {
-    try {
-        const userId = auth.currentUser.uid;
+export async function getReactionCount(postId, reactionType = "UPVOTE") {
+    const reactionsCol = collection(db, "posts", postId, "reactions");
 
-        const commentsCol = collection(db, "posts", postId, "comments");
+    const reactionQuery = query(
+        reactionsCol,
+        where("type", "==", reactionType),
+        limit(100)
+    );
 
-        await addDoc(commentsCol, {
-            body: body,
-            user_id: userId,
-            timestamp: Date.now()
-        });
+    const countSnap = await getCountFromServer(reactionQuery);
+    const count = countSnap.data().count;
+    return count;
+}
+// #endregion
 
-        console.log("Comment added successfully!");
-    } catch (error) {
-        console.error("Error adding comment:", error);
-    }
+// #region ANALYTICS
+
+function startOfMonth(y, m) {
+    return Timestamp.fromDate(new Date(y, m - 1, 1));
 }
 
+function startOfNextMonth(y, m) {
+    return Timestamp.fromDate(new Date(y, m, 1));
+}
 export async function getMonthlyCounts(year = 2025) {
     const counts = [];
 
@@ -391,12 +499,4 @@ export async function getCategoryCounts() {
         cats.push(snapshot.data().count);
     }
     return cats;
-}
-
-
-function startOfMonth(y, m) {
-    return Timestamp.fromDate(new Date(y, m - 1, 1));
-}
-function startOfNextMonth(y, m) {
-    return Timestamp.fromDate(new Date(y, m, 1));
 }
