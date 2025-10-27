@@ -38,19 +38,6 @@ export function delayHrefs() {
     })
 }
 
-export async function geocode(lat, lon) {
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-
-    const res = await fetch(url, {
-        headers: {
-            'User-Agent': 'MyLeafletApp/1.0 (myemail@example.com)'
-        }
-    });
-    const data = await res.json();
-    console.log("Location Data:", data);
-    return data || "Unknown location";
-}
-
 
 export async function waitASecond(sec) {
     setTimeout(() => { return }, (sec / 1000));

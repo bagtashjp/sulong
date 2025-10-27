@@ -1,6 +1,6 @@
 import { renderCards } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { addressify, initNavBars, endLoading, delayHrefs, geocode, waitASecond, startLoading, generatePublicId } from "../utils.js";
+import { addressify, initNavBars, endLoading, delayHrefs, waitASecond, startLoading, generatePublicId } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, db } from "../init-firebase.js";
 import { collection, addDoc, GeoPoint , serverTimestamp} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -194,7 +194,7 @@ async function initMapLibre() {
         const { lat, lng } = marker.getLngLat();
         evt.target.disabled = true;
         evt.target.textContent = "Fetching Location...";
-        const address = await geocode(lat, lng);
+        const address = await (await fetch(`/api/georeverse?lat=${lat}&lon=${lng}`)).json();
         fullAddress = addressify(address.address);
         document.querySelector("#create_location_field").textContent = fullAddress.display_name;
         mapLocation = address;

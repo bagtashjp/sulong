@@ -1,6 +1,6 @@
 import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, geocode, buildStaticMapUrl, waitASecond } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, buildStaticMapUrl, waitASecond } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { getPendingPosts,auth, updatePostStatus, doesUserExist } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
@@ -37,7 +37,7 @@ async function loadPostCards() {
             imgs.push(img);
         }
 
-        const address = await geocode(post.location.latitude, post.location.longitude);
+        const address = await (await fetch(`/api/georeverse?lat=${post.location.latitude}&lon=${post.location.longitude}`)).json();
 
         const approveBtn = document.createElement("button");
         approveBtn.textContent = "Approve";
