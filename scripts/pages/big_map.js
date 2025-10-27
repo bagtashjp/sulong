@@ -2,7 +2,7 @@ import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js
 import { initDarkmode } from "../theme.js";
 import { initNavBars, endLoading, delayHrefs, generatePublicId, geocode, buildStaticMapUrl, waitASecond, summonToast, startLoading } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getUserPostReaction, getReactionCount } from "../init-firebase.js";
+import { auth, getApprovedPosts, doesUserExist} from "../init-firebase.js";
 import { POST_TAG_NAME, POST_TAG_COLOR } from "../z_constants.js";
 
 
