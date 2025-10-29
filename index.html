@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="assets/favicon.ico">
     <link rel="stylesheet" href="style.css">
     <title>Sulong</title>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
+
 <body id="home">
-    
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAB9RJWk6rsnuVWyk"></div>
     <div id="loading_page">Loading...</div>
     <card id="header"></card>
     <div class="hero">
         <div class="hero-text">
             <h1>Solving community concerns one post at a time.</h1>
-            <p>Our system empowers both citizen and local government units of Bataan to collaborate in reducing flood risks, improving transparency, and strengthening community resilience.</p>
+            <p>Our system empowers both citizen and local government units of Bataan to collaborate in reducing flood
+                risks, improving transparency, and strengthening community resilience.</p>
             <a href="signin" class="started">Get Started</a>
         </div>
         <div class="hero-image">
@@ -22,8 +26,10 @@
         </div>
     </div>
 
-    <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a larger screen. ⚠️</div>
+    <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a
+        larger screen. ⚠️</div>
 
     <script type="module" src="scripts/pages/index.js"></script>
 </body>
+
 </html>

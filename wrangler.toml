@@ -6,3 +6,6 @@ compatibility_date = "2025-10-01"
 [[kv_namespaces]]
 binding = "JWKS_KV"
 id = "01503e5508314fb292354d0e29215af9"
+
+[placement]
+mode = "smart"
