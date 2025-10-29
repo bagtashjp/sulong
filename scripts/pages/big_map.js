@@ -2,7 +2,7 @@ import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js
 import { initDarkmode } from "../theme.js";
 import { initNavBars, endLoading, delayHrefs, summonToast } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth, getApprovedPosts, doesUserExist} from "../init-firebase.js";
+import { auth, getApprovedPosts, doesUserExist } from "../init-firebase.js";
 import { POST_TAG_NAME, POST_TAG_COLOR } from "../z_constants.js";
 
 
@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initNavBars();
     setTimeout(() => delayHrefs(), 500);
 })
+
 let reactTimestamp = 0;
 
 async function loadPostCards() {
@@ -58,15 +59,28 @@ async function loadPostCards() {
                 .addTo(map);
             post.marker = marker;
         });
-        document.querySelector("#filter_by_category").addEventListener("change", (e) => {
-            const selectedCategory = e.target.value;
+        // Combined filter function
+        function updateMarkers() {
+            const selectedCategory = document.querySelector("#filter_by_category").value;
+            const selectedStatus = document.querySelector("#filter_by_status").value;
+
             posts.forEach(post => {
-                if (post.marker) {
-                    post.marker.getElement().style.display = post.category === selectedCategory || selectedCategory === "tags_null" ? "block" : "none";
-                }
+                if (!post.marker) return;
+
+                const categoryMatch = selectedCategory === "tags_null" || post.category === selectedCategory;
+                const statusMatch =
+                    selectedStatus === "status_all" ||
+                    (selectedStatus === "status_open" && post.status !== "RESOLVED") ||
+                    (selectedStatus === "status_resolved" && post.status === "RESOLVED");
+
+                post.marker.getElement().style.display = (categoryMatch && statusMatch) ? "block" : "none";
             });
-        });
-    })
+        }
+
+        // Event listeners
+        document.querySelector("#filter_by_category").addEventListener("change", updateMarkers);
+        document.querySelector("#filter_by_status").addEventListener("change", updateMarkers);
+    });
     const styles = {
         "3D": 'https://tiles.openfreemap.org/styles/liberty',
         "Bright": 'https://tiles.openfreemap.org/styles/bright',

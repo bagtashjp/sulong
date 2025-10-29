@@ -5,7 +5,6 @@ import { initAuthState } from "../auth-firebase.js";
 import { auth, db } from "../init-firebase.js";
 import { collection, addDoc, GeoPoint , serverTimestamp} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-
 let selectedFiles = [];
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
@@ -71,9 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         reader.readAsDataURL(file);
     });
     document.querySelector(".location-dropdown-content").addEventListener("submit", async (evt) => {
-
         evt.preventDefault();
-
         document.querySelector("#fetch-coordinates-button").disabled = true;
         document.querySelector("#fetch-coordinates-button").textContent = "Fetching...";
         const city = document.querySelector("#create-post-city-input").value;

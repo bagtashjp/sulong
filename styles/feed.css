@@ -237,12 +237,21 @@
     gap: 10px;
     font-weight: bold;
     background-color: var(--color-secondary);
+    padding-right: 10px;
 }
 
 .feed_post .post_display_name {
     flex: 1 0 auto;
 }
 
+.feed_post .post_status {
+    display: none;
+    font-size: 12px;
+    font-weight: normal;
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 5px 10px;
+    border-radius: 999px;
+}
 .feed_post .user_icon {
     display: inline-block;
     width: 2em;
@@ -364,6 +373,30 @@
     padding-top: 5px;
     padding-left: 10px;
     padding-bottom: 5px;
+}
+
+.progress_header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+.mark-resolved-button {
+    display: none;
+    width: 25px;
+    height: 25px;
+    background-color: transparent;
+    background-image: url(../assets/mark-resolved_icon.svg);
+    background-size: cover;
+    border: none;
+    cursor: pointer;
+    &:hover {
+        transform: translateY(-2px);
+    }
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
 }
 
 @media (max-width: 680px) {

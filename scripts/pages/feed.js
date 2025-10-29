@@ -1,6 +1,6 @@
 import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, generatePublicId,buildStaticMapUrl, waitASecond, summonToast, startLoading } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast, startLoading } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getReactions, getReactionCount } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
@@ -84,7 +84,12 @@ async function loadPostCards() {
         const upvoteId = "_" + crypto.randomUUID();
         const reactionCountId = "_" + crypto.randomUUID();
 
-
+        function goToPost() {
+            startLoading();
+            setTimeout(() => {
+                window.location.href = `post?id=${post.id}`;
+            }, 800);
+        }
         const postCards = summonTemplate("feed_post", {
             ".feed_post": { id: post.id },
             ".post_display_name": { text: post.display_name },
@@ -112,11 +117,17 @@ async function loadPostCards() {
                 id: downvoteId
             },
             ".comment_button": {
-                onclick: () => {
-                    startLoading();
-                    setTimeout(() => {
-                        window.location.href = `post?id=${post.id}`;
-                    }, 800);
+                onclick: () => goToPost()
+            },
+            ".post_status": {
+                onclick: () => goToPost(),
+                text: post.status === "RESOLVED" ? "Resolved" : "Open",
+                style: {
+                    display: "inline-block",
+                    backgroundColor: post.status === "RESOLVED"
+                        ? "rgba(70, 253, 70, 0.55)"
+                        : "rgba(255, 255, 255, 0.3)",
+                    cursor: "pointer"
                 }
             }
         });
@@ -215,7 +226,6 @@ async function loadPostCards() {
             reactTimestamp = Date.now();
 
         };
-
 
         for (const postCard of postCards.children) {
             postsContainer.appendChild(postCard);

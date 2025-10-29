@@ -2,7 +2,20 @@ import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js
 import { initDarkmode } from "../theme.js";
 import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth, getPost, doesUserExist, getReactionCount, getComments, setComment, getCurrentUserData, getReactions, removeReaction, setReaction, setProgress, getProgress } from "../init-firebase.js";
+import { auth,
+    getPost,
+    doesUserExist,
+    getReactionCount,
+    getComments,
+    setComment,
+    getCurrentUserData,
+    getReactions,
+    removeReaction,
+    setReaction,
+    setProgress,
+    getProgress,
+    markPostResolved
+} from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
 let userData = null;
@@ -63,6 +76,15 @@ async function loadPostCard(postId) {
         ".post-reaction-count": { text: (voteCount > 99 ? `99+` : "" + voteCount), id: reactionCountId },
         ".comments_section": { style: { display: "flex" } },
         ".progress_section": { style: { display: "flex" } },
+        ".post_status": {
+            text: post.status === "RESOLVED" ? "Resolved" : "Open",
+            style: {
+                display: "inline-block",
+                backgroundColor: post.status === "RESOLVED"
+                    ? "rgba(70, 253, 70, 0.55)"
+                    : "rgba(255, 255, 255, 0.3)"
+            }
+        },
         ".comment_button": { style: { display: "none" } },
         ".upvote_button": {
             img: userReaction == "UPVOTE" ? "assets/upvote_shaded_icon.svg" : "assets/upvote_icon.svg",
@@ -105,8 +127,9 @@ async function loadPostCard(postId) {
 
     auth.currentUser.getIdTokenResult(false).then((idTokenResult) => {
         const role = idTokenResult.claims.role;
-        if (role == "ADMIN" || role == "LGU") {
+        if (post.status != "RESOLVED" && (role == "ADMIN" || role == "LGU")) {
             document.querySelector(".new_progress_wrapper").style.display = "flex";
+            document.querySelector(".mark-resolved-button").style.display = "inline-block";
             document.querySelector(".new_progress_submit").onclick = async (evt) => {
                 const progressInput = document.querySelector(".new_progress_input")?.value.trim();
                 if (progressInput.length == 0) {
@@ -131,6 +154,23 @@ async function loadPostCard(postId) {
                 } catch (error) {
                     console.error("Error adding progress:", error);
                     summonToast("Error adding progress. " + error, 5000);
+                } finally {
+                    setTimeout(() => evt.target.disabled = false, 5000);
+                }
+            }
+            document.querySelector(".mark-resolved-button").onclick = async (evt) => {
+                
+                const conf = confirm("Are you sure you want to mark this post as resolved? This action cannot be undone.");
+                if (!conf) return;
+                evt.target.disabled = true;
+                try {
+                    await markPostResolved(post.id);
+                    summonToast("Post marked as resolved.", 5000);
+                    document.querySelector(".mark-resolved-button").style.display = "none";
+                    document.querySelector(".new_progress_wrapper").style.display = "none";
+                } catch (err) {
+                    console.error("Error marking post as resolved:", err);
+                    alert("Error marking post as resolved. " + err);
                 } finally {
                     setTimeout(() => evt.target.disabled = false, 5000);
                 }

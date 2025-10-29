@@ -130,7 +130,7 @@ export async function getApprovedPosts(limitCount = 10) {
     try {
         const q = query(
             collection(db, "posts"),
-            where("status", "==", "APPROVED"),
+            where("status", "in", ["APPROVED", "RESOLVED"]),
             orderBy("created_at", "desc"),
             limit(limitCount)
         );
@@ -402,6 +402,18 @@ export async function getProgress(postId, progressLimit = 100) {
         return [];
     }
 }
+
+export async function markPostResolved(postId) {
+    try {
+        const postRef = doc(db, "posts", postId);
+        await updateDoc(postRef, {
+            status: "RESOLVED",
+        });
+    } catch (error) {
+        console.error("Error marking post as resolved:", error);
+    }
+}
+
 // #endregion
 
 // #region REACTIONS
@@ -460,6 +472,7 @@ export async function getReactionCount(postId, reactionType = "UPVOTE") {
     const count = countSnap.data().count;
     return count;
 }
+
 // #endregion
 
 // #region ANALYTICS
