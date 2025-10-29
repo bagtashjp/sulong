@@ -1,8 +1,6 @@
 {
   "dependencies": {
-    "geofire-common": "^6.0.0",
-    "jose": "^6.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "jose": "^6.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
