@@ -554,14 +554,7 @@ export async function sendPasswordResetRequest(email) {
         if (!email || typeof email !== "string" || !email.includes("@")) {
             throw new Error("Please provide a valid email address.");
         }
-
-        const actionCodeSettings = {
-            // Redirect back to your app after the reset; adjust path as needed
-            url: window.location.origin + "/login",
-            handleCodeInApp: false
-        };
-
-        await sendPasswordResetEmail(auth, email, actionCodeSettings);
+        await sendPasswordResetEmail(auth, email.trim());
         console.log("Password reset email sent to:", email);
         return { success: true };
     } catch (error) {
