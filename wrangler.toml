@@ -7,5 +7,13 @@ compatibility_date = "2025-10-01"
 binding = "JWKS_KV"
 id = "01503e5508314fb292354d0e29215af9"
 
+[[kv_namespaces]]
+binding = "USER_DATA"
+id = "f79eef0c76aa47a3bfb913d252919f15"
+
+[[kv_namespaces]]
+binding = "SERVER_TOKEN_KV"
+id = "ce5fa8926a884d10917aad7f50a99738"
+
 [placement]
 mode = "smart"

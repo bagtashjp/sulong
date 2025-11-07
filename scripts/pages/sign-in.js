@@ -1,7 +1,7 @@
 import { renderCards } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth, doesUserExist, saveUserData } from "../init-firebase.js";
+import { auth, doesUserExist, saveUserData, sendPasswordResetRequest } from "../init-firebase.js";
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword
@@ -36,7 +36,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         endLoading();
         setTimeout(() => delayHrefs(), 500);
     });
+    document.getElementById("forgot-password").addEventListener("click", async (evt) => {
+        const email = document.querySelector("#auth-email").value;
+        if (!email) {
+            alert("Please enter your email address first.");
+            return;
+        }
+        evt.target.disabled = true;
+        try {
+            await sendPasswordResetRequest(email, evt);
+            alert(`Password reset email should be sent to your email address ${email}, if it exists in our system.`);
+        } catch (error) {
+            console.error("Error sending password reset request:", error);
+        } finally {
+            evt.target.disabled = false;
+        }
 
+    });
 });
 
 let profilePic = null;
@@ -96,8 +112,6 @@ function authExtra() {
         reader.readAsDataURL(file);
     });
 }
-
-
 function switchAuthUI() {
     const switcherBtn = document.querySelector("#ui-switch");
     const bigButton = document.querySelector("#auth-button");

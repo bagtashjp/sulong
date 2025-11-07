@@ -1,6 +1,6 @@
 // #region INIT 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import {
     Timestamp,
     getFirestore,
@@ -19,6 +19,7 @@ import {
     orderBy,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
 import { POST_TAG_NAME } from "./z_constants.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -172,7 +173,7 @@ export async function getApprovedPosts(limitCount = 10) {
         return [];
     }
 }
-
+/*
 export async function getPost(postId) {
     try {
         const postRef = doc(db, "posts", postId);
@@ -207,6 +208,23 @@ export async function getPost(postId) {
         return null;
     }
 }
+    */
+export async function getPost(postId) {
+    try {
+        const res = await fetch("/api/firestore/report?post_id=" + encodeURIComponent(postId), {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+            }
+        });
+        if (!res.ok) throw new Error("Failed to fetch post");
+        return await res.json();
+    } catch (error) {
+        console.error("Error getting post:", error);
+        alert("Error fetching post. " + error);
+        return null;
+    }
+}
 
 export async function updatePostStatus(docId, newStatus) {
     try {
@@ -215,6 +233,23 @@ export async function updatePostStatus(docId, newStatus) {
         console.log(`Post ${docId} status updated to ${newStatus}`);
     } catch (error) {
         console.error("Error updating post status:", error);
+    }
+}
+
+export async function approvePost(docId) {
+    try {
+        const res = await fetch("/api/firestore/post-approve?post_id=" + encodeURIComponent(docId), {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+            }
+        });
+        if (!res.ok) throw new Error("Failed to approve post");
+        return await res.json();
+    } catch (error) {
+        console.error("Error approving post:", error);
+        alert("Error approving post. " + error);
+        return null;
     }
 }
 // #endregion
@@ -512,4 +547,26 @@ export async function getCategoryCounts() {
         cats.push(snapshot.data().count);
     }
     return cats;
+}
+
+export async function sendPasswordResetRequest(email) {
+    try {
+        if (!email || typeof email !== "string" || !email.includes("@")) {
+            throw new Error("Please provide a valid email address.");
+        }
+
+        const actionCodeSettings = {
+            // Redirect back to your app after the reset; adjust path as needed
+            url: window.location.origin + "/login",
+            handleCodeInApp: false
+        };
+
+        await sendPasswordResetEmail(auth, email, actionCodeSettings);
+        console.log("Password reset email sent to:", email);
+        return { success: true };
+    } catch (error) {
+        console.error("Error sending password reset email:", error);
+        alert("Failed to send password reset email: " + (error.message || error));
+        return { success: false, error };
+    }
 }
