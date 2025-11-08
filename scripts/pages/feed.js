@@ -54,10 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         initNotifications();
         await loadPostCards();
-        document.querySelector("#create_post").addEventListener("click", async () => {
-            const query = prompt("Enter search query");
-            await searchPosts(query);
-        });
+       
     }, () => {
         window.location.href = "signin";
     })
