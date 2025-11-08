@@ -142,16 +142,7 @@ export async function initNotifications() {
         const notifElem = document.createElement("a");
         notifElem.classList.add("notif_item");
         const date = notif.timestamp.toDate();
-        let body;
-        let href;
-        if (notif.type === "POST_APPROVED") {
-            body = `Your post <b>"${stringShorten(notif.post_description)}"</b> has been approved!<br/>`;
-            href = `/post?id=${encodeURIComponent(notif.post_id)}`;
-        }
-        else if (notif.type === "NEW_COMMENT") {
-            body = `<b>New comment</b> on post: "<b>${stringShorten(notif.post_description)}</b>"<br/>`;
-            href = `/post?id=${encodeURIComponent(notif.post_id)}`;
-        }
+        const {body, href} = buildNotifBody(notif);
         notifElem.innerHTML = `
             <a class="notif_item_body">${body||""}</a>
             <span class="notif_item_date">${date.toLocaleDateString()} ${date.toLocaleTimeString()}</span>
@@ -159,11 +150,9 @@ export async function initNotifications() {
         notifElem.href = href || "#";
         notifContainer.appendChild(notifElem);
     }
+
 }
-function stringShorten(str, maxLength = 12) {
-    if (str.length <= maxLength) return str;
-    return str.slice(0, maxLength - 3) + '...';
-}
+
 export async function uploadToCloudinary(file) {
     const public_id = crypto.randomUUID();
     const { signature, timestamp } = await getSignature(public_id);
@@ -228,6 +217,7 @@ export async function summonToast(message, duration = 3000) {
     }, duration);
     
 }
+
 export async function summonRightToast(html, href = null, duration = 5000) {
     // --- Element Creation ---
     const toast = document.createElement(href ? "a" : "div");
@@ -260,8 +250,8 @@ export async function summonRightToast(html, href = null, duration = 5000) {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        backgroundColor: "rgb(var(--color-base-background))",
-        color: "rgb(var(--color-base-font))",
+        backgroundColor: "color-mix(in srgb, var(--color-primary), gray 30%)",
+        color: "black",
         padding: "10px 15px",
         borderRadius: "8px",
         fontSize: "14px",
@@ -298,7 +288,7 @@ export async function summonRightToast(html, href = null, duration = 5000) {
     // 1. Show the toast (slide in from the top)
     document.body.appendChild(toast);
     setTimeout(() => {
-        toast.style.top = "62px"; // Final visible position (upper right)
+        toast.style.top = "65px"; // Final visible position (upper right)
         toast.style.opacity = 1;
     }, 100);
 
@@ -358,4 +348,29 @@ export function addressify(addr) {
         brgy: brgy.trim(),
         city: city.trim()
     };
+}
+export function buildNotifBody(notif) {
+    let body;
+    let href;
+    if (notif.type === "POST_APPROVED") {
+        body = `Your post <b>"${stringShorten(notif.post_description)}"</b> has been approved!<br/>`;
+        href = `/post?id=${encodeURIComponent(notif.post_id)}`;
+    } else if (notif.type === "NEW_COMMENT") {
+        body = `<b>New comment</b> on post: "<b>${stringShorten(notif.post_description)}</b>"<br/>`;
+        href = `/post?id=${encodeURIComponent(notif.post_id)}`;
+    } else if (notif.type === "NEW_PROGRESS") {
+        body = `<b>New progress update</b> on post: "<b>${stringShorten(notif.post_description)}</b>"<br/>`;
+        href = `/post?id=${encodeURIComponent(notif.post_id)}`;
+    } else if (notif.type === "POST_REJECTED") {
+        body = `Your post <b>"${stringShorten(notif.post_description)}"</b> has been rejected.<br/>Reason: <b>${notif.reason || "No reason provided."}</b>`;
+        href = `#`;
+    } else if (notif.type === "POST_RESOLVED") {
+        body = `Your post <b>"${stringShorten(notif.post_description)}"</b> has been resolved.<br/>`;
+        href = `/post?id=${encodeURIComponent(notif.post_id)}`;
+    }
+    return {body, href};
+}
+function stringShorten(str, maxLength = 20) {
+    if (str.length <= maxLength) return str;
+    return str.slice(0, maxLength - 3) + '...';
 }

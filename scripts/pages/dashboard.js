@@ -2,7 +2,7 @@ import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js
 import { initDarkmode } from "../theme.js";
 import { initNavBars, endLoading, delayHrefs, buildStaticMapUrl, waitASecond, initNotifications } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { getPendingPosts,auth, updatePostStatus, doesUserExist, approvePost } from "../init-firebase.js";
+import { getPendingPosts,auth, updatePostStatus, doesUserExist, approvePost, rejectPost } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -80,7 +80,8 @@ async function loadPostCards() {
         rejectBtn.addEventListener("click", async () => {
             rejectBtn.disabled = true;
             try {
-                await updatePostStatus(post.id, "REJECTED");
+                const reason = prompt("Please provide a reason for rejecting this post:", "Inappropriate content");
+                await rejectPost(post.id, reason);
                 document.querySelector(`#${post.id}`).remove();
                 alert("Rejected!");
             } catch (e) {
@@ -95,7 +96,6 @@ async function loadPostCards() {
         await waitASecond(250);
     }
 }
-
 
 export function logout() {
     auth.signOut();

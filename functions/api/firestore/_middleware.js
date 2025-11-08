@@ -17,7 +17,7 @@ export async function onRequest(context) {
         });
         
         context.data.user = payload;
-        console.log("JWT verified for user:", context.data.user);
+        //console.log("JWT verified for user:", context.data.user);
         return await context.next();
         
     } catch (err) {

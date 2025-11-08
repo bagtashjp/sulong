@@ -1,9 +1,6 @@
 import * as jose from 'jose';
 
 const TOKEN_TTL = 3600;
-// I tried it outside the Cloudflare Workers environment
-// .. and mock the environment variables and KV store
-// .. it's working
 
 export default class FirestoreREST {
     constructor(env) {
@@ -15,13 +12,13 @@ export default class FirestoreREST {
     }
 
     async getAccessToken() {
-        console.log("Getting access token...");
+        //console.log("Getting access token...");
         const cached = await this.kv.get('access_token');
         if (cached) {
-            console.log("Using cached access token:", cached);
+            //console.log("Using cached access token:", cached);
             return cached;
         }
-        console.log("Cached token not found, generating new token...");
+        //console.log("Cached token not found, generating new token...");
         const now = Math.floor(Date.now() / 1000);
         const payload = {
             iss: this.clientEmail,
@@ -70,6 +67,14 @@ export default class FirestoreREST {
             else if (val?.latitude !== undefined && val?.longitude !== undefined) fields[key] = { geoPointValue: val };
             else if (val === null) fields[key] = { nullValue: null };
             else if (typeof val === 'boolean') fields[key] = { booleanValue: val };
+            // Custom change to handle vector arrays (number[]) for embeddings
+            else if (Array.isArray(val) && val.every(v => typeof v === 'number')) {
+                fields[key] = {
+                    arrayValue: { 
+                        values: val.map(v => ({ doubleValue: v })) 
+                    }
+                };
+            }
             else if (Array.isArray(val)) fields[key] = { arrayValue: { values: val.map(v => this.toFields({ v }).v) } };
             else if (typeof val === 'object') fields[key] = { mapValue: { fields: this.toFields(val) } };
             else fields[key] = { stringValue: String(val) };
@@ -87,6 +92,10 @@ export default class FirestoreREST {
             else if (val.timestampValue !== undefined) obj[key] = new Date(val.timestampValue);
             else if (val.geoPointValue) obj[key] = val.geoPointValue;
             else if (val.booleanValue !== undefined) obj[key] = val.booleanValue;
+            // Custom change to handle vector arrays (number[]) coming back from Firestore
+            else if (val.arrayValue?.values && val.arrayValue.values.every(v => v.doubleValue !== undefined)) {
+                 obj[key] = val.arrayValue.values.map(v => v.doubleValue);
+            }
             else if (val.arrayValue?.values) obj[key] = val.arrayValue.values.map(v => this.fromFields({ v }).v);
             else if (val.mapValue?.fields) obj[key] = this.fromFields(val.mapValue.fields);
             else obj[key] = null;
@@ -150,6 +159,65 @@ export default class FirestoreREST {
                 ...this.fromFields(r.document.fields)
             }));
     }
+    
+    // --- NEW METHOD FOR VECTOR SEARCH ---
+    /**
+     * Executes a vector similarity search on a collection, optionally pre-filtered by a 'where' clause.
+     * @param {string} fullPath The collection ID (e.g., 'posts').
+     * @param {number[]} queryVector The vector to search for (e.g., the embedding of the user's query).
+     * @param {{limit: number, vectorField: string, distanceMeasure: 'EUCLIDEAN'|'COSINE'|'DOT_PRODUCT', distanceResultField?: string, distanceThreshold?: number, where?: object}} options
+     * @returns {Promise<object[]>} Array of documents, including the distanceResultField if specified.
+     */
+    // ...
+    async vectorFinder(fullPath, queryVector, options) {
+        const { 
+            limit, 
+            vectorField, 
+            distanceMeasure, 
+            distanceResultField, 
+            distanceThreshold, 
+            where // The `where` filter, formatted for StructuredQuery
+        } = options;
+
+        if (!queryVector || !Array.isArray(queryVector) || queryVector.length === 0) {
+             throw new Error("queryVector must be a non-empty array of numbers.");
+        }
+
+        const body = {
+            structuredQuery: {
+                from: [{ collectionId: fullPath }],
+                // Optional: Include the 'where' filter for pre-filtering (e.g., status == 'published')
+                ...(where && { where }), 
+                
+                // The main vector search configuration
+                findNearest: {
+                    vectorField: { fieldPath: vectorField },
+                    queryVector: { 
+                        Vector: {
+                            values: queryVector.map(v => ({ doubleValue: v }))
+                        }
+                    },
+                    distanceMeasure: distanceMeasure,
+                    limit: limit,
+                    ...(distanceResultField && { distanceResultField }),
+                    // --- FIX IS HERE ---
+                    ...(distanceThreshold !== undefined && { 
+                        distanceThreshold: distanceThreshold // Pass the raw number
+                    })
+                }
+            }
+        };
+
+        const results = await this.firestoreRequest('POST', ':runQuery', body);
+
+        return results
+            .filter(r => r.document)
+            .map(r => ({
+                id: r.document.name.split('/').pop(),
+                ...this.fromFields(r.document.fields)
+            }));
+    }
+    // --- END NEW METHOD ---
 
     // The addDoc method adds a new document to the collection at the specified path.
     async addDoc(fullPath, data) {

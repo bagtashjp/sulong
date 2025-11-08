@@ -22,7 +22,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 import { POST_TAG_NAME } from "./z_constants.js";
-import { summonRightToast, summonToast } from "./utils.js";
+import { buildNotifBody, summonRightToast, summonToast } from "./utils.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -236,6 +236,24 @@ export async function getPost(postId) {
         return null;
     }
 }
+export async function searchPosts(query) {
+    try {
+        const res = await fetch("/api/firestore/search?query=" + encodeURIComponent(query), {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+            }
+        });
+        if (!res.ok) throw new Error("Failed to search posts");
+        const results = await res.json();
+        console.log("Search results:", results);
+        return results;
+    } catch (error) {
+        console.error("Error searching posts:", error);
+        alert("Error searching posts. " + error);
+        return [];
+    }
+}
 
 export async function getNotifications(limitCount = 10) {
     const userData = await getCurrentUserData();
@@ -267,12 +285,21 @@ export async function notificationListener(bookmarks) {
         console.log(`Snapshot received. Total matching documents: ${querySnapshot.size}`);
 
         querySnapshot.forEach((doc) => {
-            const body = doc.data();
-            let bodyBuilder = "";
-            if (body.type === "POST_APPROVED") {
-                bodyBuilder = "Your post has been <b>approved</b>!<br/><i>Click here to view.</i>";
-            }
-            summonRightToast(bodyBuilder, "/post?id=" + encodeURIComponent(body.post_id));
+            const notif = doc.data();
+            const notifContainer = document.querySelector(".notif_content");
+            notifContainer.replaceChildren();
+
+            const notifElem = document.createElement("a");
+            notifElem.classList.add("notif_item");
+            const date = notif.timestamp.toDate();
+            const {body, href} = buildNotifBody(notif);
+            notifElem.innerHTML = `
+                <a class="notif_item_body">${body || ""}</a>
+                <span class="notif_item_date">${date.toLocaleDateString()} ${date.toLocaleTimeString()}</span>
+            `;
+            notifElem.href = href || "#";
+            notifContainer.prepend(notifElem);
+            summonRightToast(body, href);
         });
 
     }, (error) => {
@@ -327,6 +354,24 @@ export async function approvePost(docId) {
     } catch (error) {
         console.error("Error approving post:", error);
         alert("Error approving post. " + error);
+        return null;
+    }
+}
+export async function rejectPost(docId, reason) {
+     try {
+        const res = await fetch("/api/firestore/post-reject?post_id="
+            + encodeURIComponent(docId)
+            + "&reason=" + encodeURIComponent(reason), {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+            }
+        });
+        if (!res.ok) throw new Error("Failed to reject post");
+        return await res.json();
+    } catch (error) {
+        console.error("Error rejecting post:", error);
+        alert("Error rejecting post. " + error);
         return null;
     }
 }
@@ -689,5 +734,20 @@ export async function sendPasswordResetRequest(email) {
         console.error("Error sending password reset email:", error);
         alert("Failed to send password reset email: " + (error.message || error));
         return { success: false, error };
+    }
+}
+
+
+// TMP ADD EMBEDDING TO OLD POSTS MANUALLY
+export async function addEmbedding(postId) {
+    const res = await fetch(`/api/firestore/add_embedding?post_id=${postId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + (await auth.currentUser.getIdToken())
+        }
+    })
+    if (res.ok) {
+        alert("Embedding added successfully.");
     }
 }

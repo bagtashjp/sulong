@@ -15,12 +15,14 @@ import {
     setReaction,
     setProgress,
     getProgress,
-    markPostResolved
+    markPostResolved,
+    addBookmark,
+    removeBookmark
 } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
 let userData = null;
-
+let bookmarkTimestamp = 0;
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
     await renderCardsAsync(["feed_post", "comment", "progress"]);
@@ -31,6 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
         userData = await getCurrentUserData();
+        initNotifications()
         endLoading();
         const params = new URLSearchParams(window.location.search);
         if (!params.has("id")) {

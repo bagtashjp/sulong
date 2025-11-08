@@ -1,4 +1,5 @@
 import FirestoreREST from "./FirestoreREST";
+import { getEmbedding } from "./googleai";
 export async function onRequestGet(context) {
     const firestore = new FirestoreREST(context.env);
     const req = context.request;
@@ -43,6 +44,7 @@ export async function onRequestPost(context) {
     if (!data) return new Response("Invalid request body", { status: 400 });
     data.created_at = new Date();
     data.status = "PENDING";
+    const embedding = await getEmbedding(context.env.GOOGLE_AI_KEY_A, "gemini-embedding-001", data.description);
     try {
         const res = await firestore.addDoc("posts", data);
         const postId = res.name.split("/").pop();
@@ -50,7 +52,18 @@ export async function onRequestPost(context) {
             await firestore.setDoc(`users/${user.sub}/bookmarks`, postId, {
                 timestamp: new Date()
             });
-            return new Response(JSON.stringify({ id: postId }), { status: 200 });
+            const res = await fetch(context.env.VECTOR_TOOL_URL + "/embed", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ post_id: postId, embedding })
+            })
+            if (res.ok) {
+                return new Response(JSON.stringify({ id: postId }), { status: 200 });
+            } else {
+                return new Response("Internal Server Error", { status: 500 });
+            }
         } catch (e) {
             console.error("Error adding bookmark:", e);
             return new Response("Error adding bookmark", { status: 500 });

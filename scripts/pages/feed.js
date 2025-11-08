@@ -2,7 +2,7 @@ import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js
 import { initDarkmode } from "../theme.js";
 import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast, startLoading, initNotifications } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getReactions, getReactionCount, removeBookmark, addBookmark } from "../init-firebase.js";
+import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getReactions, getReactionCount, removeBookmark, addBookmark, addEmbedding, searchPosts } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
 /**
@@ -54,6 +54,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         initNotifications();
         await loadPostCards();
+        document.querySelector("#create_post").addEventListener("click", async () => {
+            const query = prompt("Enter search query");
+            await searchPosts(query);
+        });
     }, () => {
         window.location.href = "signin";
     })
@@ -154,6 +158,14 @@ async function loadPostCards() {
                         evt.target.src = "assets/bookmark_icon-shaded.svg";
                         bookmarks.push(post.id);
                         summonToast("Added bookmark.");
+                        try {
+                            
+                            await addEmbedding(post.id);
+                            alert("Embedding updated");
+                        } catch(e) {
+                            console.log(e);
+                        }
+                        
                     }
                     bookmarkTimestamp = Date.now();
                 }
