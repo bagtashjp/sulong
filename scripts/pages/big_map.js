@@ -1,6 +1,6 @@
 import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, summonToast } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, summonToast, initNotifications } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, getApprovedPosts, doesUserExist } from "../init-firebase.js";
 import { POST_TAG_NAME, POST_TAG_COLOR } from "../z_constants.js";
@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.href = "signin";
             return;
         }
+        initNotifications();
         await loadPostCards();
     }, () => {
         window.location.href = "signin";

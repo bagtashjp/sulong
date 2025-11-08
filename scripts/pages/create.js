@@ -1,6 +1,6 @@
 import { renderCards } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { addressify, initNavBars, endLoading, delayHrefs, waitASecond, startLoading, generatePublicId } from "../utils.js";
+import { addressify, initNavBars, endLoading, delayHrefs, waitASecond, startLoading, generatePublicId, initNotifications } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, createPost, db } from "../init-firebase.js";
 import { collection, addDoc, GeoPoint , serverTimestamp} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -9,7 +9,9 @@ let selectedFiles = [];
 document.addEventListener("DOMContentLoaded", async () => {
     await renderCards();
     initDarkmode();
-    initAuthState(() => { }, () => window.location.href = "signin");
+    initAuthState(() => {
+        initNotifications();
+    }, () => window.location.href = "signin");
     initNavBars();
     endLoading();
     initMapLibre();

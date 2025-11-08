@@ -1,6 +1,6 @@
 import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast, initNotifications } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import {
     auth,
@@ -8,7 +8,7 @@ import {
     doesUserExist,
     getReactionCount,
     getComments,
-    setComment,
+    addComment,
     getCurrentUserData,
     getReactions,
     removeReaction,
@@ -105,7 +105,7 @@ async function loadPostCard(postId) {
                 }
                 evt.target.disabled = true;
                 try {
-                    await setComment(post.id, commentInput);
+                    await addComment(post.id, commentInput);
                     summonToast("Comment added!", 3000);
                     const commentNode = summonTemplate("comment", {
                         ".comment_display_name": { text: userData.first_name + " " + userData.last_name },

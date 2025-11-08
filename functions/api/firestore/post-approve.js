@@ -18,6 +18,7 @@ export async function onRequestPost(context) {
     await firestore.updateDoc("posts", postId, data);
     await firestore.addDoc("notifications", {
         post_id: postId,
+        post_description: postDoc.post_description,
         type: "POST_APPROVED",
         timestamp: new Date()
     });

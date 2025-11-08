@@ -145,18 +145,25 @@ export async function initNotifications() {
         let body;
         let href;
         if (notif.type === "POST_APPROVED") {
-            body = `<b>Your post has been approved!<br/><i>Click to view.</i></b>`;
+            body = `Your post <b>"${stringShorten(notif.post_description)}"</b> has been approved!<br/>`;
+            href = `/post?id=${encodeURIComponent(notif.post_id)}`;
+        }
+        else if (notif.type === "NEW_COMMENT") {
+            body = `<b>New comment</b> on post: "<b>${stringShorten(notif.post_description)}</b>"<br/>`;
             href = `/post?id=${encodeURIComponent(notif.post_id)}`;
         }
         notifElem.innerHTML = `
+            <a class="notif_item_body">${body||""}</a>
             <span class="notif_item_date">${date.toLocaleDateString()} ${date.toLocaleTimeString()}</span>
-            
-            <a class="notif_item_body">${body||""}</a>`;
+            `;
         notifElem.href = href || "#";
         notifContainer.appendChild(notifElem);
     }
 }
-
+function stringShorten(str, maxLength = 12) {
+    if (str.length <= maxLength) return str;
+    return str.slice(0, maxLength - 3) + '...';
+}
 export async function uploadToCloudinary(file) {
     const public_id = crypto.randomUUID();
     const { signature, timestamp } = await getSignature(public_id);

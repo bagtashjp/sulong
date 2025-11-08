@@ -270,7 +270,7 @@ export async function notificationListener(bookmarks) {
             const body = doc.data();
             let bodyBuilder = "";
             if (body.type === "POST_APPROVED") {
-                bodyBuilder = "Your post has been approved!<br/><i>Click here to view.</i>";
+                bodyBuilder = "Your post has been <b>approved</b>!<br/><i>Click here to view.</i>";
             }
             summonRightToast(bodyBuilder, "/post?id=" + encodeURIComponent(body.post_id));
         });
@@ -340,7 +340,6 @@ export async function doesUserExist(userId) {
     return userSnap.exists();
 }
 
-
 export async function getCurrentUserData() {
     const user = auth.currentUser;
     if (!user) return null;
@@ -370,7 +369,6 @@ export async function getCurrentUserData() {
     localStorage.setItem("userData", userDataSerialized);
     return result;
 }
-
 
 export async function saveUserData(userData) {
     const user = auth.currentUser;
@@ -465,7 +463,20 @@ export async function getComments(postId, commentLimit = 100) {
         return [];
     }
 }
-
+export async function addComment(postId, body) {
+    try {
+        await fetch("/api/firestore/comment?post_id=" + encodeURIComponent(postId), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+            },
+            body: JSON.stringify({ text: body })
+        });
+    } catch (error) {
+        console.error("Error adding comment:", error);
+    }
+}
 export async function setComment(postId, body) {
     try {
         const userId = auth.currentUser.uid;

@@ -1,6 +1,6 @@
 import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, buildStaticMapUrl, waitASecond } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, buildStaticMapUrl, waitASecond, initNotifications } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { getPendingPosts,auth, updatePostStatus, doesUserExist, approvePost } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.href = "signin";
             return;
         }
+        initNotifications();
         endLoading();
     }, () => {
         window.location.href = "signin";
