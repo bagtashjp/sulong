@@ -158,13 +158,6 @@ async function loadPostCards() {
                         evt.target.src = "assets/bookmark_icon-shaded.svg";
                         bookmarks.push(post.id);
                         summonToast("Added bookmark.");
-                        try {
-                            
-                            await addEmbedding(post.id);
-                            alert("Embedding updated");
-                        } catch(e) {
-                            console.log(e);
-                        }
                         
                     }
                     bookmarkTimestamp = Date.now();

@@ -40,19 +40,3 @@ export async function getEmbedding(apiKey, model = "gemini-embedding-001", textC
     }
 }
 
-// Example usage:
-const GEMINI_API_KEY = "YOUR_API_KEY_HERE";
-const EMBEDDING_MODEL = "gemini-embedding-001";
-const INPUT_TEXT = "What is the meaning of life?";
-
-/*
-getEmbedding(GEMINI_API_KEY, EMBEDDING_MODEL, INPUT_TEXT)
-    .then(embedding => {
-        if (embedding) {
-            console.log("Embedding vector generated. Dimension:", embedding.length);
-            // console.log("First 5 values:", embedding.slice(0, 5));
-        } else {
-            console.log("Failed to retrieve embedding.");
-        }
-    });
-*/

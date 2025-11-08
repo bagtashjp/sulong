@@ -12,7 +12,6 @@ export async function onRequest(context) {
         query,
         "RETRIEVAL_QUERY"
     );
-    console.log(embedding.join("|"))
     if (!embedding) return new Response("Failed to generate embedding", { status: 500 });
     const res = await fetch(context.env.VECTOR_TOOL_URL + "/vector-search", {
         method: "POST",
