@@ -122,51 +122,73 @@ export default class FirestoreREST {
         return null;
     }
 
-    async getDoc(collection, docId) {
+    async getDoc(fullPath, docId) {
         try {
-            const data = await this.firestoreRequest('GET', `${collection}/${docId}`);
-            return { id: docId, ...this.fromFields(data.fields) };
-        } catch {
+            const data = await this.firestoreRequest('GET', `${fullPath}/${docId}`);
+            const id = data.name.split('/').pop();
+            return { id, ...this.fromFields(data.fields) };
+        } catch (error) {
             return null;
         }
     }
 
-    async getDocs(collection, queryBody = {}) {
-        const body = { structuredQuery: { from: [{ collectionId: collection }], ...queryBody } };
+    // The getDocs method queries a collection specified by the full path.
+    async getDocs(fullPath, queryBody = {}) {
+        const body = {
+            structuredQuery: {
+                from: [{ collectionId: fullPath }],
+                ...queryBody
+            }
+        };
+
         const results = await this.firestoreRequest('POST', ':runQuery', body);
+
         return results
             .filter(r => r.document)
-            .map(r => ({ id: r.document.name.split('/').pop(), ...this.fromFields(r.document.fields) }));
+            .map(r => ({
+                id: r.document.name.split('/').pop(),
+                ...this.fromFields(r.document.fields)
+            }));
     }
 
-    async setDoc(collection, docId, data) {
-        return this.firestoreRequest('PATCH', `${collection}/${docId}`, { fields: this.toFields(data) });
+    // The addDoc method adds a new document to the collection at the specified path.
+    async addDoc(fullPath, data) {
+        // fullPath: e.g., 'users/user123/bookmarks'
+        // The API automatically generates an ID.
+        return this.firestoreRequest('POST', fullPath, { fields: this.toFields(data) });
     }
 
-    async addDoc(collection, data) {
-        return this.firestoreRequest('POST', collection, { fields: this.toFields(data) });
+    // The setDoc method creates or overwrites a document at the specified path/ID.
+    async setDoc(fullPath, docId, data) {
+        // fullPath: e.g., 'users/user123/bookmarks'
+        // docId: e.g., 'post456'
+        return this.firestoreRequest('PATCH', `${fullPath}/${docId}`, { fields: this.toFields(data) });
     }
 
-    async updateDoc(collection, docId, data) {
+    // updateDoc and deleteDoc should also use the full collection path and docId.
+    // They are already written to construct the path as `${collection}/${docId}`, 
+    // so they will work as long as you pass the correct collection path.
+    async updateDoc(fullPath, docId, data) {
         const queryParams = Object.keys(data).map(key => ['updateMask.fieldPaths', key]);
         const searchString = new URLSearchParams(queryParams).toString();
 
         return this.firestoreRequest(
             'PATCH',
-            `${collection}/${docId}?${searchString}`,
+            `${fullPath}/${docId}?${searchString}`, // fullPath/docId/
             { fields: this.toFields(data) }
         );
     }
 
-    async deleteDoc(collection, docId) {
-        return await this.firestoreRequest('DELETE', `${collection}/${docId}`);
+    async deleteDoc(fullPath, docId) {
+        return await this.firestoreRequest('DELETE', `${fullPath}/${docId}`);
     }
 
-    async count(collection, whereField = null, whereOp = 'EQUAL', whereValue = null) {
+    async count(fullCollectionPath, whereField = null, whereOp = 'EQUAL', whereValue = null) {
         const body = {
             structuredAggregationQuery: {
                 structuredQuery: {
-                    from: [{ collectionId: collection }]
+                    // Use the full path for the collectionId
+                    from: [{ collectionId: fullCollectionPath }]
                 },
                 aggregations: [
                     {

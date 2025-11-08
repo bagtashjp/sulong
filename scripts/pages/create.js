@@ -2,7 +2,7 @@ import { renderCards } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
 import { addressify, initNavBars, endLoading, delayHrefs, waitASecond, startLoading, generatePublicId } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth, db } from "../init-firebase.js";
+import { auth, createPost, db } from "../init-firebase.js";
 import { collection, addDoc, GeoPoint , serverTimestamp} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 let selectedFiles = [];
@@ -131,16 +131,17 @@ async function submitCreatePost() {
         category: theCategory,
         media: imgURLS,
         tracker_id: null,
-        created_at: serverTimestamp(),
-        location: new GeoPoint(mapLocation.lat, mapLocation.lon),
-        status: "PENDING",
+        //created_at: serverTimestamp(), <- To be handled in the backend
+        location: {latitude: mapLocation.lat, longitude: mapLocation.lon},//new GeoPoint(mapLocation.lat, mapLocation.lon),
+        // status: "PENDING", <- To be handled in the backend
         address_name: fullAddress.display_name || "Unknown Address",
         address_city: fullAddress.city || "Unknown City",
         address_brgy: fullAddress.brgy || "Unknown Barangay",
     };
     console.log("Post Data:", postData);
     try {
-        const docRef = await addDoc(collection(db, "posts"), postData);
+        //const docRef = await addDoc(collection(db, "posts"), postData);
+        const docRef = await createPost(postData);
         console.log("Post created with ID:", docRef.id);
         alert("Post successfully created.\nPlease wait for the admin review to approve your post.");
         startLoading();

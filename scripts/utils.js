@@ -188,7 +188,104 @@ export async function summonToast(message, duration = 3000) {
     }, duration);
     
 }
+export async function summonRightToast(html, href = null, duration = 5000) {
+    // --- Element Creation ---
+    const toast = document.createElement(href ? "a" : "div");
+    toast.className = 'custom-right-toast-container';
 
+    // Configure as a link if href is provided
+    if (href) {
+        toast.href = href;
+        toast.target = "_blank";
+    }
+
+    // Add a close button
+    const closeButton = document.createElement("span");
+    closeButton.innerHTML = "&#x2715;"; // X mark
+    closeButton.className = 'custom-toast-close';
+
+    // Set the message content (supports multi-line HTML)
+    toast.innerHTML = `<div class="custom-toast-message">${html}</div>`;
+    toast.appendChild(closeButton);
+
+    // --- Styling (Upper Right Corner) ---
+    Object.assign(toast.style, {
+        position: "fixed",
+        top: "101vh", // Initial position (off-screen)
+        right: "20px", // Anchor to the right side
+        left: "auto",
+        transform: "none",
+        maxWidth: "350px",
+        minHeight: "40px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        backgroundColor: "rgb(var(--color-base-background))",
+        color: "rgb(var(--color-base-font))",
+        padding: "10px 15px",
+        borderRadius: "8px",
+        fontSize: "14px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
+        zIndex: 9999,
+        opacity: 0,
+        // Update transition property for top and opacity
+        transition: "top 0.5s ease, opacity 0.5s ease",
+        textDecoration: href ? "none" : "initial",
+        cursor: "pointer",
+    });
+
+    // Style for the close button
+    Object.assign(closeButton.style, {
+        marginLeft: "15px",
+        fontSize: "16px",
+        cursor: "pointer",
+        flexShrink: 0,
+    });
+
+    // Style for the message container inside the toast
+    const messageContainer = toast.querySelector('.custom-toast-message');
+    if (messageContainer) {
+        Object.assign(messageContainer.style, {
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+            paddingRight: "10px",
+            flexGrow: 1,
+        });
+    }
+
+    // --- Functionality ---
+
+    // 1. Show the toast (slide in from the top)
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.style.top = "62px"; // Final visible position (upper right)
+        toast.style.opacity = 1;
+    }, 100);
+
+    // 2. Define the hide function
+    const hideToast = () => {
+        toast.style.opacity = 0;
+        toast.style.top = "-20px";
+        closeButton.removeEventListener("click", closeButtonHandler);
+        toast.addEventListener("transitionend", () => toast.remove(), { once: true });
+    };
+
+    // 3. Auto-hide timeout
+    const hideTimeout = setTimeout(hideToast, duration);
+
+    // 4. Close button handler
+    const closeButtonHandler = (e) => {
+        e.stopPropagation(); // Prevents link navigation if applicable
+        clearTimeout(hideTimeout);
+        hideToast();
+    };
+    closeButton.addEventListener("click", closeButtonHandler);
+
+    // If it's a link, prevent the close button from triggering the link navigation
+    if (href) {
+        closeButton.addEventListener("click", (e) => e.preventDefault());
+    }
+}
 
 export function addressify(addr) {
     let city = addr.city || addr.town || addr.municipality || addr.county || "";

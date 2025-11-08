@@ -16,10 +16,10 @@ export async function onRequestPost(context) {
         status: "APPROVED"
     };
     await firestore.updateDoc("posts", postId, data);
-    await firestore.addDoc("notify_user", {
-        user_id: postDoc.user_id,
+    await firestore.addDoc("notifications", {
+        post_id: postId,
         type: "POST_APPROVED",
-        link: postId
+        timestamp: new Date()
     });
     return new Response(JSON.stringify(data), { status: 200 });
 }

@@ -1,11 +1,11 @@
-import { auth, getCurrentUserData } from "./init-firebase.js";
+import { auth, getCurrentUserData, getNotifications } from "./init-firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 export function initAuthState(userLoggedIn, userLoggedOut) {
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-
+            await getNotifications();
             if (!window.location.pathname.endsWith("signin")) {
                 auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
                     const role = idTokenResult.claims.role;

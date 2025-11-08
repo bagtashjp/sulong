@@ -6,7 +6,7 @@ import {
     getFirestore,
     collection,
     getDocs,
-    updateDoc, 
+    updateDoc,
     query,
     limit,
     getDoc,
@@ -17,10 +17,12 @@ import {
     addDoc,
     deleteDoc,
     orderBy,
-    serverTimestamp
+    serverTimestamp,
+    onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 import { POST_TAG_NAME } from "./z_constants.js";
+import { summonRightToast, summonToast } from "./utils.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -44,6 +46,32 @@ const usersCache = {};
 // #endregion
 
 // #region POSTS
+export async function createPost(postData) {
+    const res = await fetch("/api/firestore/report", {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + (await auth.currentUser.getIdToken()),
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(postData)
+    });
+
+    if (!res.ok) {
+        // Optional: you can read error body if server returns JSON error details
+        let errorMsg = `Error ${res.status}: ${res.statusText}`;
+        try {
+            const errData = await res.json();
+            if (errData?.message) errorMsg += ` - ${errData.message}`;
+        } catch (e) {
+            // ignore JSON parse errors
+        }
+        alert(errorMsg);  // or console.error, or throw
+        throw new Error(errorMsg);
+    }
+
+    return await res.json();  // safe to parse because res.ok === true
+}
+
 export async function getPosts(limitCount = 10) {
     try {
         const q = query(collection(db, "posts"),
@@ -173,7 +201,7 @@ export async function getApprovedPosts(limitCount = 10) {
         return [];
     }
 }
-/*
+
 export async function getPost(postId) {
     try {
         const postRef = doc(db, "posts", postId);
@@ -208,24 +236,64 @@ export async function getPost(postId) {
         return null;
     }
 }
-    */
-export async function getPost(postId) {
-    try {
-        const res = await fetch("/api/firestore/report?post_id=" + encodeURIComponent(postId), {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
-            }
-        });
-        if (!res.ok) throw new Error("Failed to fetch post");
-        return await res.json();
-    } catch (error) {
-        console.error("Error getting post:", error);
-        alert("Error fetching post. " + error);
-        return null;
-    }
-}
 
+export async function getNotifications(limitCount = 10) {
+
+    const userData = await getCurrentUserData();
+    const bookmarks = userData.bookmarks || [];
+    const notifications = [];
+    for (const bookmark of bookmarks) {
+        const q = query(
+            collection(db, "notifications"),
+            where("post_id", "==", bookmark.id),
+            where("timestamp", ">", bookmark.timestamp),
+            orderBy("timestamp", "desc")
+        );
+        const querySnapshot = await getDocs(q);
+        notifications.push(...querySnapshot.docs.map(doc => doc.data()));
+    }
+    console.log("Notifications:", notifications);
+    notificationListener(bookmarks.map(b => b.id));
+    return notifications;
+}
+export async function notificationListener(bookmarks) {
+    const q = query(
+        collection(db, "notifications"),
+        where("post_id", "in", bookmarks)
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        console.log(`Snapshot received. Total matching documents: ${querySnapshot.size}`);
+
+        querySnapshot.forEach((doc) => {
+            const body = doc.data();
+            let bodyBuilder = "";
+            if (body.type === "POST_APPROVED") {
+                bodyBuilder = "Your post has been approved!<br/><i>Click here to view.</i>";
+            }
+            summonRightToast(bodyBuilder, "/post?id=" + encodeURIComponent(body.post_id));
+        });
+    }, (error) => {
+        console.error("Listener failed:", error);
+    });
+}
+/*
+export async function getPost(postId) {
+try {
+    const res = await fetch("/api/firestore/report?post_id=" + encodeURIComponent(postId), {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+        }
+    });
+    if (!res.ok) throw new Error("Failed to fetch post");
+    return await res.json();
+} catch (error) {
+    console.error("Error getting post:", error);
+    alert("Error fetching post. " + error);
+    return null;
+}
+}
+*/
 export async function updatePostStatus(docId, newStatus) {
     try {
         const postRef = doc(db, "posts", docId);
@@ -263,6 +331,7 @@ export async function doesUserExist(userId) {
     return userSnap.exists();
 }
 
+
 export async function getCurrentUserData() {
     const user = auth.currentUser;
     if (!user) return null;
@@ -270,16 +339,29 @@ export async function getCurrentUserData() {
     const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
-    if (userSnap.exists()) {
-        const userData = { id: userSnap.id, ...userSnap.data() };
-        const { location, created_at, ...filteredData } = userData;
-        const userDataSerialized = JSON.stringify(filteredData);
-        localStorage.setItem("userData", userDataSerialized);
-        return filteredData;
-    } else {
-        return null;
-    }
+    if (!userSnap.exists()) return null;
+
+    // Main user data
+    const userData = { id: userSnap.id, ...userSnap.data() };
+    const { location, created_at, ...filteredData } = userData;
+
+    // Fetch bookmarks subcollection
+    const bookmarksCol = collection(userRef, "bookmarks");
+    const bookmarksSnap = await getDocs(bookmarksCol);
+    const bookmarks = bookmarksSnap.docs.map(docr => ({
+        id: docr.id,
+        ...docr.data()
+    }));
+
+    // Attach bookmarks to user data
+    const result = { ...filteredData, bookmarks };
+
+    // Optionally store in localStorage
+    const userDataSerialized = JSON.stringify(result);
+    localStorage.setItem("userData", userDataSerialized);
+    return result;
 }
+
 
 export async function saveUserData(userData) {
     const user = auth.currentUser;
@@ -296,6 +378,32 @@ export async function saveUserData(userData) {
         email: user.email,
         created_at: serverTimestamp(),
     }, { merge: true });
+}
+
+export async function removeBookmark(postId) {
+    const res = await fetch("/api/firestore/bookmark?post_id=" + encodeURIComponent(postId), {
+        method: "DELETE",
+        headers: {
+            "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+        }
+    });
+    if (!res.ok) {
+        alert("Error deleting bookmark.");
+        throw new Error("Failed to delete bookmark");
+    }
+}
+
+export async function addBookmark(postId) {
+    const res = await fetch("/api/firestore/bookmark?post_id=" + encodeURIComponent(postId), {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+        }
+    });
+    if (!res.ok) {
+        alert("Error adding bookmark.");
+        throw new Error("Failed to add bookmark");
+    }
 }
 // #endregion
 
@@ -376,7 +484,7 @@ export async function setProgress(postId, body, media = []) {
             media,
             user_id,
             timestamp: serverTimestamp()
-        }); 
+        });
         // Re-fetch to get the resolved timestamp
         const snap = await getDoc(docRef);
         const data = snap.data();
@@ -538,7 +646,7 @@ export async function getMonthlyCounts(year = 2025) {
 export async function getCategoryCounts() {
     const catTags = Object.keys(POST_TAG_NAME);
     const cats = [];
-     for (const tag of catTags) {
+    for (const tag of catTags) {
         const q = query(
             collection(db, "posts"),
             where("category", "==", tag)

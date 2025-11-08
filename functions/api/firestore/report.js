@@ -21,14 +21,44 @@ export async function onRequestGet(context) {
         }
     }
     const newDoc = {
-            id: postDoc.id,
-            ...postDoc,
-            display_name: userName,
-            user_avatar: userAvatar
+        id: postDoc.id,
+        ...postDoc,
+        display_name: userName,
+        user_avatar: userAvatar
     }
 
     return new Response(JSON.stringify(newDoc), { status: 200 });
 }
+
 export async function onRequestPost(context) {
-    
+    const firestore = new FirestoreREST(context.env);
+    const req = context.request;
+    const user = context.data.user;
+    let data;
+    try {
+        data = await req.json();
+    } catch (e) {
+        return new Response("Invalid JSON", { status: 400 });
+    }
+    if (!data) return new Response("Invalid request body", { status: 400 });
+    data.created_at = new Date();
+    data.status = "PENDING";
+    try {
+        const res = await firestore.addDoc("posts", data);
+        const postId = res.name.split("/").pop();
+        try {
+            await firestore.setDoc(`users/${user.sub}/bookmarks`, postId, {
+                timestamp: new Date()
+            });
+            return new Response(JSON.stringify({ id: postId }), { status: 200 });
+        } catch (e) {
+            console.error("Error adding bookmark:", e);
+            return new Response("Error adding bookmark", { status: 500 });
+        }
+
+    } catch (e) {
+        console.error("Error creating post:", e);
+        return new Response("Error creating post", { status: 500 });
+    }
+
 }

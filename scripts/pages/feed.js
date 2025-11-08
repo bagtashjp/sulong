@@ -2,7 +2,7 @@ import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js
 import { initDarkmode } from "../theme.js";
 import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast, startLoading } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getReactions, getReactionCount } from "../init-firebase.js";
+import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getReactions, getReactionCount, removeBookmark, addBookmark } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
 /**
@@ -60,7 +60,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     setTimeout(() => delayHrefs(), 500);
 })
 let reactTimestamp = 0;
+let bookmarkTimestamp = 0;
+
 async function loadPostCards() {
+    
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        let bookmarks = userData.bookmarks.map(e => e.id);
+        console.log(userData.bookmarks);
+        console.log(bookmarks);
     const postsContainer = document.querySelector(".core_feed");
     const posts = await getApprovedPosts();
     endLoading();
@@ -90,6 +97,7 @@ async function loadPostCards() {
                 window.location.href = `post?id=${post.id}`;
             }, 800);
         }
+
         const postCards = summonTemplate("feed_post", {
             ".feed_post": { id: post.id },
             ".post_display_name": { text: post.display_name },
@@ -128,6 +136,29 @@ async function loadPostCards() {
                         ? "rgba(70, 253, 70, 0.55)"
                         : "rgba(255, 255, 255, 0.3)",
                     cursor: "pointer"
+                }
+            },
+            ".favorite_button": {
+                img: (bookmarks.includes(post.id))
+                    ? "assets/bookmark_icon-shaded.svg"
+                    : "assets/bookmark_icon.svg",
+                onclick: async (evt) => {
+                    if (bookmarkTimestamp + 3000 > Date.now()) {
+                        summonToast("Woah woah not too fast!!");
+                        return;
+                    }
+                    if (bookmarks.includes(post.id)) {
+                        await removeBookmark(post.id);
+                        evt.target.src = "assets/bookmark_icon.svg";
+                        bookmarks = bookmarks.filter(b => b !== post.id);
+                        summonToast("Removed bookmark.");
+                    } else {
+                        await addBookmark(post.id);
+                        evt.target.src = "assets/bookmark_icon-shaded.svg";
+                        bookmarks.push(post.id);
+                        summonToast("Added bookmark.");
+                    }
+                    bookmarkTimestamp = Date.now();
                 }
             }
         });
