@@ -256,10 +256,13 @@ export async function getNotifications(limitCount = 10) {
     notificationListener(bookmarks.map(b => b.id));
     return notifications;
 }
+
 export async function notificationListener(bookmarks) {
     const q = query(
         collection(db, "notifications"),
-        where("post_id", "in", bookmarks)
+        where("post_id", "in", bookmarks),
+        where("timestamp", ">", Timestamp.now()),
+        orderBy("timestamp", "desc")
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
         console.log(`Snapshot received. Total matching documents: ${querySnapshot.size}`);
@@ -276,6 +279,7 @@ export async function notificationListener(bookmarks) {
         console.error("Listener failed:", error);
     });
 }
+
 /*
 export async function getPost(postId) {
 try {
@@ -294,6 +298,7 @@ try {
 }
 }
 */
+
 export async function updatePostStatus(docId, newStatus) {
     try {
         const postRef = doc(db, "posts", docId);
@@ -321,7 +326,6 @@ export async function approvePost(docId) {
     }
 }
 // #endregion
-
 
 // #region USERS
 export async function doesUserExist(userId) {
