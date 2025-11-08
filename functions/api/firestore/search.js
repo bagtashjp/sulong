@@ -14,20 +14,17 @@ export async function onRequest(context) {
     );
     console.log(embedding.join("|"))
     if (!embedding) return new Response("Failed to generate embedding", { status: 500 });
-    const results = await firestore.vectorFinder("posts", embedding, {
-        limit: 10,
-        vectorField: "embeddings",
-        distanceMeasure: "COSINE",
-        distanceResultField: "distance",
-        distanceThreshold: 0.3,
-        where: {
-            fieldFilter: {
-                field: { fieldPath: 'status' },
-                op: 'NOT_EQUAL',
-                value: { stringValue: 'REJECTED' }
-            }
-        }
-    });
-    console.log("Search results:", results);
-    return new Response(JSON.stringify(results), { status: 200 });
+    const res = await fetch(context.env.VECTOR_TOOL_URL + "/vector-search", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ vector: embedding })
+    })
+    if (res.ok) {
+        const data = await res.json();
+        return new Response(JSON.stringify(data), { status: 200 });
+    } else {
+        return new Response("Internal Server Error", { status: 500});
+    }
 }
