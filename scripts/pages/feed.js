@@ -1,6 +1,6 @@
 import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast, startLoading } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast, startLoading, initNotifications } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getReactions, getReactionCount, removeBookmark, addBookmark } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.href = "signin";
             return;
         }
+        initNotifications();
         await loadPostCards();
     }, () => {
         window.location.href = "signin";
@@ -63,16 +64,12 @@ let reactTimestamp = 0;
 let bookmarkTimestamp = 0;
 
 async function loadPostCards() {
-    
-        const userData = JSON.parse(localStorage.getItem("userData"));
-        let bookmarks = userData.bookmarks.map(e => e.id);
-        console.log(userData.bookmarks);
-        console.log(bookmarks);
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    let bookmarks = userData.bookmarks.map(e => e.id);
     const postsContainer = document.querySelector(".core_feed");
     const posts = await getApprovedPosts();
     endLoading();
     for (const post of posts) {
-
         const imgs = [];
         for (const imgUrl of post.media || []) {
             const img = document.createElement("span");

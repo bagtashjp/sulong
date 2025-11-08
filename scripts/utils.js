@@ -1,4 +1,4 @@
-import { auth } from "./init-firebase.js";
+import { auth, getNotifications } from "./init-firebase.js";
 
 export function initNavBars() {
     document.querySelector("#logout_btn").addEventListener("click", logout);
@@ -122,6 +122,39 @@ export async function getSignature(public_id) {
 
     const data = await response.json();
     return data;
+}
+export async function initNotifications() {
+    const alertBtn = document.querySelector("#alert-btn");
+    alertBtn.style.display = "block";
+    alertBtn.onclick = async () => {
+        const notifBar = document.querySelector(".notif_bar");
+        if (notifBar.style.right === "0px") {
+            notifBar.style.right = "-350px";
+            return;
+        }
+        notifBar.style.right = "0px";
+    }
+    const notifs = await getNotifications();
+    notifs.sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis());
+    const notifContainer = document.querySelector(".notif_content");
+    notifContainer.replaceChildren();
+    for (const notif of notifs) {
+        const notifElem = document.createElement("a");
+        notifElem.classList.add("notif_item");
+        const date = notif.timestamp.toDate();
+        let body;
+        let href;
+        if (notif.type === "POST_APPROVED") {
+            body = `<b>Your post has been approved!<br/><i>Click to view.</i></b>`;
+            href = `/post?id=${encodeURIComponent(notif.post_id)}`;
+        }
+        notifElem.innerHTML = `
+            <span class="notif_item_date">${date.toLocaleDateString()} ${date.toLocaleTimeString()}</span>
+            
+            <a class="notif_item_body">${body||""}</a>`;
+        notifElem.href = href || "#";
+        notifContainer.appendChild(notifElem);
+    }
 }
 
 export async function uploadToCloudinary(file) {

@@ -5,7 +5,6 @@ export function initAuthState(userLoggedIn, userLoggedOut) {
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            await getNotifications();
             if (!window.location.pathname.endsWith("signin")) {
                 auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
                     const role = idTokenResult.claims.role;

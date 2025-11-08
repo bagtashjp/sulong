@@ -238,7 +238,6 @@ export async function getPost(postId) {
 }
 
 export async function getNotifications(limitCount = 10) {
-
     const userData = await getCurrentUserData();
     const bookmarks = userData.bookmarks || [];
     const notifications = [];
@@ -275,8 +274,14 @@ export async function notificationListener(bookmarks) {
             }
             summonRightToast(bodyBuilder, "/post?id=" + encodeURIComponent(body.post_id));
         });
+
     }, (error) => {
         console.error("Listener failed:", error);
+    });
+    window.addEventListener('beforeunload', () => {
+        console.log("Stopping Firebase listener before page exit.");
+        unsubscribe();
+
     });
 }
 

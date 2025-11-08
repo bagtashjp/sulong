@@ -2,7 +2,8 @@ import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js
 import { initDarkmode } from "../theme.js";
 import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
-import { auth,
+import {
+    auth,
     getPost,
     doesUserExist,
     getReactionCount,
@@ -48,7 +49,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadPostCard(postId) {
     const postsContainer = document.querySelector(".core_feed");
     const post = await getPost(postId);
-
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    let bookmarks = userData.bookmarks.map(e => e.id);
     const imgs = [];
     for (const imgUrl of post.media || []) {
         const img = document.createElement("span");
@@ -122,6 +124,29 @@ async function loadPostCard(postId) {
                     setTimeout(() => evt.target.disabled = false, 5000);
                 }
             }
+        },
+        ".favorite_button": {
+            img: (bookmarks.includes(post.id))
+                ? "assets/bookmark_icon-shaded.svg"
+                : "assets/bookmark_icon.svg",
+            onclick: async (evt) => {
+                if (bookmarkTimestamp + 3000 > Date.now()) {
+                    summonToast("Woah woah not too fast!!");
+                    return;
+                }
+                if (bookmarks.includes(post.id)) {
+                    await removeBookmark(post.id);
+                    evt.target.src = "assets/bookmark_icon.svg";
+                    bookmarks = bookmarks.filter(b => b !== post.id);
+                    summonToast("Removed bookmark.");
+                } else {
+                    await addBookmark(post.id);
+                    evt.target.src = "assets/bookmark_icon-shaded.svg";
+                    bookmarks.push(post.id);
+                    summonToast("Added bookmark.");
+                }
+                bookmarkTimestamp = Date.now();
+            }
         }
     });
 
@@ -139,7 +164,7 @@ async function loadPostCard(postId) {
                 evt.target.disabled = true;
                 try {
                     const timestamp = await setProgress(post.id, progressInput);
-                    
+
                     summonToast("Progress added!", 3000);
                     const progressNode = summonTemplate("progress", {
                         ".progress_user": { text: userData.first_name + " " + userData.last_name },
@@ -159,7 +184,7 @@ async function loadPostCard(postId) {
                 }
             }
             document.querySelector(".mark-resolved-button").onclick = async (evt) => {
-                
+
                 const conf = confirm("Are you sure you want to mark this post as resolved? This action cannot be undone.");
                 if (!conf) return;
                 evt.target.disabled = true;
