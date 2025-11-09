@@ -73,6 +73,7 @@ export async function onRequestPost(context) {
                     return new Response(JSON.stringify({ id: postId }), { status: 202 });
                 }
             } else {
+                console.log("Error adding embedding:", await res.text());
                 return new Response("Internal Server Error", { status: 500 });
             }
         } catch (e) {

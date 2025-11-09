@@ -65,7 +65,8 @@ export async function createPost(postData) {
             theBtn.disabled = false;
             theBtn.textContent = "Submit";
         } else {
-            let errorMsg = `Error ${res.status}: ${res.statusText}`;
+            const t = await res.text();
+            let errorMsg = `Error ${res.status}: ${t}`;
             try {
                 const errData = await res.json();
                 if (errData?.message) errorMsg += ` - ${errData.message}`;
