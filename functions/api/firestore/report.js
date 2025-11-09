@@ -1,5 +1,6 @@
 import FirestoreREST from "./FirestoreREST";
 import { getEmbedding, moderateContent } from "./googleai";
+import { URL } from 'node:url';
 export async function onRequestGet(context) {
     const firestore = new FirestoreREST(context.env);
     const req = context.request;
@@ -52,6 +53,7 @@ export async function onRequestPost(context) {
     }
     data.created_at = new Date();
     const embedding = await getEmbedding(context.env.GOOGLE_AI_KEY_A, "gemini-embedding-001", data.description);
+    data.embedarray = embedding;
     try {
         const res = await firestore.addDoc("posts", data);
         const postId = res.name.split("/").pop();
@@ -59,20 +61,20 @@ export async function onRequestPost(context) {
             await firestore.setDoc(`users/${user.sub}/bookmarks`, postId, {
                 timestamp: new Date()
             });
-            const uri = context.env.VECTOR_TOOL_URL + "/embed";
-            console.log("Adding embedding to:", uri);
-            const res = await fetch(uri, {
+            
+            
+            const res = await fetch(context.env.VECTOR_TOOL_URL + "/embed", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ post_id: postId, embedding })
-            })
-                if (data.status === "APPROVED") {
-                    return new Response(JSON.stringify({ id: postId }), { status: 201 });
-                } else {
-                    return new Response(JSON.stringify({ id: postId }), { status: 202 });
-                }
+            });
+            if (data.status === "APPROVED") {
+                return new Response(JSON.stringify({ id: postId }), { status: 201 });
+            } else {
+                return new Response(JSON.stringify({ id: postId }), { status: 202 });
+            }
             
         } catch (e) {
             console.error("Error adding bookmark:", e);
@@ -85,3 +87,4 @@ export async function onRequestPost(context) {
     }
 
 }
+
