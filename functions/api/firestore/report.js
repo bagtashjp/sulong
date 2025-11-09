@@ -43,14 +43,14 @@ export async function onRequestPost(context) {
         return new Response("Invalid JSON", { status: 500 });
     }
     if (!data) return new Response("Invalid request body", { status: 500 });
-    const moderation = await moderateContent(context.env.GOOGLE_AI_KEY_A, "gemini-2.5-flash", data.description, data.media);
-    if (moderation.score < 0.3) {
-        return new Response("Your report has been auto-rejected by AI moderation.\nReason: " + moderation.reason, { status: 400 });
-    } else if (moderation.score > 0.7) {
-        data.status = "APPROVED";
-    } else {
+    //const moderation = await moderateContent(context.env.GOOGLE_AI_KEY_A, "gemini-2.5-flash", data.description, data.media);
+    //if (moderation.score < 0.3) {
+    //    return new Response("Your report has been auto-rejected by AI moderation.\nReason: " + moderation.reason, { status: 400 });
+    //} else if (moderation.score > 0.7) {
+    //    data.status = "APPROVED";
+    //} else {
         data.status = "PENDING";
-    }
+    //}
     data.created_at = new Date();
     const embedding = await getEmbedding(context.env.GOOGLE_AI_KEY_A, "gemini-embedding-001", data.description);
     data.embedarray = embedding;
