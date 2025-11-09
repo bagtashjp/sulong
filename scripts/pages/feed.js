@@ -102,11 +102,7 @@ async function loadPostCards() {
             ".post_desc": { text: post.description },
             ".tile_map": {
                 style: {
-                    backgroundImage: `url(${buildStaticMapUrl({
-                        centerLon: post.location.longitude,
-                        centerLat: post.location.latitude,
-                        markers: [{}]
-                    })})`
+                    backgroundImage: `url(/api/geoapify?lon=${encodeURIComponent(post.location.longitude)}&lat=${encodeURIComponent(post.location.latitude)})`
                 }
             },
             ".post_tag": { text: POST_TAG_NAME[post.category] },

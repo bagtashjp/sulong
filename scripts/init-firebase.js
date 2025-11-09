@@ -613,12 +613,18 @@ export async function getProgress(postId, progressLimit = 100) {
 
 export async function markPostResolved(postId) {
     try {
-        const postRef = doc(db, "posts", postId);
-        await updateDoc(postRef, {
-            status: "RESOLVED",
+        const res = await fetch("/api/firestore/post-resolve?post_id=" + encodeURIComponent(postId), {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+            }
         });
+        if (!res.ok) throw new Error("Failed to approve post");
+        return await res.json();
     } catch (error) {
-        console.error("Error marking post as resolved:", error);
+        console.error("Error resolving post:", error);
+        alert("Error resolving post. " + error);
+        return null;
     }
 }
 
@@ -727,8 +733,8 @@ export async function sendPasswordResetRequest(email) {
         if (!email || typeof email !== "string" || !email.includes("@")) {
             throw new Error("Please provide a valid email address.");
         }
-        await sendPasswordResetEmail(auth, email.trim());
-        console.log("Password reset email sent to:", email);
+        await sendPasswordResetEmail(auth, email)
+        alert("Password reset email sent!" + resetLink);
         return { success: true };
     } catch (error) {
         console.error("Error sending password reset email:", error);

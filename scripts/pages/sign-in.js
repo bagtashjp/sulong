@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         evt.target.disabled = true;
         try {
             await sendPasswordResetRequest(email, evt);
-            alert(`Password reset email should be sent to your email address ${email}, if it exists in our system.`);
         } catch (error) {
             console.error("Error sending password reset request:", error);
         } finally {
