@@ -63,6 +63,7 @@ export async function onRequestPost(context) {
             });
             
             const uri = context.env.VECTOR_TOOL_URL + "/embed";
+            console.log("Embedding URL:", uri);
             const res = await fetch(uri, {
                 method: "POST",
                 headers: {
