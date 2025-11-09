@@ -59,7 +59,9 @@ export async function onRequestPost(context) {
             await firestore.setDoc(`users/${user.sub}/bookmarks`, postId, {
                 timestamp: new Date()
             });
-            const res = await fetch(context.env.VECTOR_TOOL_URL + "/embed", {
+            const uri = context.env.VECTOR_TOOL_URL + "/embed";
+            console.log("Adding embedding to:", uri);
+            const res = await fetch(uri, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
