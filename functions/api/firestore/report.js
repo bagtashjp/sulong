@@ -68,16 +68,12 @@ export async function onRequestPost(context) {
                 },
                 body: JSON.stringify({ post_id: postId, embedding })
             })
-            if (res.ok) {
                 if (data.status === "APPROVED") {
                     return new Response(JSON.stringify({ id: postId }), { status: 201 });
                 } else {
                     return new Response(JSON.stringify({ id: postId }), { status: 202 });
                 }
-            } else {
-                console.log("Error adding embedding:", await res.text());
-                return new Response("Internal Server Error", { status: 500 });
-            }
+            
         } catch (e) {
             console.error("Error adding bookmark:", e);
             return new Response("Error adding bookmark", { status: 500 });
