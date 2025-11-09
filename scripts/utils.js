@@ -328,20 +328,40 @@ function stringShorten(str, maxLength = 20) {
     return str.slice(0, maxLength - 3) + '...';
 }
 
-export function convertSimilarity(cosineDistance, decayFactor = 5) {
-  // 1. Convert Distance to Cosine Similarity (Range: -1 to 1)
-  const cosineSimilarity = 1 - cosineDistance;
+/*export function convertSimilarity(cosineDistance) {
+  // 1. Define constants to tune the curve's shape and position
+  // 'L' is the max curve output (max percentage)
+  const L = 100; 
+  // 'k' determines the steepness of the curve (higher k = sharper drop)
+  const k = 20; 
+  // 'x0' determines the center point of the drop (tuned to be slightly below 0.3)
+  const x0 = 0.28; 
 
-  // 2. Normalize to a Positive Range (Range: 0 to 1)
-  // We use (cosineSimilarity + 1) / 2 to map -1 to 0, and 1 to 1.
-  const normalizedSimilarity = (cosineSimilarity + 1) / 2;
+  // 2. Apply a modified inverse Logistic/Sigmoid function
+  // The '1 - ...' in the denominator inverts the curve to make it drop as distance increases.
+  let customScore = L / (1 + Math.exp(k * (cosineDistance - x0)));
 
-  // 3. Apply Exponential Decay (The "Stricter" Part)
-  // This heavily penalizes normalizedSimilarity values below 1.
-  const strictSimilarity = Math.pow(normalizedSimilarity, decayFactor);
+  // 3. Ensure score is between 0 and 100
+  return Math.max(0, Math.min(100, customScore));
+}*/
+export function convertSimilarity(cosineDistance) {
+    return curve(cosineDistance) * 100;
+}
+export function curve(x) {
+  if (x <= 0) return 1;
+  if (x >= 0.5) return 0;
 
-  // 4. Convert to Percentage (Range: 0 to 100)
-  const similarityPercentage = strictSimilarity * 100;
-
-  return similarityPercentage;
+  if (x <= 0.3) {
+    // between 0 and 0.3 → from 1 to 0.5 (smooth curve)
+    const t = x / 0.3;
+    return 1 - 0.5 * Math.pow(t, 0.8); // slightly eased
+  } else if (x <= 0.4) {
+    // between 0.3 and 0.4 → from 0.5 to 0.05
+    const t = (x - 0.3) / 0.1;
+    return 0.5 - 0.45 * Math.pow(t, 1.5);
+  } else {
+    // between 0.4 and 0.5 → from 0.05 to 0
+    const t = (x - 0.4) / 0.1;
+    return 0.05 * (1 - Math.pow(t, 2));
+  }
 }
