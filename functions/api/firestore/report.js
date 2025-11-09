@@ -62,8 +62,8 @@ export async function onRequestPost(context) {
                 timestamp: new Date()
             });
             
-            
-            const res = await fetch(context.env.VECTOR_TOOL_URL + "/embed", {
+            const uri = context.env.VECTOR_TOOL_URL + "/embed";
+            const res = await fetch(uri, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
