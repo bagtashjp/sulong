@@ -328,40 +328,29 @@ function stringShorten(str, maxLength = 20) {
     return str.slice(0, maxLength - 3) + '...';
 }
 
-/*export function convertSimilarity(cosineDistance) {
-  // 1. Define constants to tune the curve's shape and position
-  // 'L' is the max curve output (max percentage)
-  const L = 100; 
-  // 'k' determines the steepness of the curve (higher k = sharper drop)
-  const k = 20; 
-  // 'x0' determines the center point of the drop (tuned to be slightly below 0.3)
-  const x0 = 0.28; 
-
-  // 2. Apply a modified inverse Logistic/Sigmoid function
-  // The '1 - ...' in the denominator inverts the curve to make it drop as distance increases.
-  let customScore = L / (1 + Math.exp(k * (cosineDistance - x0)));
-
-  // 3. Ensure score is between 0 and 100
-  return Math.max(0, Math.min(100, customScore));
-}*/
 export function convertSimilarity(cosineDistance) {
-    return curve(cosineDistance) * 100;
-}
-export function curve(x) {
-  if (x <= 0) return 1;
-  if (x >= 0.5) return 0;
+  const D = cosineDistance;
+  let percentage;
 
-  if (x <= 0.3) {
-    // between 0 and 0.3 → from 1 to 0.5 (smooth curve)
-    const t = x / 0.3;
-    return 1 - 0.5 * Math.pow(t, 0.8); // slightly eased
-  } else if (x <= 0.4) {
-    // between 0.3 and 0.4 → from 0.5 to 0.05
-    const t = (x - 0.3) / 0.1;
-    return 0.5 - 0.45 * Math.pow(t, 1.5);
+  // --- Segment 1: High Similarity (0.0 to 0.3) ---
+  // This segment is now less steep: 100% (at 0.0) -> 80% (at 0.3)
+  // Slope = (80 - 100) / (0.3 - 0.0) = -20 / 0.3 = -66.67
+  if (D <= 0.3) {
+    percentage = (-20 / 0.3) * D + 100;
+
+  // --- Segment 2: Steep Cliff (0.3 to 0.5) ---
+  // This segment is now steeper: 80% (at 0.3) -> 0% (at 0.5)
+  // Slope = (0 - 80) / (0.5 - 0.3) = -80 / 0.2 = -400
+  } else if (D > 0.3 && D <= 0.5) {
+    // We can solve for the equation y = -400*D + b
+    // Using point (0.5, 0): 0 = -400*(0.5) + b -> b = 200
+    percentage = -400 * D + 200;
+
+  // --- Catch-all: Distances > 0.5 ---
   } else {
-    // between 0.4 and 0.5 → from 0.05 to 0
-    const t = (x - 0.4) / 0.1;
-    return 0.05 * (1 - Math.pow(t, 2));
+    percentage = 0;
   }
+
+  // Ensure the result is within the 0 to 100 range
+  return Math.max(0, Math.min(100, percentage));
 }

@@ -1,6 +1,6 @@
 import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast, initNotifications } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, generatePublicId, waitASecond, summonToast, initNotifications } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import {
     auth,
