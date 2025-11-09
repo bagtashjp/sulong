@@ -22,7 +22,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 import { POST_TAG_NAME } from "./z_constants.js";
-import { buildNotifBody, summonRightToast, summonToast } from "./utils.js";
+import { buildNotifBody, startLoading, summonRightToast, summonToast } from "./utils.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -57,19 +57,40 @@ export async function createPost(postData) {
     });
 
     if (!res.ok) {
-        // Optional: you can read error body if server returns JSON error details
-        let errorMsg = `Error ${res.status}: ${res.statusText}`;
-        try {
-            const errData = await res.json();
-            if (errData?.message) errorMsg += ` - ${errData.message}`;
-        } catch (e) {
-            // ignore JSON parse errors
+        if (res.status == 400) {
+            const reason = await res.text();
+            alert(reason + "\nIf you think this decision is wrong, please report it as a bug.");
+            console.error("Error creating post: " );
+            const theBtn = document.querySelector("#create_map-submit_button");
+            theBtn.disabled = false;
+            theBtn.textContent = "Submit";
+        } else {
+            let errorMsg = `Error ${res.status}: ${res.statusText}`;
+            try {
+                const errData = await res.json();
+                if (errData?.message) errorMsg += ` - ${errData.message}`;
+            } catch (e) {
+            }
+            alert(errorMsg);  // or console.error, or throw
+            throw new Error(errorMsg);
         }
-        alert(errorMsg);  // or console.error, or throw
-        throw new Error(errorMsg);
+    } else {
+        if (res.status == 201) {
+            alert("Your post has been successfully created and auto-approved by AI moderation!");
+            return await res.json();
+        } else if (res.status == 202) {
+            alert("Your post is submitted and is under review.");
+            return await res.json();
+        }
+        startLoading();
+        setTimeout(() => {
+            window.location.href = "feed"
+        }, 800);
     }
-
-    return await res.json();  // safe to parse because res.ok === true
+    
+       
+        
+ // safe to parse because res.ok === true
 }
 
 export async function getPosts(limitCount = 10) {

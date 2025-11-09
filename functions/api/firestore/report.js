@@ -1,5 +1,5 @@
 import FirestoreREST from "./FirestoreREST";
-import { getEmbedding } from "./googleai";
+import { getEmbedding, moderateContent } from "./googleai";
 export async function onRequestGet(context) {
     const firestore = new FirestoreREST(context.env);
     const req = context.request;
@@ -39,11 +39,18 @@ export async function onRequestPost(context) {
     try {
         data = await req.json();
     } catch (e) {
-        return new Response("Invalid JSON", { status: 400 });
+        return new Response("Invalid JSON", { status: 500 });
     }
-    if (!data) return new Response("Invalid request body", { status: 400 });
+    if (!data) return new Response("Invalid request body", { status: 500 });
+    const moderation = await moderateContent(context.env.GOOGLE_AI_KEY_A, "gemini-2.5-flash", data.description, data.media);
+    if (moderation.score < 0.3) {
+        return new Response("Your report has been auto-rejected by AI moderation.\nReason: " + moderation.reason, { status: 400 });
+    } else if (moderation.score > 0.7) {
+        data.status = "APPROVED";
+    } else {
+        data.status = "PENDING";
+    }
     data.created_at = new Date();
-    data.status = "PENDING";
     const embedding = await getEmbedding(context.env.GOOGLE_AI_KEY_A, "gemini-embedding-001", data.description);
     try {
         const res = await firestore.addDoc("posts", data);
@@ -60,7 +67,11 @@ export async function onRequestPost(context) {
                 body: JSON.stringify({ post_id: postId, embedding })
             })
             if (res.ok) {
-                return new Response(JSON.stringify({ id: postId }), { status: 200 });
+                if (data.status === "APPROVED") {
+                    return new Response(JSON.stringify({ id: postId }), { status: 201 });
+                } else {
+                    return new Response(JSON.stringify({ id: postId }), { status: 202 });
+                }
             } else {
                 return new Response("Internal Server Error", { status: 500 });
             }

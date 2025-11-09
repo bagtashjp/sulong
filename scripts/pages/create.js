@@ -141,22 +141,7 @@ async function submitCreatePost() {
         address_brgy: fullAddress.brgy || "Unknown Barangay",
     };
     console.log("Post Data:", postData);
-    try {
-        //const docRef = await addDoc(collection(db, "posts"), postData);
-        const docRef = await createPost(postData);
-        console.log("Post created with ID:", docRef.id);
-        alert("Post successfully created.\nPlease wait for the admin review to approve your post.");
-        startLoading();
-        setTimeout(() => {
-            window.location.href = "feed"
-        }, 800)
-    } catch (err) {
-        console.error("Error creating post:", err);
-        alert("Error creating post:" + err.message);
-        const theBtn = document.querySelector("#create_map-submit_button");
-        theBtn.disabled = false;
-        theBtn.textContent = "Submit";
-    }
+    await createPost(postData);
 }
 let map;
 let marker;

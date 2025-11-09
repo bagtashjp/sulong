@@ -22,7 +22,6 @@ export async function onRequest(context) {
     }
 
     const data = await res.json();
-    console.log("Reverse Geocode Data:", data);
 
     return new Response(JSON.stringify(data), {
       headers: { "Content-Type": "application/json" },
