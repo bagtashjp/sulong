@@ -245,7 +245,32 @@ export async function searchPosts(query) {
             }
         });
         if (!res.ok) throw new Error("Failed to search posts");
-        const results = await res.json();
+        const docs = await res.json();
+        const results = await Promise.all(docs.map(async (postData) => {
+            let userName = "Unknown";
+            let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
+
+            if (usersCache[postData.user_id]) {
+                userName = usersCache[postData.user_id].name;
+                userAvatar = usersCache[postData.user_id].avatar;
+            } else {
+                const userRef = doc(db, "users", postData.user_id);
+                const userSnap = await getDoc(userRef);
+                const userData = userSnap.exists() ? userSnap.data() : null;
+                if (userData) {
+                    userName = userData.first_name + " " + userData.last_name;
+                    userAvatar = userData.avatar || userAvatar;
+                }
+                usersCache[postData.user_id] = { name: userName, avatar: userAvatar };
+            }
+            postData.location.longitude = postData.location._longitude;
+            postData.location.latitude = postData.location._latitude;
+            return {
+                ...postData,
+                display_name: userName,
+                user_avatar: userAvatar
+            };
+        }));
         console.log("Search results:", results);
         return results;
     } catch (error) {

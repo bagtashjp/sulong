@@ -66,53 +66,6 @@ export function generatePublicId() {
     return crypto.randomUUID();
 }
 
-const GEOAPIFY_BASE = "https://maps.geoapify.com/v1/staticmap";
-const API_KEY = "2d543afb501542e2baf2164ff8af23c9";
-
-export function buildStaticMapUrl({
-    centerLon,
-    centerLat,
-    zoom = 16,
-    width = 1200,
-    height = 700,
-    markers = []
-}) {
-    // center lonlat part
-    const center = `lonlat:${centerLon},${centerLat}`;
-
-    // markers part
-    const markerStrings = markers.map(marker => {
-        const {
-            lon = centerLon, lat = centerLat,
-            type = "material",
-            color = "#4c905a",
-            size = "medium",
-            icon = "",
-            icontype = "awesome"
-        } = marker;
-        let str = `lonlat:${lon},${lat};type:${type};color:${encodeURIComponent(color)};size:${size}`;
-        if (icon) {
-            str += `;icon:${icon}`;
-        }
-        if (icontype) {
-            str += `;icontype:${icontype}`;
-        }
-        return str;
-    });
-
-    const markerParam = markerStrings.length > 0
-        ? `&marker=${markerStrings.join("|")}`
-        : "";
-
-    const url = `${GEOAPIFY_BASE}?style=osm-bright-smooth&width=${width}&height=${height}`
-        + `&center=${center}&zoom=${zoom}`
-        + markerParam
-        + `&apiKey=${API_KEY}`;
-
-    return url;
-}
-
-
 export async function getSignature(public_id) {
     const response = await fetch("/api/upload_sign", {
         method: "POST",
@@ -373,4 +326,22 @@ export function buildNotifBody(notif) {
 function stringShorten(str, maxLength = 20) {
     if (str.length <= maxLength) return str;
     return str.slice(0, maxLength - 3) + '...';
+}
+
+export function convertSimilarity(cosineDistance, decayFactor = 5) {
+  // 1. Convert Distance to Cosine Similarity (Range: -1 to 1)
+  const cosineSimilarity = 1 - cosineDistance;
+
+  // 2. Normalize to a Positive Range (Range: 0 to 1)
+  // We use (cosineSimilarity + 1) / 2 to map -1 to 0, and 1 to 1.
+  const normalizedSimilarity = (cosineSimilarity + 1) / 2;
+
+  // 3. Apply Exponential Decay (The "Stricter" Part)
+  // This heavily penalizes normalizedSimilarity values below 1.
+  const strictSimilarity = Math.pow(normalizedSimilarity, decayFactor);
+
+  // 4. Convert to Percentage (Range: 0 to 100)
+  const similarityPercentage = strictSimilarity * 100;
+
+  return similarityPercentage;
 }

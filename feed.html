@@ -17,7 +17,14 @@
         
     <div class="feed_layer">
         <div class="core_feed">
-            <a href="/create" id="create_post">Create Post</a>
+        <a href="/create" id="create_post">Create Post</a>
+        <form class="feed_searcher_container" action="" method="GET">
+
+            <input type="text" name="q" id="feed_search_input" placeholder="Search post powered by AI..." required/>
+            <button type="submit" id="feed_search_button">AI Search</button>
+        </form>
+        <div class="feed_sorter_container">
+            <div class="asdasd">Search results for <span id="search_query"></span></div>
         </div>
     </div>
 

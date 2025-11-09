@@ -1,6 +1,6 @@
 import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, generatePublicId, buildStaticMapUrl, waitASecond, summonToast, startLoading, initNotifications } from "../utils.js";
+import { initNavBars, endLoading, delayHrefs, generatePublicId, waitASecond, summonToast, startLoading, initNotifications, convertSimilarity } from "../utils.js";
 import { initAuthState } from "../auth-firebase.js";
 import { auth, getApprovedPosts, doesUserExist, setReaction, removeReaction, getReactions, getReactionCount, removeBookmark, addBookmark, addEmbedding, searchPosts } from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
@@ -53,7 +53,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
         initNotifications();
-        await loadPostCards();
+        
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("q")) {
+            document.querySelector(".feed_sorter_container").style.display = "flex";
+            document.getElementById("search_query").textContent = params.get("q");
+            await loadPostCards(await searchPosts(params.get("q")));
+        } else {
+            await loadPostCards(await getApprovedPosts());
+        }
        
     }, () => {
         window.location.href = "signin";
@@ -64,11 +72,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 let reactTimestamp = 0;
 let bookmarkTimestamp = 0;
 
-async function loadPostCards() {
+async function loadPostCards(posts) {
     const userData = JSON.parse(localStorage.getItem("userData"));
     let bookmarks = userData.bookmarks.map(e => e.id);
     const postsContainer = document.querySelector(".core_feed");
-    const posts = await getApprovedPosts();
     endLoading();
     for (const post of posts) {
         const imgs = [];
@@ -81,8 +88,9 @@ async function loadPostCards() {
             }
             imgs.push(img);
         }
-
-        const address = await (await fetch(`/api/georeverse?lat=${post.location.latitude}&lon=${post.location.longitude}`)).json();
+        const address = post.address_name
+            ? {display_name: post.address_name}
+            : await (await fetch(`/api/georeverse?lat=${post.location.latitude}&lon=${post.location.longitude}`)).json();
         const voteCount = await getReactionCount(post.id, "UPVOTE") - await getReactionCount(post.id, "DOWNVOTE");
         let userReaction = (await getReactions(post.id))?.type;
         const downvoteId = "_" + crypto.randomUUID();
@@ -155,7 +163,12 @@ async function loadPostCards() {
                     }
                     bookmarkTimestamp = Date.now();
                 }
-            }
+            },
+            ...(post.distance ? {
+                ".interax_post_similarity": {
+                    html: `Relevance: <b>${(convertSimilarity(post.distance)).toFixed(2)}%</b>`
+                }
+            } : {})
         });
         postCards.querySelector(".upvote_button").onclick = async (evt) => {
             if (reactTimestamp + 3000 > Date.now()) {
