@@ -53,7 +53,7 @@ export async function onRequestPost(context) {
         data.embeddings = null;
     //}
     data.created_at = new Date();
-    const embedding = await getEmbedding(context.env.GOOGLE_AI_KEY_A, "gemini-embedding-001", data.description);
+    //const embedding = await getEmbedding(context.env.GOOGLE_AI_KEY_A, "gemini-embedding-001", data.description);
     try {
         const res = await firestore.addDoc("posts", data);
         const postId = res.name.split("/").pop();
@@ -70,7 +70,7 @@ export async function onRequestPost(context) {
                     headers: {
                     "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ post_id: postId, embedding })
+                    body: JSON.stringify({ post_id: postId, description })
                 });
                 console.log("Embedding status: " + res.status);
                 console.log("Embedding response:", await res.text());
