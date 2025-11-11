@@ -406,6 +406,54 @@ export async function rejectPost(docId, reason) {
         return null;
     }
 }
+
+
+export async function getUserPosts(limitCount = 10) {
+    try {
+        const q = query(
+            collection(db, "posts"),
+            where("user_id", "==", auth.currentUser.uid),
+            orderBy("created_at", "desc"),
+            limit(limitCount)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        const posts = await Promise.all(
+            querySnapshot.docs.map(async (postDoc) => {
+                const postData = postDoc.data();
+                let userName = "Unknown";
+                let userAvatar = "https://res.cloudinary.com/dxdmjp5zr/image/upload/v1760607661/edfff15a-48da-4e29-8eb3-27000d3d3ead.png";
+
+                if (usersCache[postData.user_id]) {
+                    userName = usersCache[postData.user_id].name;
+                    userAvatar = usersCache[postData.user_id].avatar;
+                } else {
+                    const userRef = doc(db, "users", postData.user_id);
+                    const userSnap = await getDoc(userRef);
+                    const userData = userSnap.exists() ? userSnap.data() : null;
+                    if (userData) {
+                        userName = userData.first_name + " " + userData.last_name;
+                        userAvatar = userData.avatar || userAvatar;
+                    }
+                    usersCache[postData.user_id] = { name: userName, avatar: userAvatar };
+                }
+                return {
+                    id: postDoc.id,
+                    ...postData,
+                    display_name: userName,
+                    user_avatar: userAvatar
+                };
+            })
+        );
+
+        return posts;
+    }   catch (error) {
+        console.error("Error fetching user posts:", error);
+        return [];
+    }
+}
+
 // #endregion
 
 // #region USERS

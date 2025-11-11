@@ -8,23 +8,24 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
-    <title>Post - Sulong</title>
+    <title>Profile - Sulong</title>
 </head>
-<body id="post">
+<body id="profile">
     <div id="loading_page">Loading...</div>
     <card id="header"></card>
     <card id="left_nav"></card>
     <card id="notif_bar"></card>
     <!--#endregion-->
     <div class="feed_layer">
-        <div class="core_feed">
-            
-        </div>
+        <card id="user_profile"></card>
+        <div id="post_loading_indicator">Loading posts...</div>
+        <div class="core_feed"></div>
+
     </div>
 
     <!--#region templates down-->
     <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a larger screen. ⚠️</div>
-    <script type="module" src="scripts/pages/post.js"></script>
+    <script type="module" src="scripts/pages/profile.js"></script>
     
 </body>
 </html>
