@@ -46,11 +46,16 @@ export async function onRequestPost(context) {
     //const moderation = await moderateContent(context.env.GOOGLE_AI_KEY_A, "gemini-2.5-flash", data.description, data.media);
     //if (moderation.score < 0.3) {
     //    return new Response("Your report has been auto-rejected by AI moderation.\nReason: " + moderation.reason, { status: 400 });
-    //} else if (moderation.score > 0.7) {
-    //    data.status = "APPROVED";
     //} else {
         data.status = "PENDING";
-        data.embeddings = null;
+    //}
+        
+        
+    //if (moderation.score > 0.7) {
+    //    data.status = "APPROVED";
+    //} else {
+    data.status = "PENDING";
+    data.embeddings = null;
     //}
     data.created_at = new Date();
     //const embedding = await getEmbedding(context.env.GOOGLE_AI_KEY_A, "gemini-embedding-001", data.description);
@@ -61,7 +66,7 @@ export async function onRequestPost(context) {
             await firestore.setDoc(`users/${user.sub}/bookmarks`, postId, {
                 timestamp: new Date()
             });
-            
+            /*
             const uri = context.env.VECTOR_TOOL_URL + "/embed";
             console.log("Embedding URL:", uri);
             try {
@@ -76,7 +81,7 @@ export async function onRequestPost(context) {
                 console.log("Embedding response:", await res.text());
             } catch (err) {
                 console.error("Error sending embedding:", err);
-            }
+            }*/
             if (data.status === "APPROVED") {
                 return new Response(JSON.stringify({ id: postId }), { status: 201 });
             } else {
