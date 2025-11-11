@@ -53,7 +53,6 @@ export async function onRequestPost(context) {
     //}
     data.created_at = new Date();
     const embedding = await getEmbedding(context.env.GOOGLE_AI_KEY_A, "gemini-embedding-001", data.description);
-    data.embedarray = embedding;
     try {
         const res = await firestore.addDoc("posts", data);
         const postId = res.name.split("/").pop();
@@ -64,13 +63,17 @@ export async function onRequestPost(context) {
             
             const uri = context.env.VECTOR_TOOL_URL + "/embed";
             console.log("Embedding URL:", uri);
-            const res = await fetch(uri, {
+            try {
+                const res = await fetch(uri, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ post_id: postId, embedding })
             });
+            } catch (err) {
+                console.error("Error sending embedding:", err);
+            }
             if (data.status === "APPROVED") {
                 return new Response(JSON.stringify({ id: postId }), { status: 201 });
             } else {
