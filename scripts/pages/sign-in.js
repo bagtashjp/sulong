@@ -76,7 +76,8 @@ async function submitProfile() {
         await saveUserData({
             first_name: firstName,
             last_name: lastName,
-            avatar: img
+            avatar: img,
+            role: "USER"
         });
         alert("Profile completed successfully!");
         window.location.href = "feed";
@@ -154,7 +155,6 @@ async function registerUI() {
     try {
         await createUserWithEmailAndPassword(auth, email, pass);
         authExtra();
-
 
     } catch (err) {
         alert("Error: " + err.message);

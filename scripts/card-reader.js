@@ -51,12 +51,14 @@ export function summonTemplate(node_name, data) {
         if (value?.append) child.append(...(Array.isArray(value.append) ? value.append : [value.append]));
         if (value?.html) child.innerHTML = value.html;
         if (value?.text) child.textContent = value.text;
-        if (value?.attr) child.setAttribute(value.attr[0], value.attr[1]);
+        if (value?.attr) value.attr.forEach(attr => child.setAttribute(attr[0], attr[1]));
         if (value?.style) Object.assign(child.style, value.style);
         if (value?.onclick) child.onclick = value.onclick;
+        if (value?.onchange) child.onchange = value.onchange;
         if (value?.id) child.id = value.id;
         if (value?.bg) setBackgroundPreload(child, value.bg);
         if (value?.img) child.src = value.img;
+        if (value?.value) child.value = value.value;
     }
     return node;
 }

@@ -1,0 +1,54 @@
+<!--#region templates up-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Users - Sulong</title>
+</head>
+
+<body id="users" class="admin_page">
+    <div id="loading_page">Loading...</div>
+    <card id="header"></card>
+    <card id="admin_nav"></card>
+    <card id="notif_bar"></card>
+    <!--#endregion-->
+
+    <div class="dash-layer">
+        <div class="dash-mock-layer"></div>
+        <div class="main_body_container">
+            <h1 class="users_page_title">User Management</h1>
+            <div class="filters_container">
+                <span>Filter by Date:</span>
+                <select id="filter_by_date">
+                    <option value="desc">Newest First</option>
+                    <option value="asc">Oldest First</option>
+                </select>
+                <span>Filter by Role:</span>
+                <select id="filter_by_role">
+                    <option value = "" selected>All Roles</option>
+                    <option value="user">User</option>
+                    <option value="lgu">LGU</option>
+                    <option value="admin">Admin</option>
+                    <option value="blocked">Blocked</option>
+                </select>
+                <button id="apply_filters_button" onclick="applyFilters()">Apply</button>
+            </div>
+            <div class="users_list">
+
+            </div>
+            <button id="load_more_users_button" onclick="loadMoreUsers(this)">Load More Users</button>
+        </div>
+    </div>
+
+    <!--#region templates down-->
+    <div id="size-error">⚠️ Screen size is awkward. ⚠️ Component positions may break. ⚠️ Please use or resize to a
+        larger screen. ⚠️</div>
+    <script type="module" src="scripts/pages/users.js"></script>
+</body>
+</html>
+<!--#endregion-->

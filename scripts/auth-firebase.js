@@ -8,6 +8,7 @@ export function initAuthState(userLoggedIn, userLoggedOut) {
             if (!window.location.pathname.endsWith("signin")) {
                 auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
                     const role = idTokenResult.claims.role;
+                    console.log("User role:", role);
                     const lndash = document.querySelector(".lndash");
                     if (role == "ADMIN") {
                         if (lndash) lndash.style.display = "flex";

@@ -19,7 +19,7 @@ export async function onRequestPost(context) {
     await firestore.updateDoc("posts", postId, data);
     await firestore.addDoc("notifications", {
         post_id: postId,
-        post_description: postDoc.description,
+        post_description: postDoc.description || "",
         type: "POST_REJECTED",
         reason: reason,
         timestamp: new Date()

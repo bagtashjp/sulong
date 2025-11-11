@@ -18,9 +18,9 @@ import {
     deleteDoc,
     orderBy,
     serverTimestamp,
-    onSnapshot
+    onSnapshot,
+    startAfter
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
 import { POST_TAG_NAME } from "./z_constants.js";
 import { buildNotifBody, startLoading, summonRightToast, summonToast } from "./utils.js";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -60,7 +60,7 @@ export async function createPost(postData) {
         if (res.status == 400) {
             const reason = await res.text();
             alert(reason + "\nIf you think this decision is wrong, please report it as a bug.");
-            console.error("Error creating post: " );
+            console.error("Error creating post: ");
             const theBtn = document.querySelector("#create_map-submit_button");
             theBtn.disabled = false;
             theBtn.textContent = "Submit";
@@ -88,10 +88,10 @@ export async function createPost(postData) {
             window.location.href = "feed"
         }, 800);
     }
-    
-       
-        
- // safe to parse because res.ok === true
+
+
+
+    // safe to parse because res.ok === true
 }
 
 export async function getPosts(limitCount = 10) {
@@ -258,6 +258,7 @@ export async function getPost(postId) {
         return null;
     }
 }
+
 export async function searchPosts(query) {
     try {
         const res = await fetch("/api/firestore/search?query=" + encodeURIComponent(query), {
@@ -339,7 +340,7 @@ export async function notificationListener(bookmarks) {
             const notifElem = document.createElement("a");
             notifElem.classList.add("notif_item");
             const date = notif.timestamp.toDate();
-            const {body, href} = buildNotifBody(notif);
+            const { body, href } = buildNotifBody(notif);
             notifElem.innerHTML = `
                 <a class="notif_item_body">${body || ""}</a>
                 <span class="notif_item_date">${date.toLocaleDateString()} ${date.toLocaleTimeString()}</span>
@@ -359,24 +360,7 @@ export async function notificationListener(bookmarks) {
     });
 }
 
-/*
-export async function getPost(postId) {
-try {
-    const res = await fetch("/api/firestore/report?post_id=" + encodeURIComponent(postId), {
-        method: "GET",
-        headers: {
-            "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
-        }
-    });
-    if (!res.ok) throw new Error("Failed to fetch post");
-    return await res.json();
-} catch (error) {
-    console.error("Error getting post:", error);
-    alert("Error fetching post. " + error);
-    return null;
-}
-}
-*/
+
 
 export async function updatePostStatus(docId, newStatus) {
     try {
@@ -405,7 +389,7 @@ export async function approvePost(docId) {
     }
 }
 export async function rejectPost(docId, reason) {
-     try {
+    try {
         const res = await fetch("/api/firestore/post-reject?post_id="
             + encodeURIComponent(docId)
             + "&reason=" + encodeURIComponent(reason), {
@@ -504,6 +488,53 @@ export async function addBookmark(postId) {
         throw new Error("Failed to add bookmark");
     }
 }
+let lastUser = null;
+export async function getUsers(filterByDate = "desc", filterByRole = "", limiter = 5, isOffset = false) {
+    try {
+        let constraints = [];
+        if (filterByRole) {
+            constraints.push(where("role", "==", filterByRole));
+        }
+        constraints.push(orderBy("created_at", filterByDate));
+        if (isOffset && lastUser) {
+            constraints.push(startAfter(lastUser));
+        }
+        constraints.push(limit(limiter));
+        let q = query(collection(db, "users"), ...constraints);
+        const querySnapshot = await getDocs(q);
+        const users = querySnapshot.docs.map(userDoc => ({
+            id: userDoc.id,
+            ...userDoc.data()
+        }));
+        lastUser = querySnapshot.docs[querySnapshot.docs.length - 1];
+        return users;
+    } catch (error) {
+        console.error("Error getting users by date:", error);
+        alert("Error getting users. " + error);
+        return [];
+    }
+}
+
+export async function changeUserRole(userId, newRole) {
+    try {
+        const res = await fetch("/api/firestore/role?user_id=" + encodeURIComponent(userId)
+            + "&new_role=" + encodeURIComponent(newRole), {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+            }
+        });
+        if (!res.ok) {
+            throw new Error("Failed to change user role");
+        }
+        return true;
+    } catch (error) {
+        console.error("Error changing user role:", error);
+        alert("Error changing user role. " + error);
+        return false;
+    }
+}
+
 // #endregion
 
 // #region COMMENTS
@@ -804,3 +835,23 @@ export async function addEmbedding(postId) {
         alert("Embedding added successfully.");
     }
 }
+
+
+/*
+export async function getPost(postId) {
+try {
+    const res = await fetch("/api/firestore/report?post_id=" + encodeURIComponent(postId), {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + (await auth.currentUser.getIdToken())
+        }
+    });
+    if (!res.ok) throw new Error("Failed to fetch post");
+    return await res.json();
+} catch (error) {
+    console.error("Error getting post:", error);
+    alert("Error fetching post. " + error);
+    return null;
+}
+}
+*/
