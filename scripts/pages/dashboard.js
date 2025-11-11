@@ -1,8 +1,27 @@
-import { renderCards, renderCardsAsync, summonTemplate } from "../card-reader.js";
+import {
+    renderCards,
+    renderCardsAsync,
+    summonTemplate
+} from "../card-reader.js";
+
 import { initDarkmode } from "../theme.js";
-import { initNavBars, endLoading, delayHrefs, buildStaticMapUrl, waitASecond, initNotifications } from "../utils.js";
+
+import {
+    initNavBars,
+    endLoading,
+    delayHrefs,
+    waitASecond,
+    initNotifications
+} from "../utils.js";
+
 import { initAuthState } from "../auth-firebase.js";
-import { getPendingPosts,auth, updatePostStatus, doesUserExist, approvePost, rejectPost } from "../init-firebase.js";
+import {
+    getPendingPosts,
+    auth,
+    doesUserExist,
+    approvePost,
+    rejectPost
+} from "../init-firebase.js";
 import { POST_TAG_NAME } from "../z_constants.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -38,7 +57,9 @@ async function loadPostCards() {
             imgs.push(img);
         }
 
-        const address = await (await fetch(`/api/georeverse?lat=${post.location.latitude}&lon=${post.location.longitude}`)).json();
+        const address = post.address_name
+            ? {display_name: post.address_name}
+            : await (await fetch(`/api/georeverse?lat=${post.location.latitude}&lon=${post.location.longitude}`)).json();
 
         const approveBtn = document.createElement("button");
         approveBtn.textContent = "Approve";
@@ -49,15 +70,13 @@ async function loadPostCards() {
         rejectBtn.classList.add("admin_reject_button");
         console.log(post);
         const postCards = summonTemplate("feed_post", {
-            ".feed_post": { id: post.id },
+            ".feed_post": { id: "post_" + post.id },
             ".post_display_name": { text: post.display_name },
             ".post_desc": { text: post.description },
             ".tile_map": {
-                bg: buildStaticMapUrl({
-                    centerLon: post.location.longitude,
-                    centerLat: post.location.latitude,
-                    markers: [{}]
-                })
+                style: {
+                    backgroundImage: `url(/api/geoapify?lon=${encodeURIComponent(post.location.longitude)}&lat=${encodeURIComponent(post.location.latitude)})`
+                }
             },
             ".post_tag": { text: POST_TAG_NAME[post.category] },
             ".image_container": { append: imgs },
@@ -70,7 +89,7 @@ async function loadPostCards() {
             approveBtn.disabled = true;
             try {
                 await approvePost(post.id);
-                document.querySelector(`#${post.id}`).remove();
+                document.querySelector(`#post_${post.id}`).remove();
                 alert("Approved!");
             } catch (e) {
                 console.error(e);

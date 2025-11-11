@@ -50,6 +50,7 @@ export async function onRequestPost(context) {
     //    data.status = "APPROVED";
     //} else {
         data.status = "PENDING";
+        data.embeddings = null;
     //}
     data.created_at = new Date();
     const embedding = await getEmbedding(context.env.GOOGLE_AI_KEY_A, "gemini-embedding-001", data.description);
@@ -65,12 +66,14 @@ export async function onRequestPost(context) {
             console.log("Embedding URL:", uri);
             try {
                 const res = await fetch(uri, {
-                method: "POST",
-                headers: {
+                    method: "POST",
+                    headers: {
                     "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ post_id: postId, embedding })
-            });
+                    },
+                    body: JSON.stringify({ post_id: postId, embedding })
+                });
+                console.log("Embedding status: " + res.status);
+                console.log("Embedding response:", await res.text());
             } catch (err) {
                 console.error("Error sending embedding:", err);
             }

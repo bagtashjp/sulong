@@ -13,7 +13,6 @@ export async function onRequestPost(context) {
     const description = postDoc.description;
     const embedding = await getEmbedding(context.env.GOOGLE_AI_KEY_A, "gemini-embedding-001", description);
     if (!embedding) return new Response("Failed to generate embedding", { status: 500 });
-    //await firestore.updateDoc("posts", postId, { embeddings: embedding });
     const res = await fetch(context.env.VECTOR_TOOL_URL + "/embed", {
         method: "POST",
         headers: {

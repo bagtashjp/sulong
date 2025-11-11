@@ -29,9 +29,6 @@ export async function getEmbedding(apiKey, model = "gemini-embedding-001", textC
         }
 
         const data = await response.json();
-        
-        // The API returns an object with an 'embedding' property.
-        // The vector itself is in 'data.embedding.values'.
         return data.embedding.values || null;
 
     } catch (error) {
