@@ -1,0 +1,40 @@
+<div class="profile_setting">
+    <div class="profile_setting_item">
+        <h2>Change Profile Picture</h2>
+        <div class="profile_pic_container">
+            <img id="profile_avatar_preview" src="../assets/default_icon.jpg" />
+            <input type="file" id="profile_pic_input" accept="image/*" hidden />
+            <button id="change_profile_pic_btn" onclick="document.querySelector('#profile_pic_input').click()">Upload New Picture</button>
+            <button id="save_profile_pic_btn" >Save Profile Picture</button>
+        </div>
+
+    </div>
+    <div class="profile_setting_item">
+        <h2>Update Name</h2>
+        <div class="input-group">
+            <input type="text" placeholder="" id="profile_name_input" required>
+            <label for="profile_name_input">First Name</label>
+        </div>
+        <div class="input-group">
+            <input type="text" placeholder="" id="profile_last_name_input" required>
+            <label for="profile_last_name_input">Last Name</label>
+        </div>
+        <button id="update_name_btn">Update Name</button>
+    </div>
+    <div class="profile_setting_item">
+        <h2>Change Password</h2>
+        <div class="input-group">
+            <input type="password" placeholder="" id="profile_current_password_input" required>
+            <label for="profile_current_password_input">Current Password</label>
+        </div>
+        <div class="input-group">
+            <input type="password" placeholder="" id="profile_new_password_input" required>
+            <label for="profile_new_password_input">New Password</label>
+        </div>
+        <div class="input-group">
+            <input type="password" placeholder="" id="profile_new_password_confirm_input" required>
+            <label for="profile_new_password_confirm_input">Confirm Password</label>
+        </div>
+        <button id="update_password_btn">Update Password</button>
+    </div>
+</div>

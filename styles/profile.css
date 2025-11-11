@@ -1,6 +1,7 @@
 #profile .feed_layer {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
 }
 .user_profile {
     display: flex;
@@ -24,6 +25,13 @@
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
+}
+#profile_avatar_preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: 0 0 auto;
 }
 .profile_info {
     display: flex;
@@ -60,4 +68,75 @@ input[name="profile_nav"] + label{
 input[name="profile_nav"]:checked + label {
     color: rgb(var(--color-base-font));
     border-bottom: 2px solid var(--color-secondary);
+}
+#profile .feed_layer .core_feed, .profile_setting {
+    display: none;
+}
+
+#profile .feed_layer:has(#profile_nav_post:checked) #profile_posts_container {
+    display: flex;
+}
+#profile .feed_layer:has(#profile_nav_bookmarks:checked) #profile_bms_container{
+    display: flex;
+}
+#profile .feed_layer:has(#profile_nav_settings:checked) .profile_setting {
+    display: flex;
+}
+
+#profile_avatar_preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-secondary);
+}
+.profile_setting {
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    align-items: flex-start;
+}
+.profile_setting_item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+}
+.profile_pic_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    
+}
+.profile_pic_container #change_profile_pic_btn {
+    cursor: pointer;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none;
+    background-color: var(--color-secondary);
+    color: white;
+    border-radius: 10px
+}
+.profile_setting_item button, #change_profile_pic_btn {
+    cursor: pointer;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none;
+    background-color: var(--color-secondary);
+    color: white;
+    border-radius: 10px;
+    &:hover {
+        background-color: color-mix(in srgb, var(--color-secondary), black 20%);
+    }
+    &:disabled {
+        background-color: gray;
+        cursor: not-allowed;
+    }
+}
+
+.profile_setting_item h2 {
+    text-align: left;
+    margin-left: 0;
 }

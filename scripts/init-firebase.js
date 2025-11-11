@@ -1,6 +1,6 @@
 // #region INIT 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { getAuth, sendPasswordResetEmail , EmailAuthProvider, reauthenticateWithCredential, updatePassword} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import {
     Timestamp,
     getFirestore,
@@ -19,7 +19,9 @@ import {
     orderBy,
     serverTimestamp,
     onSnapshot,
-    startAfter
+    startAfter,
+    FieldPath,
+    
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { POST_TAG_NAME } from "./z_constants.js";
 import { buildNotifBody, startLoading, summonRightToast, summonToast } from "./utils.js";
@@ -223,7 +225,24 @@ export async function getApprovedPosts(limitCount = 10) {
         return [];
     }
 }
-
+export async function getBookmarkedPosts(bookmarks = [], limitCount = 10) {
+    try {
+        if (!bookmarks || bookmarks.length === 0) return [];
+        const posts = await Promise.all(
+            bookmarks.map(async (postId) => {
+                console.log("Getting bookmarked post:", postId);
+                const post = await getPost(postId);
+                return post;
+            })
+        );
+        console.log("Bookmarked posts:", posts);
+        return posts;
+    } catch (error) {
+        console.error("Error getting bookmarked posts:", error);
+        alert("Error getting bookmarked posts. " + error);
+        return [];
+    }
+}
 export async function getPost(postId) {
     try {
         const postRef = doc(db, "posts", postId);
@@ -448,7 +467,7 @@ export async function getUserPosts(limitCount = 10) {
         );
 
         return posts;
-    }   catch (error) {
+    } catch (error) {
         console.error("Error fetching user posts:", error);
         return [];
     }
@@ -473,9 +492,9 @@ export async function getCurrentUserData() {
 
     if (!userSnap.exists()) return null;
 
-    // Main user data
+    // Main user data()
     const userData = { id: userSnap.id, ...userSnap.data() };
-    const { location, created_at, ...filteredData } = userData;
+    const { location, created_at, email, ...filteredData } = userData;
 
     // Fetch bookmarks subcollection
     const bookmarksCol = collection(userRef, "bookmarks");
@@ -509,6 +528,17 @@ export async function saveUserData(userData) {
         email: user.email,
         created_at: serverTimestamp(),
     }, { merge: true });
+}
+export async function updateUserData(userData) {
+    const user = auth.currentUser;
+    if (!user) {
+        console.error("No authenticated user!");
+        return;
+    }
+
+    const userRef = doc(db, "users", user.uid);
+
+    await setDoc(userRef, userData, { merge: true });
 }
 
 export async function removeBookmark(postId) {
@@ -883,7 +913,18 @@ export async function addEmbedding(postId) {
         alert("Embedding added successfully.");
     }
 }
-
+export async function changePassword(oldPassword, newPassword) {
+    const credentials = EmailAuthProvider.credential(
+        auth.currentUser.email,
+        oldPassword
+    );
+    await reauthenticateWithCredential(auth.currentUser, credentials).then(async () => {
+        await updatePassword(auth.currentUser, newPassword);
+        summonToast("Password updated successfully.");
+    }).catch((error) => {
+        throw new Error("Error changing password: " + error.message);
+    });
+}
 
 /*
 export async function getPost(postId) {
