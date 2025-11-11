@@ -1,7 +1,17 @@
 <nav class="admin_nav">
     <div class="anav-title">Admin Dashboard</div>
     <div class="top_anav">
-        <a href="dashboard" class="anav anmainte"><img src="../assets/maintenance_icon.svg">Management</a>
+        <!--a href="dashboard" class="anav anmainte"><img src="../assets/maintenance_icon.svg">Management</a-->
+        <!--a href="users" class="anav anmainte"><img src="../assets/usrs.svg">User</a-->
+
+        <input type="checkbox" id="anav-management-toggle" class="anav-toggle" hidden>
+        <label for="anav-management-toggle" class="anav-toggle-label">
+            <img src="../assets/maintenance_icon.svg">Management
+        </label>
+        <div class="anam-wrapper">
+            <a href="dashboard" class="anav anaposts"><img src="../assets/tables_icon.svg">Posts</a>
+            <a href="users" class="anav anausers"><img src="../assets/users_icon.svg">Users</a>
+        </div>
         <!--a href="overview" class="anav anoverview"><img src="../assets/overview_icon.svg">Overview</a-->
         <input type="checkbox" id="anav-analytics-toggle" class="anav-toggle" hidden>
         <label for="anav-analytics-toggle" class="anav-toggle-label">

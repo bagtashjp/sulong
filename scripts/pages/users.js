@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         initNotifications();
         endLoading();
         loadUsers();
+        document.querySelector("#anav-management-toggle").checked = true;
     }, () => {
         window.location.href = "signin";
     })

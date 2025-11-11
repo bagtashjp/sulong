@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 			return;
 		}
 		initNotifications();
+		document.querySelector("#anav-analytics-toggle").checked = true;
 		endLoading();
 	}, () => {
 		window.location.href = "signin";
